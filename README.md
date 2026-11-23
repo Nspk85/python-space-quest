@@ -23,4 +23,4 @@ A space-themed Python course for complete beginners, written for kids around 10 
 
 ## How to use
 
-Open `world1.html` in a phone or computer browser. Add each learner under **Your crew**, then pick who's playing in the top bar before tapping tasks.
+Open `index.html` (or the GitHub Pages link) in a phone or computer browser and tap World 1. Add each learner under **Your crew**, then pick who's playing in the top bar before tapping tasks.

@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Python Space Quest: World 1</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +27,9 @@
   --term-bg:#060b1a; color-scheme:dark}
 
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
@@ -156,6 +164,8 @@ td code{font-family:var(--font-code);font-size:.85em;overflow-wrap:anywhere}
 @media (prefers-reduced-motion: reduce){.toast{transition:none}}
 footer{padding-block:24px 40px;font-size:.9rem}
 </style>
+</head>
+<body>
 
 <div class="crewbar">
   <div class="wrap">
@@ -1044,3 +1054,5 @@ print("BLAST OFF! 🚀")</pre>
   render();
 })();
 </script>
+</body>
+</html>
