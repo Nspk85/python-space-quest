@@ -201,3 +201,9 @@ body.pad-open{padding-bottom:64vh}
 .crew-add-btn{font-size:.95rem}
 .add-form.flash{outline:3px solid var(--accent);outline-offset:3px}
 @media (prefers-reduced-motion: no-preference){.add-form{transition:outline-color .3s}}
+
+/* Backup code panel */
+.backup summary{font-family:var(--font-display);font-weight:600;font-size:1.05rem}
+.backup h4{margin-top:4px}
+.backup-code{width:100%;font-family:var(--font-code);font-size:.85rem;line-height:1.4;padding:10px 12px;border-radius:12px;border:2px solid var(--line);
+  background:var(--bg);color:var(--ink);resize:vertical;overflow-wrap:anywhere;word-break:break-all}

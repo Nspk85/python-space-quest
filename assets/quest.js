@@ -268,5 +268,119 @@
     })();
   }
 
+  // ---------- backup code: save progress as text, load it back on any phone ----------
+  (function(){
+    const PREFIX = "PSQ1.";
+    class Friendly extends Error {}
+    const DAMAGED = "This code is damaged. Check you copied all of it, from PSQ1 to the very end.";
+    const box = document.createElement("details");
+    box.className = "card backup"; box.id = "backup";
+    box.innerHTML = `
+      <summary>💾 Save or load your crew's progress</summary>
+      <div class="stack">
+        <p>Scores live only in this phone's browser. Save a <b>backup code</b> so you can get them back if the browser data is cleared, or move your crew to another phone.</p>
+        <div class="stack">
+          <h4>Save progress</h4>
+          <div class="task-row"><button type="button" class="btn small" id="backup-make">Make backup code</button></div>
+          <div id="backup-out" class="stack" hidden>
+            <label for="backup-code" class="muted">Copy this whole code and keep it in a notes app or a message to yourself:</label>
+            <textarea id="backup-code" class="backup-code" readonly rows="4"></textarea>
+            <div class="task-row"><button type="button" class="btn ghost small" id="backup-copy">Copy code</button><span class="muted" id="backup-info"></span></div>
+          </div>
+        </div>
+        <div class="stack">
+          <h4>Load progress</h4>
+          <label for="restore-code" class="muted">Paste a backup code here:</label>
+          <textarea id="restore-code" class="backup-code" rows="4" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="PSQ1.…"></textarea>
+          <div class="task-row"><button type="button" class="btn small" id="restore-check">Check code</button></div>
+          <div id="restore-preview" class="callout stack" hidden></div>
+        </div>
+      </div>`;
+    const anchor = $("#add-form");
+    anchor.insertAdjacentElement("afterend", box);
+
+    const b64 = {
+      enc(bytes){ let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); },
+      dec(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str+="="; const bin=atob(str); return Uint8Array.from(bin,c=>c.charCodeAt(0)); }
+    };
+    async function pipe(bytes, Stream){ return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new Stream("deflate-raw"))).arrayBuffer()); }
+    const canZip = typeof CompressionStream === "function" && typeof DecompressionStream === "function";
+
+    async function makeCode(){
+      // compact form: players as [id,name,avatar], done as {id:"task:xp,task:xp"}
+      const data = {v:1, p: state.players.map(pl=>[pl.id,pl.name,pl.avatar]), d:{}};
+      state.players.forEach(pl=>{ const d=state.done[pl.id]||{}; data.d[pl.id]=Object.keys(d).map(k=>k+":"+(Number(d[k])||0)).join(","); });
+      let bytes = new TextEncoder().encode(JSON.stringify(data)), flag="j";
+      if(canZip){ try{ bytes = await pipe(bytes, CompressionStream); flag="z"; }catch(e){} }
+      return PREFIX + flag + b64.enc(bytes);
+    }
+    async function readCode(code){
+      code = code.replace(/\s+/g,"");
+      if(!code.startsWith(PREFIX)) throw new Friendly("This doesn't look like a Python Space Quest backup code. It should start with PSQ1.");
+      const flag = code.charAt(PREFIX.length);
+      let bytes = b64.dec(code.slice(PREFIX.length+1));
+      if(flag==="z"){ if(!canZip) throw new Friendly("This browser is too old to read this code. Try Chrome."); bytes = await pipe(bytes, DecompressionStream); }
+      else if(flag!=="j") throw new Friendly(DAMAGED);
+      const data = JSON.parse(new TextDecoder().decode(bytes));
+      if(!data || !Array.isArray(data.p)) throw new Friendly(DAMAGED);
+      const players = data.p.filter(x=>Array.isArray(x)&&x[0]&&x[1]).map(x=>({id:String(x[0]),name:String(x[1]).slice(0,20),avatar:String(x[2]||"🧑‍🚀")}));
+      const done = {};
+      players.forEach(pl=>{ done[pl.id]={}; String((data.d||{})[pl.id]||"").split(",").filter(Boolean).forEach(pair=>{ const i=pair.lastIndexOf(":"); const k=pair.slice(0,i), v=Number(pair.slice(i+1)); if(k && v>=0 && v<=1000) done[pl.id][k]=v; }); });
+      return {players, done};
+    }
+    const xpIn = d => Object.keys(d).reduce((a,k)=>a+(Number(d[k])||0),0);
+
+    $("#backup-make").addEventListener("click", async ()=>{
+      if(!state.players.length){ toast("Add a crew member first!"); return; }
+      const code = await makeCode();
+      $("#backup-code").value = code; $("#backup-out").hidden = false;
+      $("#backup-info").textContent = state.players.length + (state.players.length===1?" crew member":" crew members") + " saved in this code.";
+    });
+    $("#backup-copy").addEventListener("click", ()=>{
+      const ta=$("#backup-code");
+      const fallback=()=>{ ta.focus(); ta.select(); toast("Code selected. Now tap Copy on your phone's menu."); };
+      try{ navigator.clipboard.writeText(ta.value).then(()=>toast("Backup code copied! Paste it somewhere safe."), fallback); }catch(e){ fallback(); }
+    });
+
+    let pending = null;
+    const preview = $("#restore-preview");
+    $("#restore-check").addEventListener("click", async ()=>{
+      preview.hidden = false; pending = null;
+      try{
+        const got = await readCode($("#restore-code").value);
+        if(!got.players.length) throw new Friendly("This code has no crew members in it.");
+        pending = got;
+        const rows = got.players.map(pl=>{
+          const mine = state.players.find(x=>x.id===pl.id);
+          const li = document.createElement("li");
+          li.textContent = `${pl.avatar} ${pl.name}: ${xpIn(got.done[pl.id])} XP` + (mine ? " (already on this phone, progress will be combined)" : " (new on this phone)");
+          return li;
+        });
+        preview.innerHTML = `<p><b>This code has ${got.players.length} crew ${got.players.length===1?"member":"members"}:</b></p><ul class="list"></ul>
+          <p class="muted">Loading adds them to this phone. Nobody already here is removed, and no progress is lost.</p>
+          <div class="task-row"><button type="button" class="btn small" id="restore-yes">Load this crew</button><button type="button" class="btn ghost small" id="restore-no">Cancel</button></div>`;
+        rows.forEach(li=>preview.querySelector("ul").appendChild(li));
+        $("#restore-yes").addEventListener("click", ()=>{
+          pending.players.forEach(pl=>{
+            if(!state.players.find(x=>x.id===pl.id)) state.players.push(pl);
+            const d = doneOf(pl.id);
+            Object.keys(pending.done[pl.id]).forEach(k=>{ if(d[k]===undefined) d[k]=pending.done[pl.id][k]; });
+          });
+          if(!player()) state.active = pending.players[0].id;
+          save(); render();
+          preview.innerHTML = "<p><b>✓ Crew loaded!</b> Check the crew cards above.</p>";
+          $("#restore-code").value = ""; pending = null;
+          toast("Crew loaded! 🚀");
+        });
+        $("#restore-no").addEventListener("click", ()=>{ preview.hidden = true; pending = null; });
+      }catch(e){
+        preview.innerHTML = "";
+        const p = document.createElement("p"); p.className="feedback no";
+        p.textContent = (e instanceof Friendly) ? e.message : DAMAGED;
+        preview.appendChild(p);
+      }
+    });
+  })();
+
   render();
 })();

@@ -27,6 +27,7 @@ A space-themed Python course for complete beginners, written for kids around 10 
 - `assets/codepad.js` adds the Code Pad: an editor with symbol keys, a Run button and "Try it" buttons on every example. It runs Python with [Pyodide](https://pyodide.org), hosted in `assets/pyodide/` (downloaded on the first Run, about 14 MB). `input()` answers are typed into a pop-up box; tapping Cancel stops the program. A program that runs longer than 5 seconds (not counting time spent answering) is stopped, so endless loops can't freeze the page.
 - Each World page sets `window.QUEST` (its World number, boss task and lesson task lists) before loading `quest.js`.
 - Progress is saved in the browser under one key, so the crew and total XP carry across Worlds. Progress saved by the first World 1 release is imported automatically.
+- The **Save or load your crew's progress** panel (under the crew list) turns the crew and their progress into a backup code (`PSQ1.` followed by compressed data) that can be pasted back on any phone. Loading adds to the crew already there; it never removes anyone or loses progress.
 
 ## How to use
 
