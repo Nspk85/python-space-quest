@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Space Quest: World 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/quest.css">
+</head>
+<body>
+
+<div class="crewbar">
+  <div class="wrap">
+    <label for="active-player">Who's playing?</label>
+    <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars" data-text='name = "Py-Bot"' data-planet="#ff8a65"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 2</span>
+  <h1>Magic Boxes</h1>
+  <p class="lead">Py-Bot can talk now, but it forgets everything right away! In World 2 you'll give Py-Bot memory boxes, keep track of rocket fuel, and teach it to ask you questions and listen to your answers.</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP… who are you again? I keep forgetting! If you give me some boxes to keep things in, I'll remember your name forever. Well, until the program ends. BOOP!"</p>
+  </div>
+  <p class="muted">New here? Start with <a href="world1.html">World 1</a> first. Your crew, XP and badges from World 1 are already here.</p>
+</header>
+
+<!-- MAP -->
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map">
+      <a class="station" href="#lesson-1" data-lesson="m1"><div class="planet p1"></div><span class="name">1 · Memory Boxes</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="m2"><div class="planet p2"></div><span class="name">2 · Fuel Tank</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="m3"><div class="planet p3"></div><span class="name">3 · Py-Bot Asks</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="m4"><div class="planet p4"></div><span class="name">4 · Number Answers</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Space Passport</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<!-- CREW -->
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Same crew as World 1, with all your XP. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>World 2 badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" aria-labelledby="setup-h">
+  <div class="stack">
+    <span class="eyebrow">New skill for this World</span>
+    <h2 id="setup-h">Answering Py-Bot in Pydroid 3</h2>
+    <p>In this World, your programs will <b>ask questions</b> and wait for you to answer. Here's how that works in Pydroid 3:</p>
+    <ol class="list">
+      <li>Tap ▶ to run. The black terminal screen opens and shows Py-Bot's question.</li>
+      <li>Tap the terminal so the keyboard pops up.</li>
+      <li>Type your answer and press <b>Enter</b> (the ↵ key).</li>
+      <li>If the keyboard covers the screen, scroll up or hide the keyboard to see everything.</li>
+    </ol>
+    <p class="muted">In the examples, the <span class="typed" style="color:var(--accent)">underlined</span> words in the black "screen shows" boxes are what <b>you</b> type.</p>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="m1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="m1-h">Memory Boxes</h2></div></div>
+    <p class="story"><b>Story:</b> Every time Py-Bot wants to say your name, you have to type it again. That's a lot of typing for tired thumbs! Let's give Py-Bot a box where it can keep your name.</p>
+    <div class="bigidea">
+      <h4>The big idea: a variable is a box with a label</h4>
+      <p>A <b>variable</b> is like a box with a name tag on it. You put something inside, and later you can ask Py-Bot "what's in the box called <i>name</i>?"</p>
+      <p style="margin-top:8px">The <code class="inl">=</code> sign in Python doesn't mean "equals" like in math. It means <b>"put this into the box"</b>.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a variable line">name  =  "Mia"
+ │    │    └─ what goes inside the box
+ │    └─ means "put it in"
+ └─ the label on the box</pre>
+    <div class="trace" aria-label="Picture of two boxes">
+      <div class="boxv"><small>name</small>"Mia"</div>
+      <div class="boxv"><small>planet</small>"Mars"</div>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">name = "Mia"                     # put "Mia" in a box called name
+planet = "Mars"                  # another box
+print(name)                      # look inside the box
+print("Hello,", name)            # a comma joins things with a space
+print(name, "is flying to", planet)</pre></div>
+      <pre class="out">Mia
+Hello, Mia
+Mia is flying to Mars</pre>
+      <p class="muted">See how <code class="inl">print(name)</code> shows <b>Mia</b>, not the word "name"? No quotes means "look inside the box".</p>
+      <div class="task-row"><button class="task" data-id="m1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Change <code class="inl">"Mia"</code> to your own name, and run again. You only changed <b>one</b> line, but every sentence changed. That's the magic of boxes!</li>
+        <li>Try <code class="inl">print("name")</code> <b>with</b> quotes. It shows the word <i>name</i>, because quotes mean "say these exact letters".</li>
+        <li>Try <code class="inl">print(Name)</code> with a capital N. You'll get a <b>NameError</b>, because box labels must be spelled exactly the same every time.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="m1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="callout stack">
+      <h4>Rules for box labels</h4>
+      <ul class="list">
+        <li><b>No spaces.</b> Use an underscore instead: <code class="inl">ship_name</code>, not <code class="inl">ship name</code>.</li>
+        <li><b>Don't start with a number.</b> <code class="inl">player1</code> is fine, but <code class="inl">1player</code> is not.</li>
+        <li><b>Use small letters</b> and spell it the same way every time. <code class="inl">Score</code> and <code class="inl">score</code> are two different boxes!</li>
+        <li><b>Pick names that make sense</b>, like <code class="inl">fuel</code> or <code class="inl">pet</code>, so you remember what's inside.</li>
+      </ul>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a box called <code class="inl">pet</code> with your favorite animal inside. Then print <code class="inl">My favorite animal is</code> followed by what's in the box.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Line 1 puts the animal in the box. Line 2 uses <code class="inl">print("My favorite animal is", pet)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="m1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make 3 boxes: <code class="inl">name</code>, <code class="inl">age</code> and <code class="inl">food</code>. Print one sentence that uses all three.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Numbers don't need quotes: <code class="inl">age = 10</code></p></details><details><summary>Hint 2</summary><p>Use commas to join several things in one <code class="inl">print</code>.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Silly story machine:</b> make boxes <code class="inl">hero</code>, <code class="inl">place</code> and <code class="inl">thing</code>. Print a 3-line story that uses them. Then change only the boxes to make a totally new story, without touching the <code class="inl">print</code> lines!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Put the 3 box lines at the top and the 3 print lines underneath.</p></details><details><summary>Hint 2</summary><p><code class="inl">print(hero, "flew to", place)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="m1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>There are <b>2 bugs</b>. Fix them one at a time, reading the red error each time.</p>
+      <div class="codebox"><pre class="code bad">ship name = "Comet"
+print(Ship_name)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Look at the box label rules. Can a label have a space?</p></details><details><summary>Hint 2</summary><p>Compare the label on line 1 and line 2, letter by letter.</p></details></div>
+      <div class="task-row"><button class="task" data-id="m1-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Surprise sentence <span class="xp">+10 XP</span></h4>
+      <p>The <b>Navigator</b> secretly writes on paper what goes in 3 boxes: <code class="inl">animal</code>, <code class="inl">color</code> and <code class="inl">food</code>. Meanwhile, the <b>Driver</b> types print lines that use those labels, without knowing what's inside! Then the Navigator tells the Driver the box lines to type at the top. Run it and laugh at the surprise sentence. Swap jobs and play again!</p>
+      <div class="task-row"><button class="task" data-id="m1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="m1-q1" data-xp="10" data-explain="Yes! The box called fuel has 50 inside.">
+        <p class="q">1. After <code class="inl">fuel = 50</code>, what's inside the box called fuel?</p>
+        <div class="choices"><button>The word fuel</button><button data-ok>50</button><button>Nothing</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m1-q2" data-xp="10" data-explain="Correct! With quotes, Python says the exact letters, not what's in the box.">
+        <p class="q">2. If <code class="inl">planet = "Mars"</code>, what does <code class="inl">print("planet")</code> show?</p>
+        <div class="choices"><button>Mars</button><button data-ok>planet</button><button>An error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m1-q3" data-xp="10" data-explain="Right! No spaces, and it doesn't start with a number.">
+        <p class="q">3. Which one is a good box label?</p>
+        <div class="choices"><button>my score</button><button data-ok>ship_name</button><button>2fast</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- UNPLUGGED -->
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Box Swap</h2>
+    <p>You need 3 cups or envelopes, some paper slips and a pen. Write a label on each cup: <code class="inl">score</code>, <code class="inl">fuel</code>, <code class="inl">pet</code>.</p>
+    <ol class="list">
+      <li>The leader reads out commands one at a time, like <code class="inl">score = 5</code>. A player writes <b>5</b> on a slip and puts it in the <i>score</i> cup.</li>
+      <li>Next command: <code class="inl">score = score + 2</code>. The player takes out the slip, works out 5 + 2, <b>throws the old slip away</b>, and puts a new slip saying <b>7</b> in the cup.</li>
+      <li>Mix in others: <code class="inl">pet = "cat"</code>, <code class="inl">fuel = 100</code>, <code class="inl">fuel = fuel - 40</code>, <code class="inl">pet = "dragon"</code>.</li>
+      <li>At the end, the leader asks: "<code class="inl">print(fuel)</code>! What's inside?" Everyone checks the cup.</li>
+    </ol>
+    <p class="muted">What you're learning: a box holds only one thing at a time. When you put something new in, the old thing is gone.</p>
+    <div class="task-row"><button class="task" data-id="w2-un" data-xp="20">I played Box Swap +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="m2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 30 minutes</span><h2 id="m2-h">Fuel Tank</h2></div></div>
+    <p class="story"><b>Story:</b> The rocket uses fuel as it flies from planet to planet. If the tank gets empty, we'll be stuck in space! Py-Bot needs to keep track of the fuel as it goes up and down.</p>
+    <div class="bigidea">
+      <h4>The big idea: you can change what's in a box</h4>
+      <p>Boxes can hold numbers, and you can swap in a new number any time. The new thing <b>replaces</b> the old thing.</p>
+      <p style="margin-top:8px"><code class="inl">fuel = fuel - 30</code> looks strange, but Python reads it in this order: <b>first</b> look in the fuel box, <b>then</b> take away 30, <b>then</b> put the answer back into the fuel box.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of fuel = fuel - 30">fuel  =  fuel - 30
+  ▲        └───┬───┘
+  │            └─ 1. work this out first: 100 - 30 = 70
+  └─ 2. then put 70 in the box (the 100 is gone)</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">fuel = 100                # start with a full tank
+print("Fuel:", fuel)
+fuel = fuel - 30          # fly to the Moon
+print("Fuel:", fuel)
+fuel = fuel - 50          # fly to Mars
+print("Fuel:", fuel)</pre></div>
+      <pre class="out">Fuel: 100
+Fuel: 70
+Fuel: 20</pre>
+      <div class="trace" aria-label="The fuel box changing">
+        <div class="boxv"><small>fuel at start</small>100</div>
+        <div class="boxv"><small>after the Moon</small>70</div>
+        <div class="boxv"><small>after Mars</small>20</div>
+      </div>
+      <div class="task-row"><button class="task" data-id="m2-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Add a fuel station stop: <code class="inl">fuel = fuel + 60</code>, then print the fuel again.</li>
+        <li>Start with a bigger tank: change the first line to <code class="inl">fuel = 200</code>. Every answer changes!</li>
+        <li>Make a game score: start with <code class="inl">score = 0</code>, then add <code class="inl">score = score + 10</code> three times and print it.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="m2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Start <code class="inl">stars = 0</code>. You collect 5 stars, then 5 more. Print how many stars you have.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">stars = stars + 5</code> two times.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>The ship has <code class="inl">snacks = 12</code>. Each day, the crew eats 3 snacks. Print how many are left after day 1, day 2 and day 3.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Each day: one line to take away 3, one line to print.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Make <code class="inl">crew = 4</code> and <code class="inl">snacks_each = 3</code>. Make a <code class="inl">total</code> box that multiplies them and print it. Then 2 more astronauts join: <code class="inl">crew = crew + 2</code>. Print <code class="inl">total</code> again. Did it change by itself? How can you fix it?</p>
+          <div class="hints"><details><summary>Hint 1</summary><p><code class="inl">total = crew * snacks_each</code></p></details><details><summary>Hint 2</summary><p>Python only works out <code class="inl">total</code> when it reads that line. If <code class="inl">crew</code> changes later, you need to work out <code class="inl">total</code> again.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot wanted to add 1 star and show <b>6</b>. There are <b>2 bugs</b>: one makes an error, and the other one gives the wrong answer with no error at all!</p>
+      <div class="codebox"><pre class="code bad">stars = "5"
+stars + 1
+print(stars)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Is 5 a number to do math with, or a word? What do the quotes say?</p></details><details><summary>Hint 2</summary><p>Line 2 works out an answer… but where does the answer go? Is it put back in the box?</p></details></div>
+      <div class="task-row"><button class="task" data-id="m2-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Fuel trip <span class="xp">+10 XP</span></h4>
+      <p>The Navigator plans a trip and calls out stops: "Moon, use 30!" "Fuel station, add 40!" "Jupiter, use 80!" The Driver types a line for each stop. Before running, you <b>both guess</b> how much fuel will be left. Then run it. Who was right? Is the tank below zero?</p>
+      <div class="task-row"><button class="task" data-id="m2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="m2-q1" data-xp="10" data-explain="Yes! The 8 replaced the 5. A box holds one thing at a time.">
+        <p class="q">1. <code class="inl">x = 5</code>, then <code class="inl">x = 8</code>, then <code class="inl">print(x)</code>. What shows?</p>
+        <div class="choices"><button>5</button><button data-ok>8</button><button>13</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m2-q2" data-xp="10" data-explain="Correct! 10 + 5 = 15, and 15 goes back in the box.">
+        <p class="q">2. <code class="inl">score = 10</code>, then <code class="inl">score = score + 5</code>. What's in the score box now?</p>
+        <div class="choices"><button>10</button><button>5</button><button data-ok>15</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m2-q3" data-xp="10" data-explain="Right! In Python, = means put into the box.">
+        <p class="q">3. What does <code class="inl">=</code> mean in Python?</p>
+        <div class="choices"><button>The two sides are the same</button><button data-ok>Put this into the box</button><button>Do a countdown</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="m3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 30 minutes</span><h2 id="m3-h">Py-Bot Asks Questions</h2></div></div>
+    <p class="story"><b>Story:</b> New astronauts are joining the ship! Py-Bot wants to chat with each one, but so far, it only says what <i>you</i> typed in the code. Now Py-Bot will learn to <b>ask</b> and <b>listen</b>.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">input()</code> is Py-Bot's ears</h4>
+      <p><code class="inl">input("question")</code> shows a question, waits for someone to type an answer, and gives back what they typed. Put the answer in a box so Py-Bot can remember it:</p>
+    </div>
+    <pre class="code" aria-label="Diagram of an input line">name = input("What is your name? ")
+ │       │      └─ the question Py-Bot asks
+ │       └─ wait for an answer
+ └─ the box where the answer goes</pre>
+    <p class="muted">Tip: put a space before the last quote (<code class="inl">"name? "</code>) so the answer doesn't squish against the question.</p>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">name = input("What is your name? ")    # ask, then keep the answer
+print("Welcome aboard,", name)
+planet = input("Favorite planet? ")
+print(name, "loves", planet)</pre></div>
+      <pre class="out">What is your name? <span class="typed">Mia</span>
+Welcome aboard, Mia
+Favorite planet? <span class="typed">Saturn</span>
+Mia loves Saturn</pre>
+      <div class="task-row"><button class="task" data-id="m3-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Run it again and give different answers. Same code, different result! Let a friend try it too.</li>
+        <li>Remove the space before the last quote in a question. What looks different?</li>
+        <li>Add a third question, like <code class="inl">food = input("Favorite space snack? ")</code>, and print the answer.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="m3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Ask for a favorite food. Then make Py-Bot answer <code class="inl">Yum! I like pizza too!</code> (using whatever food was typed).</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">print("Yum! I like", food, "too!")</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="m3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Robot interview:</b> ask 3 questions (name, favorite animal, favorite color). At the end, print one summary sentence using all 3 answers.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Ask all 3 questions first, each into its own box. Then print once at the end.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Story maker:</b> ask for an animal, a color and a place. Print a 3-line story using the answers, with a border of <code class="inl">"=" * 20</code> above and below it. Ask a friend to play!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Questions first, then border, then story, then border.</p></details><details><summary>Hint 2</summary><p><code class="inl">print("A", color, animal, "landed in", place)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="m3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>There are <b>2 bugs</b>. Fix the first error, run again, then fix the next one.</p>
+      <div class="codebox"><pre class="code bad">color = input("Favorite color? )
+print("You like", colour)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Count the quotes on line 1. Every <code class="inl">"</code> needs a partner.</p></details><details><summary>Hint 2</summary><p>Is the box on line 2 spelled the same as on line 1?</p></details></div>
+      <div class="task-row"><button class="task" data-id="m3-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: The interview <span class="xp">+10 XP</span></h4>
+      <p>The Navigator writes 3 fun questions on paper ("What's your superpower?"). The Driver turns them into a program. Then hand the phone to the Navigator to answer the questions. Swap jobs and do it again with new questions!</p>
+      <div class="task-row"><button class="task" data-id="m3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="m3-q1" data-xp="10" data-explain="Yes! input() waits for someone to type and press Enter.">
+        <p class="q">1. What does <code class="inl">input()</code> do?</p>
+        <div class="choices"><button>Prints a picture</button><button data-ok>Asks a question and waits for an answer</button><button>Deletes a box</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m3-q2" data-xp="10" data-explain="Correct! The answer goes into the box on the left of the = sign.">
+        <p class="q">2. In <code class="inl">pet = input("Your pet? ")</code>, where does the answer go?</p>
+        <div class="choices"><button data-ok>Into the box called pet</button><button>It disappears</button><button>Into the question</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="m4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 35 minutes</span><h2 id="m4-h">Number Answers</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot asked an astronaut how old they are, then tried to work out how old they'll be in 5 years… and CRASHED! Sparks everywhere! Let's find out why.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">input()</code> always gives back text</h4>
+      <p>Even if you type <b>10</b>, <code class="inl">input()</code> gives back the text <code class="inl">"10"</code>, like a word written on paper. You can't do math with words! To turn the text into a real number, wrap it in <code class="inl">int()</code>. "int" is short for <b>integer</b>, which means a whole number.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>First, see the crash</h4>
+      <div class="codebox"><pre class="code bad">age = input("How old are you? ")
+print(age + 5)</pre></div>
+      <pre class="out">How old are you? <span class="typed">10</span>
+TypeError: can only concatenate str (not "int") to str</pre>
+      <p class="muted">Translation: "You asked me to add text and a number together. I don't know how!" (<i>str</i> means text and <i>int</i> means number.)</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it: the fix <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">age = int(input("How old are you? "))    # turn the answer into a number
+print("In 5 years you will be", age + 5)
+print("You have been alive about", age * 365, "days!")</pre></div>
+      <pre class="out">How old are you? <span class="typed">10</span>
+In 5 years you will be 15
+You have been alive about 3650 days!</pre>
+      <pre class="code" aria-label="Diagram of int around input">int( input("How old are you? ") )
+│    └──────────┬─────────────┘ │
+│               └─ 1. ask the question, get text "10"
+└─ 2. turn the text into the number 10
+   Count the brackets: 2 open, so 2 close at the end!</pre>
+      <div class="task-row"><button class="task" data-id="m4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Run it and type a word like <code class="inl">ten</code> instead of a number. You'll get a <b>ValueError</b>, because <code class="inl">int()</code> only understands digits.</li>
+        <li>Add a line that works out your age in months: <code class="inl">age * 12</code>.</li>
+        <li>Fun fact: you <i>can</i> add text to text! Try <code class="inl">print("Star" + "ship")</code>. It glues them together: <b>Starship</b>.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="m4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p><b>Doubler machine:</b> ask for a number and print double it.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Use <code class="inl">int(input(...))</code>, then print the number <code class="inl">* 2</code>.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Snack calculator:</b> ask how many astronauts there are and how many snacks each one gets. Print the total number of snacks to pack.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Two <code class="inl">int(input())</code> lines into two boxes, then multiply them.</p></details></div>
+          <div class="task-row"><button class="task" data-id="m4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Trip planner:</b> ask how many days the trip lasts and how many crew are coming. Print how many hours the trip is, and how many meals to pack (each person eats 3 meals a day).</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Hours: <code class="inl">days * 24</code></p></details><details><summary>Hint 2</summary><p>Meals: <code class="inl">days * 3 * crew</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="m4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Two programs, <b>one bug each</b>. Program A crashes. Program B doesn't crash, but when you type <b>3</b>, it says <b>3333</b> windows! Why?</p>
+      <p><b>Program A</b></p>
+      <div class="codebox"><pre class="code bad">rockets = int(input("How many rockets? ")
+print("Windows needed:", rockets * 4)</pre></div>
+      <p><b>Program B</b></p>
+      <div class="codebox"><pre class="code bad">rockets = input("How many rockets? ")
+print("Windows needed:", rockets * 4)</pre></div>
+      <div class="hints"><details><summary>Hint 1 (A)</summary><p>Count the opening brackets and the closing brackets on line 1.</p></details><details><summary>Hint 2 (B)</summary><p>Remember <code class="inl">"ha" * 3</code> from World 1? What happens when you multiply <b>text</b>?</p></details></div>
+      <div class="task-row"><button class="task" data-id="m4-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: The magic number trick <span class="xp">+10 XP</span></h4>
+      <p>Build a mind-reading program together! It asks for a secret number, then secretly does: add 5, times 2, take away 10, divide by 2. Then it prints the answer. Try it on someone. Spooky: you always get their number back!</p>
+      <div class="codebox"><pre class="code">secret = int(input("Think of a number and type it: "))
+magic = secret + 5
+magic = magic * 2
+magic = magic - 10
+magic = magic / 2
+print("Py-Bot reads your mind... your number was", magic)</pre></div>
+      <p class="muted">The answer will have <b>.0</b> on the end (like 7.0). That's because dividing always gives a dot answer, like you saw in World 1.</p>
+      <div class="task-row"><button class="task" data-id="m4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="m4-q1" data-xp="10" data-explain="Yes! input() always gives back text, even when you type digits.">
+        <p class="q">1. You type <b>7</b> into <code class="inl">input()</code>. What does it give back?</p>
+        <div class="choices"><button>The number 7</button><button data-ok>The text "7"</button><button>Nothing</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m4-q2" data-xp="10" data-explain="Correct! int() turns text like &quot;7&quot; into the number 7.">
+        <p class="q">2. What does <code class="inl">int()</code> do?</p>
+        <div class="choices"><button>Asks a question</button><button data-ok>Turns text into a whole number</button><button>Makes text bigger</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="m4-q3" data-xp="10" data-explain="Right! Text times 4 repeats the text 4 times.">
+        <p class="q">3. What does <code class="inl">print("3" * 4)</code> show?</p>
+        <div class="choices"><button>12</button><button data-ok>3333</button><button>An error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">Space Passport</h2></div></div>
+    <p class="story"><b>Story:</b> You can't fly to other planets without a passport! Build a <b>passport machine</b>: a program that asks a traveler some questions, then prints their very own space passport. Every crew member should get one!</p>
+    <div class="stack">
+      <h4>Your program must:</h4>
+      <ul class="list">
+        <li>Start with a comment saying who made it</li>
+        <li>Ask for the traveler's <b>name</b>, <b>home planet</b> and a <b>favorite snack</b> with <code class="inl">input()</code> (Lesson 3)</li>
+        <li>Ask for their <b>age</b> as a number with <code class="inl">int(input())</code> (Lesson 4)</li>
+        <li>Work out at least one number from their answers, like days alive or age in 10 years (Lessons 2 and 4)</li>
+        <li>Print the passport inside a border made with <code class="inl">*</code> (World 1)</li>
+        <li>Use at least 4 boxes (Lesson 1)</li>
+      </ul>
+      <p class="muted">Teamwork tip: one person writes the questions, one designs the passport layout on paper, and one works out the math. Then put it all together.</p>
+    </div>
+    <pre class="out">Name? <span class="typed">Leo</span>
+Home planet? <span class="typed">Earth</span>
+Favorite snack? <span class="typed">space noodles</span>
+Age? <span class="typed">9</span>
+************************
+   SPACE PASSPORT
+************************
+Name: Leo
+From: Earth
+Snack: space noodles
+Age: 9
+Days alive: about 3285
+Passport number: 9007
+************************
+Have a great flight! 🚀</pre>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">🛂 Boss · +50 XP</span><p>Build your passport machine and make a passport for everyone in your crew!</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Do all the questions first, then the math, then all the printing.</p></details><details><summary>Hint 2</summary><p>A fun "passport number": <code class="inl">age * 1000 + 7</code></p></details><details><summary>Hint 3</summary><p>Run after every few lines, so bugs are easy to find.</p></details></div>
+        <div class="task-row"><button class="task" data-id="w2-boss" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 2: Magic Boxes</b><br>and holds the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">📦 🛂 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Coming next: World 3 · Choose Your Path</h4>
+      <p>Py-Bot will learn to make <b>decisions</b>: "IF the fuel is low, THEN go to the fuel station!" You'll build quiz games and choose-your-own-adventure stories.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ERRORS -->
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder: World 2</h2>
+    <p>Read the <b>last line</b> of the red error first, and check which <b>line number</b> it points to. The World 1 errors can still happen too. <a href="world1.html#errors">See the World 1 decoder</a>.</p>
+    <div class="tablewrap"><table>
+      <tr><th>The error says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td><code>NameError: name 'Ship_name' is not defined</code></td><td>Python can't find a box with that label. It's often a capital letter or a spelling difference.</td><td>Spell the label exactly the same as where you made the box.</td></tr>
+      <tr><td><code>NameError</code> for a box you <i>did</i> make</td><td>You used the box <b>before</b> the line that makes it.</td><td>Move the line that fills the box higher up.</td></tr>
+      <tr><td><code>SyntaxError: invalid syntax</code> on a line like <code>ship name = ...</code></td><td>Box labels can't have spaces.</td><td>Use an underscore: <code>ship_name</code></td></tr>
+      <tr><td><code>SyntaxError: invalid decimal literal</code></td><td>A box label starts with a number, like <code>1player</code>.</td><td>Put the number at the end: <code>player1</code></td></tr>
+      <tr><td><code>TypeError: can only concatenate str (not "int") to str</code></td><td>You tried to add text and a number together.</td><td>Use <code>int(input(...))</code> for number answers, or remove quotes around numbers.</td></tr>
+      <tr><td><code>ValueError: invalid literal for int() with base 10: 'ten'</code></td><td><code>int()</code> was given a word, not digits.</td><td>Run again and type digits, like <code>10</code>.</td></tr>
+      <tr><td><code>SyntaxError: '(' was never closed</code></td><td>A bracket is missing, which is common with <code>int(input(...))</code>.</td><td>Count the brackets: two <code>(</code> need two <code>)</code>.</td></tr>
+      <tr><td>No error, but the wrong answer</td><td>A "sneaky bug". Maybe the answer wasn't put back in the box, or a number was in quotes.</td><td>Draw the boxes on paper and follow each line, like the Box Swap game.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- GROWN-UPS -->
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key: World 2</h2>
+    <p>Run sessions the same way as World 1 (warm-up, story, type and change, challenges, bug hunt, pair activity, quiz, show-and-tell). World 2 is a bigger step: <b>variables</b> are one of the most important ideas in all of coding, so it's fine to spend extra sessions here.</p>
+
+    <details>
+      <summary>Common confusions, and what to say</summary>
+      <ul class="list">
+        <li><b>"Why does <code class="inl">fuel = fuel - 30</code> make sense? It's not true!"</b> Say: "In Python, = isn't 'equals'. It means 'put into'. Read the right side first, then put the answer in the box."</li>
+        <li><b>Quotes or no quotes?</b> Quotes mean "these exact letters". No quotes means "look in the box" (or "it's a number").</li>
+        <li><b>Box tracing:</b> when a learner is stuck, draw the boxes on paper together and update them line by line. This is the single most helpful thing you can do in this World.</li>
+        <li><b>The <code class="inl">int(input())</code> brackets</b> are tricky to type on a phone. Encourage counting brackets out loud.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Helping questions for this World</summary>
+      <ul class="list">
+        <li>"What's inside the box right now? How do you know?"</li>
+        <li>"Is that a word or a number? What do the quotes say?"</li>
+        <li>"Is the label spelled exactly the same in both places?"</li>
+        <li>"Which line runs first? Has the box been filled yet?"</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">pet = "dolphin"
+print("My favorite animal is", pet)</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">name = "Leo"
+age = 9
+food = "tacos"
+print(name, "is", age, "and loves", food)</pre>
+        <p><b>⭐⭐⭐ Hero</b> (any story counts)</p><pre class="code">hero = "Captain Sparkle"
+place = "the Moon"
+thing = "a giant cookie"
+print(hero, "flew to", place)
+print("There, they found", thing)
+print("Then", hero, "ate", thing, "for lunch!")</pre>
+        <p><b>Bug hunt.</b> Line 1 has a space in the label (<code class="inl">SyntaxError</code>). After fixing it, line 2 gives <code class="inl">NameError</code> because of the capital S.</p>
+        <pre class="code">ship_name = "Comet"
+print(ship_name)</pre>
+        <p><b>Quiz:</b> 1. 50 · 2. planet · 3. ship_name</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">stars = 0
+stars = stars + 5
+stars = stars + 5
+print(stars)</pre><p>Shows 10.</p>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">snacks = 12
+snacks = snacks - 3
+print("After day 1:", snacks)
+snacks = snacks - 3
+print("After day 2:", snacks)
+snacks = snacks - 3
+print("After day 3:", snacks)</pre><p>Shows 9, 6, 3.</p>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">crew = 4
+snacks_each = 3
+total = crew * snacks_each
+print(total)
+crew = crew + 2
+print(total)
+total = crew * snacks_each
+print(total)</pre>
+        <p>Prints 12, then <b>12 again</b> (it doesn't update by itself!), then 18 after working it out again. This is a big idea: a box only changes when a line puts something new in it.</p>
+        <p><b>Bug hunt.</b> Bug 1: <code class="inl">"5"</code> is text, so <code class="inl">stars + 1</code> gives a <code class="inl">TypeError</code>. Remove the quotes. Bug 2: <code class="inl">stars + 1</code> works out 6 but throws it away. It should be <code class="inl">stars = stars + 1</code>.</p>
+        <pre class="code">stars = 5
+stars = stars + 1
+print(stars)</pre>
+        <p><b>Quiz:</b> 1. 8 · 2. 15 · 3. Put this into the box</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">food = input("Favorite food? ")
+print("Yum! I like", food, "too!")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">name = input("What is your name? ")
+animal = input("Favorite animal? ")
+color = input("Favorite color? ")
+print(name, "would love a", color, animal)</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">animal = input("Pick an animal: ")
+color = input("Pick a color: ")
+place = input("Pick a place: ")
+print("=" * 20)
+print("Once upon a time, a", color, animal)
+print("blasted off to", place)
+print("and was never bored again!")
+print("=" * 20)</pre>
+        <p><b>Bug hunt.</b> Line 1 is missing the closing quote: <code class="inl">"Favorite color? "</code>. Line 2 uses <code class="inl">colour</code> instead of <code class="inl">color</code> (<code class="inl">NameError</code>). Spelling must match exactly, even a British spelling!</p>
+        <pre class="code">color = input("Favorite color? ")
+print("You like", color)</pre>
+        <p><b>Quiz:</b> 1. Asks a question and waits for an answer · 2. Into the box called pet</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>Change it:</b> typing <code class="inl">ten</code> gives <code class="inl">ValueError</code>. Age in months is <code class="inl">age * 12</code>. <code class="inl">"Star" + "ship"</code> shows Starship.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">number = int(input("Type a number: "))
+print("Double is", number * 2)</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">crew = int(input("How many astronauts? "))
+each = int(input("Snacks for each one? "))
+print("Pack this many snacks:", crew * each)</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">days = int(input("How many days is the trip? "))
+crew = int(input("How many crew? "))
+print("The trip is", days * 24, "hours long")
+print("Pack", days * 3 * crew, "meals")</pre>
+        <p><b>Bug hunt A.</b> Line 1 is missing one closing bracket: <code class="inl">int(input("How many rockets? "))</code>.</p>
+        <p><b>Bug hunt B.</b> There's no <code class="inl">int()</code>, so <code class="inl">rockets</code> is the text "3", and text times 4 repeats it: 3333. Fix: <code class="inl">rockets = int(input("How many rockets? "))</code>.</p>
+        <p><b>Magic trick:</b> (n + 5) × 2 − 10 = 2n, and 2n ÷ 2 = n. So it always gives back the original number.</p>
+        <p><b>Quiz:</b> 1. The text "7" · 2. Turns text into a whole number · 3. 3333</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <p>Any program with all the required parts counts. This one makes the example passport shown above:</p>
+        <pre class="code"># Passport machine by Mia and Leo
+name = input("Name? ")
+planet = input("Home planet? ")
+snack = input("Favorite snack? ")
+age = int(input("Age? "))
+days = age * 365
+number = age * 1000 + 7
+print("*" * 24)
+print("   SPACE PASSPORT")
+print("*" * 24)
+print("Name:", name)
+print("From:", planet)
+print("Snack:", snack)
+print("Age:", age)
+print("Days alive: about", days)
+print("Passport number:", number)
+print("*" * 24)
+print("Have a great flight! 🚀")</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Box Swap game tips</summary>
+      <p>Go slowly at first and say each step out loud: "Look inside. Do the math. Throw away the old slip. Put in the new one." Once that's easy, try a tricky one: <code class="inl">fuel = 50</code>, <code class="inl">snacks = fuel</code>, <code class="inl">fuel = 0</code>. What's in snacks? (Still 50!)</p>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP in <b>every</b> World on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted"><a href="index.html">All Worlds</a> · <a href="world1.html">Back to World 1</a> · Next up: World 3 · Choose Your Path (coming soon)</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+window.QUEST={world:2,bossId:"w2-boss",lessons:{
+  m1:["m1-try","m1-change","m1-c1","m1-c2","m1-c3","m1-bug","m1-pair","m1-q1","m1-q2","m1-q3"],
+  m2:["m2-try","m2-change","m2-c1","m2-c2","m2-c3","m2-bug","m2-pair","m2-q1","m2-q2","m2-q3"],
+  m3:["m3-try","m3-change","m3-c1","m3-c2","m3-c3","m3-bug","m3-pair","m3-q1","m3-q2"],
+  m4:["m4-try","m4-change","m4-c1","m4-c2","m4-c3","m4-bug","m4-pair","m4-q1","m4-q2","m4-q3"],
+  boss:["w2-boss"]}};
+</script>
+<script src="assets/quest.js"></script>
+</body>
+</html>

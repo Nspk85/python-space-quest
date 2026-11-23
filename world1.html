@@ -7,163 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
-<style>
-/* Layout: a single scrolling "mission log". Sticky crew bar on top, flight-path map, then lesson cards in order, grown-up section last. */
-:root{
-  --bg:#eef3fb; --surface:#ffffff; --surface2:#e3ebf8; --ink:#14213d; --muted:#4f5d78; --line:#cdd8ea;
-  --accent:#e8541f; --accent-ink:#ffffff; --star:#f2a900; --ok:#1d8a5b; --bad:#c62f3b;
-  --term-bg:#0d1630; --term-fg:#dbe5ff; --term-str:#ffc96b; --term-com:#7f8fb8; --term-num:#7ee0c3; --term-kw:#ff9a6e; --term-out:#a6f0a6;
-  --font-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
-  --font-body:"Nunito","Segoe UI",system-ui,sans-serif;
-  --font-code:"JetBrains Mono",ui-monospace,"Roboto Mono",Menlo,monospace;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0a1124; --surface:#131c37; --surface2:#1b2648; --ink:#e7edff; --muted:#a3b0cf; --line:#2a3760;
-  --accent:#ff7a45; --accent-ink:#1a0d05; --star:#ffd257; --ok:#4fd39a; --bad:#ff7380;
-  --term-bg:#060b1a; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0a1124; --surface:#131c37; --surface2:#1b2648; --ink:#e7edff; --muted:#a3b0cf; --line:#2a3760;
-  --accent:#ff7a45; --accent-ink:#1a0d05; --star:#ffd257; --ok:#4fd39a; --bad:#ff7380;
-  --term-bg:#060b1a; color-scheme:dark}
-
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
-.wrap{max-width:760px;margin:0 auto}
-h1,h2,h3,h4{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0}
-h1{font-size:clamp(2rem,7vw,3rem);font-weight:700}
-h2{font-size:clamp(1.5rem,5vw,2rem);font-weight:700}
-h3{font-size:1.25rem;font-weight:600}
-h4{font-size:1.05rem;font-weight:600}
-p{margin:0}
-a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--star);outline-offset:2px;border-radius:6px}
-.muted{color:var(--muted)}
-.stack{display:flex;flex-direction:column;gap:14px}
-.eyebrow{font-family:var(--font-display);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-
-/* Crew bar */
-.crewbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
-  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:10px max(16px,env(safe-area-inset-left,0px))}
-.crewbar .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.crewbar label{font-weight:700;font-size:.9rem}
-.crewbar select{font:inherit;font-weight:700;padding:6px 10px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);max-width:60vw}
-.xp-pill{margin-left:auto;font-family:var(--font-display);font-weight:600;background:var(--surface2);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.xp-pill b{color:var(--accent)}
-
-/* Hero */
-.hero{padding-block:32px 8px;display:grid;gap:16px}
-.hero-art{position:relative;height:120px;border-radius:20px;overflow:hidden;background:var(--term-bg)}
-.hero-art canvas{width:100%;height:100%;display:block}
-.hero p.lead{font-size:1.1rem;max-width:62ch}
-.buddy{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px}
-.buddy .face{flex:none;width:52px;height:52px;border-radius:14px;background:var(--term-bg);display:grid;place-items:center;font-size:28px}
-.buddy p{font-size:1rem}
-.buddy b{font-family:var(--font-display)}
-
-section{padding-block:28px}
-section+section{border-top:2px dashed var(--line)}
-
-/* Map */
-.map{display:flex;flex-wrap:wrap;gap:10px;position:relative}
-.station{flex:1 1 120px;min-width:0;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.station:hover{border-color:var(--accent)}
-.planet{width:46px;height:46px;border-radius:50%;box-shadow:inset -8px -6px 0 rgba(0,0,0,.18)}
-.p1{background:#5ec2ff}.p2{background:#ff8a65}.p3{background:#9b8cff}.p4{background:#46c79a}.p5{background:#ffcc33}
-.station .name{font-family:var(--font-display);font-weight:600;font-size:.95rem;line-height:1.2}
-.station .prog{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.station.done{border-color:var(--ok)}
-.station.done .prog{color:var(--ok);font-weight:800}
-
-/* Crew panel */
-.crew-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px}
-.player{display:flex;flex-direction:column;gap:8px}
-.player.active{border-color:var(--accent)}
-.player-top{display:flex;align-items:center;gap:10px}
-.avatar{font-size:30px;width:46px;height:46px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;flex:none}
-.player-name{font-family:var(--font-display);font-weight:600;font-size:1.1rem;min-width:0;overflow-wrap:anywhere}
-.rank{font-size:.85rem;color:var(--muted)}
-.bar{height:10px;border-radius:999px;background:var(--surface2);overflow:hidden}
-.bar span{display:block;height:100%;background:var(--star);border-radius:999px}
-.badges{display:flex;flex-wrap:wrap;gap:4px;min-height:28px}
-.badges span{font-size:20px}
-.player-actions{display:flex;gap:8px;flex-wrap:wrap}
-.add-form{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
-.add-form .field{display:flex;flex-direction:column;gap:4px;flex:1 1 160px;min-width:0}
-.add-form input{font:inherit;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
-.avatar-pick{display:flex;gap:6px;flex-wrap:wrap}
-.avatar-pick button{font-size:24px;width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer}
-.avatar-pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface2)}
-.empty{padding:16px;border:2px dashed var(--line);border-radius:16px;color:var(--muted)}
-
-/* Buttons */
-.btn{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
-.btn.small{padding:6px 10px;font-size:.85rem}
-.btn.danger{background:var(--bad);color:#fff}
-
-/* Lessons */
-.lesson-head{display:flex;gap:14px;align-items:center}
-.lesson-head .planet{width:56px;height:56px;flex:none}
-.story{background:var(--surface);border-left:0;border-radius:16px;padding:14px 16px;border:2px solid var(--line);font-size:1rem}
-.story b{font-family:var(--font-display)}
-.bigidea{background:var(--surface2);border-radius:16px;padding:16px}
-.bigidea h4{margin-bottom:6px}
-.step h4{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.step h4 .xp{font-family:var(--font-body);font-size:.8rem;font-weight:800;color:var(--star);background:var(--surface2);border-radius:999px;padding:1px 8px}
-.codebox{position:relative;min-width:0}
-pre{margin:0;overflow-x:auto;border-radius:14px;padding:14px 16px;font-family:var(--font-code);font-size:.9rem;line-height:1.55;tab-size:4}
-pre.code{background:var(--term-bg);color:var(--term-fg)}
-pre.out{background:#000;color:var(--term-out);border:2px solid var(--term-bg)}
-pre.out::before{content:"SCREEN SHOWS";display:block;font-family:var(--font-body);font-weight:800;font-size:.7rem;letter-spacing:.1em;color:#7c8aa8;margin-bottom:4px}
-pre.bad{border:3px dashed var(--bad)}
-.tok-str{color:var(--term-str)}.tok-com{color:var(--term-com);font-style:italic}.tok-num{color:var(--term-num)}.tok-kw{color:var(--term-kw);font-weight:600}
-.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:.75rem;font-weight:800;border:0;border-radius:8px;padding:4px 10px;background:#24325c;color:#dbe5ff;cursor:pointer}
-ul.list,ol.list{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
-code.inl{font-family:var(--font-code);font-size:.88em;background:var(--surface2);padding:1px 6px;border-radius:6px;white-space:nowrap}
-.task-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
-.task{font:inherit;font-weight:800;font-size:.9rem;padding:8px 14px;border-radius:999px;border:2px solid var(--star);background:transparent;color:var(--ink);cursor:pointer}
-.task.is-done{background:var(--ok);border-color:var(--ok);color:#fff}
-.challenges{display:grid;gap:10px}
-.chal{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
-.chal .lvl{font-family:var(--font-display);font-weight:600;color:var(--star)}
-details{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 14px}
-details summary{cursor:pointer;font-weight:800}
-details[open] summary{margin-bottom:8px}
-.hints details{margin-top:6px}
-.quiz{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.quiz .q{font-weight:800}
-.choices{display:flex;flex-direction:column;gap:8px}
-.choices button{font:inherit;text-align:left;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;min-width:0;overflow-wrap:anywhere}
-.choices button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--bg))}
-.choices button.wrong{border-color:var(--bad);text-decoration:line-through;opacity:.75}
-.feedback{font-weight:700;min-height:1.4em}
-.feedback.ok{color:var(--ok)}.feedback.no{color:var(--bad)}
-.pair{background:var(--surface2);border-radius:16px;padding:14px 16px}
-.callout{border:2px solid var(--star);border-radius:14px;padding:12px 14px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:.95rem}
-.tablewrap{overflow-x:auto;border:2px solid var(--line);border-radius:14px;background:var(--surface)}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-family:var(--font-display);font-weight:600}
-tr:last-child td{border-bottom:0}
-td code{font-family:var(--font-code);font-size:.85em;overflow-wrap:anywhere}
-.cert{display:none;text-align:center;border:4px double var(--star);border-radius:20px;padding:24px 16px;background:var(--surface)}
-.cert.show{display:block}
-.cert .big{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--accent);overflow-wrap:anywhere}
-.grownup{background:var(--surface);border-radius:20px;padding:18px;border:2px solid var(--line)}
-
-/* Toast */
-.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
-  background:var(--ink);color:var(--bg);font-weight:800;padding:12px 18px;border-radius:14px;transition:.25s;z-index:30;max-width:calc(100vw - 32px);text-align:center}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (prefers-reduced-motion: reduce){.toast{transition:none}}
-footer{padding-block:24px 40px;font-size:.9rem}
-</style>
+<link rel="stylesheet" href="assets/quest.css">
 </head>
 <body>
 
@@ -223,13 +67,7 @@ footer{padding-block:24px 40px;font-size:.9rem}
     <details>
       <summary>How ranks and badges work</summary>
       <div class="stack">
-        <div class="tablewrap"><table>
-          <tr><th>Rank</th><th>XP needed</th></tr>
-          <tr><td>🧑‍🚀 Code Cadet</td><td>0</td></tr>
-          <tr><td>🔭 Space Explorer</td><td>100</td></tr>
-          <tr><td>🛸 Rocket Pilot</td><td>250</td></tr>
-          <tr><td>🌟 Star Captain</td><td>450</td></tr>
-        </table></div>
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
         <div class="tablewrap"><table id="badge-table"><tr><th>Badge</th><th>How to get it</th></tr></table></div>
       </div>
     </details>
@@ -651,6 +489,7 @@ print("=" * 15)</pre></div>
     <div class="callout stack">
       <h4>Coming next: World 2 · Magic Boxes</h4>
       <p>Py-Bot is going to learn to <b>remember</b> things and <b>ask you questions</b>. You'll build a robot that knows your name!</p>
+      <p><a class="btn" href="world2.html" style="display:inline-block;text-decoration:none">Fly to World 2 ▶</a></p>
     </div>
   </div>
 </section>
@@ -834,225 +673,19 @@ print("BLAST OFF! 🚀")</pre>
   </div>
 </section>
 
-<footer class="muted">Python Space Quest · World 1 of 7. Next up: Magic Boxes (variables and input).</footer>
+<footer class="muted"><a href="index.html">All Worlds</a> · Next up: <a href="world2.html">World 2 · Magic Boxes</a></footer>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-(function(){
-  const KEY = "pyquest-w1-v1";
-  const AVATARS = ["🧑‍🚀","👩‍🚀","👨‍🚀","🤖","👽","🐱","🐶","🦊","🐼","🦄","🐉","🦖"];
-  const RANKS = [[0,"Code Cadet","🧑‍🚀"],[100,"Space Explorer","🔭"],[250,"Rocket Pilot","🛸"],[450,"Star Captain","🌟"]];
-  const LESSONS = {
-    l1:["l1-try","l1-change","l1-c1","l1-c2","l1-c3","l1-bug","l1-pair","l1-q1","l1-q2"],
-    l2:["l2-try","l2-change","l2-c1","l2-c2","l2-c3","l2-bug","l2-pair","l2-q1","l2-q2"],
-    l3:["l3-try","l3-change","l3-c1","l3-c2","l3-c3","l3-bug","l3-pair","l3-q1","l3-q2","l3-q3"],
-    l4:["l4-try","l4-change","l4-c1","l4-c2","l4-c3","l4-bug","l4-pair","l4-q1","l4-q2"],
-    boss:["boss-done"]
-  };
-  const BADGES = [
-    {icon:"🗣️",name:"First Words",how:"Run your first program in Lesson 1",req:["l1-try"]},
-    {icon:"🚀",name:"Liftoff",how:"Finish the Lesson 2 countdown challenge (any level)",any:["l2-c1","l2-c2","l2-c3"]},
-    {icon:"🧮",name:"Space Calculator",how:"Get every Lesson 3 quiz question right",req:["l3-q1","l3-q2","l3-q3"]},
-    {icon:"🎨",name:"Star Artist",how:"Finish any Lesson 4 challenge",any:["l4-c1","l4-c2","l4-c3"]},
-    {icon:"🐛",name:"Bug Squasher",how:"Fix all 4 bug hunts",req:["l1-bug","l2-bug","l3-bug","l4-bug"]},
-    {icon:"🤝",name:"Pair Power",how:"Do all 4 pair activities",req:["l1-pair","l2-pair","l3-pair","l4-pair"]},
-    {icon:"🦸",name:"Hero Coder",how:"Finish all 4 Hero (⭐⭐⭐) challenges",req:["l1-c3","l2-c3","l3-c3","l4-c3"]},
-    {icon:"🕹️",name:"Robot Commander",how:"Play the unplugged game",req:["un-play"]},
-    {icon:"👑",name:"World 1 Champion",how:"Beat the Mission Patch boss",req:["boss-done"]}
-  ];
-
-  // XP values from the page
-  const XP = {};
-  document.querySelectorAll("[data-id][data-xp]").forEach(el=>{XP[el.dataset.id]=+el.dataset.xp});
-
-  let state = {players:[],active:null,done:{}};
-  try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.players)) state=Object.assign(state,s);}catch(e){}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-
-  const $ = s=>document.querySelector(s);
-  const toastEl = $("#toast"); let toastT;
-  function toast(msg){toastEl.textContent=msg;toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),2400)}
-
-  function player(){return state.players.find(p=>p.id===state.active)||null}
-  function doneOf(pid){return state.done[pid]||(state.done[pid]={})}
-  function xpOf(pid){const d=state.done[pid]||{};return Object.keys(d).reduce((a,k)=>a+(XP[k]||0),0)}
-  function rankOf(xp){let r=RANKS[0];RANKS.forEach(x=>{if(xp>=x[0])r=x});return r}
-  function nextRank(xp){return RANKS.find(x=>x[0]>xp)||null}
-  function badgesOf(pid){const d=state.done[pid]||{};return BADGES.filter(b=>b.req?b.req.every(k=>d[k]):b.any.some(k=>d[k]))}
-
-  // Badge table
-  const bt=$("#badge-table");
-  BADGES.forEach(b=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${b.icon} ${b.name}</td><td>${b.how}</td>`;bt.appendChild(tr)});
-
-  // Avatar picker
-  let pickedAvatar = AVATARS[0];
-  const ap=$("#avatar-pick");
-  AVATARS.forEach(a=>{const b=document.createElement("button");b.type="button";b.textContent=a;b.setAttribute("aria-label","Avatar "+a);b.setAttribute("aria-pressed",a===pickedAvatar);
-    b.addEventListener("click",()=>{pickedAvatar=a;ap.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b))});ap.appendChild(b)});
-
-  $("#add-form").addEventListener("submit",e=>{
-    e.preventDefault();
-    const input=$("#new-name"); const name=input.value.trim(); if(!name) return;
-    const p={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,avatar:pickedAvatar};
-    state.players.push(p); state.active=p.id; input.value=""; save(); render();
-    toast(`Welcome aboard, ${name}! ${p.avatar}`);
-  });
-
-  $("#active-player").addEventListener("change",e=>{state.active=e.target.value;save();render();const p=player();if(p)toast(`${p.avatar} ${p.name} is playing now`)});
-
-  function award(id,el){
-    const p=player();
-    if(!p){toast("Add a crew member first!");location.hash="#crew";return false}
-    const d=doneOf(p.id); const before=badgesOf(p.id).map(b=>b.name); const rBefore=rankOf(xpOf(p.id))[1];
-    d[id]=1; save(); render();
-    const newB=badgesOf(p.id).filter(b=>!before.includes(b.name)); const rAfter=rankOf(xpOf(p.id));
-    let msg=`+${XP[id]} XP for ${p.name}!`;
-    if(newB.length) msg=`${newB[0].icon} Badge unlocked: ${newB[0].name}!`;
-    if(rAfter[1]!==rBefore) msg=`${rAfter[2]} ${p.name} is now a ${rAfter[1]}!`;
-    toast(msg); return true;
-  }
-
-  // Tasks
-  document.querySelectorAll(".task").forEach(btn=>{
-    btn.dataset.label=btn.textContent;
-    btn.addEventListener("click",()=>{
-      const p=player(); const id=btn.dataset.id;
-      if(p&&doneOf(p.id)[id]){delete doneOf(p.id)[id];save();render();toast("Unmarked. Tap again to mark it done.");return}
-      award(id,btn);
-    });
-  });
-
-  // Quizzes
-  document.querySelectorAll(".quiz").forEach(q=>{
-    q.querySelectorAll(".choices button").forEach(b=>{
-      b.type="button";
-      b.addEventListener("click",()=>{
-        const p=player(); if(!p){toast("Add a crew member first!");location.hash="#crew";return}
-        if(doneOf(p.id)[q.dataset.id]) return;
-        const fb=q.querySelector(".feedback");
-        if(b.hasAttribute("data-ok")){award(q.dataset.id,b)}
-        else{b.classList.add("wrong");fb.textContent="Not quite. Try another answer!";fb.className="feedback no"}
-      });
-    });
-  });
-
-  // Reset
-  $("#reset-ask").addEventListener("click",()=>{$("#reset-confirm").hidden=false});
-  $("#reset-no").addEventListener("click",()=>{$("#reset-confirm").hidden=true});
-  $("#reset-yes").addEventListener("click",()=>{state={players:[],active:null,done:{}};save();$("#reset-confirm").hidden=true;render();toast("All scores deleted.")});
-
-  function render(){
-    if(!player()&&state.players.length) state.active=state.players[0].id;
-    const p=player();
-    // selector
-    const sel=$("#active-player"); sel.innerHTML="";
-    if(!state.players.length){const o=document.createElement("option");o.textContent="Add your crew below";o.value="";sel.appendChild(o);sel.disabled=true}
-    else{sel.disabled=false;state.players.forEach(pl=>{const o=document.createElement("option");o.value=pl.id;o.textContent=`${pl.avatar} ${pl.name}`;if(pl.id===state.active)o.selected=true;sel.appendChild(o)})}
-    const xp=p?xpOf(p.id):0;
-    $("#xp-pill").innerHTML=`⭐ <b>${xp}</b> XP · ${rankOf(xp)[1]}`;
-
-    // crew cards
-    const list=$("#crew-list"); list.innerHTML="";
-    if(!state.players.length){list.innerHTML=`<div class="empty">No crew yet. Type a name below, pick an avatar and tap <b>Add to crew</b>. Add one card for each learner.</div>`}
-    state.players.forEach(pl=>{
-      const x=xpOf(pl.id), r=rankOf(x), n=nextRank(x);
-      const pct=n?Math.round((x-r[0])/(n[0]-r[0])*100):100;
-      const card=document.createElement("div"); card.className="card player"+(pl.id===state.active?" active":"");
-      card.innerHTML=`<div class="player-top"><div class="avatar">${pl.avatar}</div><div style="min-width:0"><div class="player-name"></div><div class="rank">${r[2]} ${r[1]} · <b>${x}</b> XP</div></div></div>
-        <div class="bar" aria-hidden="true"><span style="width:${pct}%"></span></div>
-        <div class="rank">${n?`${n[0]-x} XP to ${n[1]}`:"Top rank reached!"}</div>
-        <div class="badges" aria-label="Badges">${badgesOf(pl.id).map(b=>`<span title="${b.name}">${b.icon}</span>`).join("")||'<span class="rank">No badges yet</span>'}</div>
-        <div class="player-actions"></div>`;
-      card.querySelector(".player-name").textContent=pl.name;
-      const acts=card.querySelector(".player-actions");
-      if(pl.id!==state.active){const b=document.createElement("button");b.className="btn small";b.type="button";b.textContent="Play as "+pl.name;b.addEventListener("click",()=>{state.active=pl.id;save();render();toast(`${pl.avatar} ${pl.name} is playing now`)});acts.appendChild(b)}
-      const rm=document.createElement("button");rm.className="btn ghost small";rm.type="button";rm.textContent="Remove";
-      rm.addEventListener("click",()=>{
-        if(rm.dataset.sure){state.players=state.players.filter(z=>z.id!==pl.id);delete state.done[pl.id];if(state.active===pl.id)state.active=state.players[0]?state.players[0].id:null;save();render();toast(`${pl.name} left the crew.`)}
-        else{rm.dataset.sure="1";rm.textContent="Tap again to remove";rm.classList.add("danger");rm.classList.remove("ghost")}
-      });
-      acts.appendChild(rm);
-      list.appendChild(card);
-    });
-
-    // tasks
-    const d=p?(state.done[p.id]||{}):{};
-    document.querySelectorAll(".task").forEach(btn=>{
-      const on=!!d[btn.dataset.id]; btn.classList.toggle("is-done",on);
-      btn.textContent=on?"✓ Done!":btn.dataset.label; btn.setAttribute("aria-pressed",on);
-    });
-    // quizzes
-    document.querySelectorAll(".quiz").forEach(q=>{
-      const on=!!d[q.dataset.id]; const fb=q.querySelector(".feedback");
-      q.querySelectorAll(".choices button").forEach(b=>{b.classList.remove("wrong");b.classList.toggle("right",on&&b.hasAttribute("data-ok"))});
-      if(on){fb.textContent="✓ "+q.dataset.explain+` +${XP[q.dataset.id]} XP`;fb.className="feedback ok"}else{fb.textContent="";fb.className="feedback"}
-    });
-    // map
-    document.querySelectorAll(".station").forEach(st=>{
-      const ids=LESSONS[st.dataset.lesson]; const n=ids.filter(k=>d[k]).length;
-      st.classList.toggle("done",!!p&&n===ids.length);
-      st.querySelector(".prog").textContent=p?(n===ids.length?"✓ Complete":`${n} of ${ids.length} done`):`${ids.length} tasks`;
-    });
-    // certificate
-    const cert=$("#cert"); const won=!!(p&&d["boss-done"]);
-    cert.classList.toggle("show",won);
-    if(won){$("#cert-name").textContent=`${p.avatar} ${p.name}`;$("#cert-rank").textContent=rankOf(xp)[1]}
-  }
-
-  // Syntax colouring for code blocks + copy buttons
-  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print)\b|\b(\d+(?:\.\d+)?)\b/gm;
-  document.querySelectorAll("pre.code").forEach(pre=>{
-    const raw=pre.textContent;
-    if(pre.getAttribute("aria-label")) return; // diagram
-    let out="",last=0;
-    raw.replace(RE,(m,c,s,k,n,i)=>{out+=esc(raw.slice(last,i));
-      out+=c?`<span class="tok-com">${esc(m)}</span>`:s?`<span class="tok-str">${esc(m)}</span>`:k?`<span class="tok-kw">${esc(m)}</span>`:`<span class="tok-num">${esc(m)}</span>`;
-      last=i+m.length;return m});
-    out+=esc(raw.slice(last)); pre.innerHTML=out;
-    if(pre.parentElement.classList.contains("codebox")){
-      const b=document.createElement("button");b.className="copy";b.type="button";b.textContent="Copy";
-      b.addEventListener("click",()=>{
-        const done=()=>{b.textContent="Copied!";setTimeout(()=>b.textContent="Copy",1500)};
-        const fallback=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, now copy";setTimeout(()=>b.textContent="Copy",2000)};
-        try{navigator.clipboard.writeText(raw).then(done,fallback)}catch(e){fallback()}
-      });
-      pre.parentElement.appendChild(b);
-    }
-  });
-
-  // Starfield + little rocket
-  const cv=$("#stars"),ctx=cv.getContext("2d");
-  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let W,H,stars=[];
-  function size(){const r=cv.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-    stars=Array.from({length:Math.round(W/6)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,s:Math.random()*.6+.2}))}
-  size(); addEventListener("resize",size);
-  let t=0;
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    stars.forEach(s=>{ctx.globalAlpha=.5+.5*Math.sin(t*.03*s.s+s.x);ctx.fillStyle="#dbe5ff";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();if(!reduce){s.x-=s.s;if(s.x<0)s.x=W}});
-    ctx.globalAlpha=1;
-    // planet
-    ctx.fillStyle="#5ec2ff";ctx.beginPath();ctx.arc(W-50,H-10,46,0,7);ctx.fill();
-    ctx.fillStyle="rgba(0,0,0,.18)";ctx.beginPath();ctx.arc(W-38,H+2,46,0,7);ctx.fill();
-    // rocket
-    const rx=W*.28,ry=H/2+(reduce?0:Math.sin(t*.05)*6);
-    ctx.save();ctx.translate(rx,ry);
-    ctx.fillStyle="#ffb03a";ctx.beginPath();ctx.moveTo(-34,0);ctx.lineTo(-22,-7);ctx.lineTo(-22,7);ctx.fill();
-    ctx.fillStyle="#ffffff";ctx.beginPath();ctx.moveTo(26,0);ctx.quadraticCurveTo(10,-12,-22,-10);ctx.lineTo(-22,10);ctx.quadraticCurveTo(10,12,26,0);ctx.fill();
-    ctx.fillStyle="#e8541f";ctx.beginPath();ctx.moveTo(-14,-10);ctx.lineTo(-24,-20);ctx.lineTo(-24,-9);ctx.fill();ctx.beginPath();ctx.moveTo(-14,10);ctx.lineTo(-24,20);ctx.lineTo(-24,9);ctx.fill();
-    ctx.fillStyle="#5ec2ff";ctx.beginPath();ctx.arc(6,0,4.5,0,7);ctx.fill();
-    ctx.restore();
-    ctx.fillStyle="#a6f0a6";ctx.font="600 13px JetBrains Mono, monospace";ctx.fillText('print("BLAST OFF!")',W*.28+40,ry+4);
-    t++; if(!reduce) requestAnimationFrame(draw);
-  }
-  draw();
-
-  render();
-})();
+window.QUEST={world:1,bossId:"boss-done",lessons:{
+  l1:["l1-try","l1-change","l1-c1","l1-c2","l1-c3","l1-bug","l1-pair","l1-q1","l1-q2"],
+  l2:["l2-try","l2-change","l2-c1","l2-c2","l2-c3","l2-bug","l2-pair","l2-q1","l2-q2"],
+  l3:["l3-try","l3-change","l3-c1","l3-c2","l3-c3","l3-bug","l3-pair","l3-q1","l3-q2","l3-q3"],
+  l4:["l4-try","l4-change","l4-c1","l4-c2","l4-c3","l4-bug","l4-pair","l4-q1","l4-q2"],
+  boss:["boss-done"]}};
 </script>
+<script src="assets/quest.js"></script>
 </body>
 </html>
