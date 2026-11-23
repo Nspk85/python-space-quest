@@ -1,0 +1,1046 @@
+<title>Python Space Quest: World 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single scrolling "mission log". Sticky crew bar on top, flight-path map, then lesson cards in order, grown-up section last. */
+:root{
+  --bg:#eef3fb; --surface:#ffffff; --surface2:#e3ebf8; --ink:#14213d; --muted:#4f5d78; --line:#cdd8ea;
+  --accent:#e8541f; --accent-ink:#ffffff; --star:#f2a900; --ok:#1d8a5b; --bad:#c62f3b;
+  --term-bg:#0d1630; --term-fg:#dbe5ff; --term-str:#ffc96b; --term-com:#7f8fb8; --term-num:#7ee0c3; --term-kw:#ff9a6e; --term-out:#a6f0a6;
+  --font-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --font-code:"JetBrains Mono",ui-monospace,"Roboto Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0a1124; --surface:#131c37; --surface2:#1b2648; --ink:#e7edff; --muted:#a3b0cf; --line:#2a3760;
+  --accent:#ff7a45; --accent-ink:#1a0d05; --star:#ffd257; --ok:#4fd39a; --bad:#ff7380;
+  --term-bg:#060b1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a1124; --surface:#131c37; --surface2:#1b2648; --ink:#e7edff; --muted:#a3b0cf; --line:#2a3760;
+  --accent:#ff7a45; --accent-ink:#1a0d05; --star:#ffd257; --ok:#4fd39a; --bad:#ff7380;
+  --term-bg:#060b1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:700}
+h2{font-size:clamp(1.5rem,5vw,2rem);font-weight:700}
+h3{font-size:1.25rem;font-weight:600}
+h4{font-size:1.05rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--star);outline-offset:2px;border-radius:6px}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--font-display);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+/* Crew bar */
+.crewbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:10px max(16px,env(safe-area-inset-left,0px))}
+.crewbar .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.crewbar label{font-weight:700;font-size:.9rem}
+.crewbar select{font:inherit;font-weight:700;padding:6px 10px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);max-width:60vw}
+.xp-pill{margin-left:auto;font-family:var(--font-display);font-weight:600;background:var(--surface2);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.xp-pill b{color:var(--accent)}
+
+/* Hero */
+.hero{padding-block:32px 8px;display:grid;gap:16px}
+.hero-art{position:relative;height:120px;border-radius:20px;overflow:hidden;background:var(--term-bg)}
+.hero-art canvas{width:100%;height:100%;display:block}
+.hero p.lead{font-size:1.1rem;max-width:62ch}
+.buddy{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px}
+.buddy .face{flex:none;width:52px;height:52px;border-radius:14px;background:var(--term-bg);display:grid;place-items:center;font-size:28px}
+.buddy p{font-size:1rem}
+.buddy b{font-family:var(--font-display)}
+
+section{padding-block:28px}
+section+section{border-top:2px dashed var(--line)}
+
+/* Map */
+.map{display:flex;flex-wrap:wrap;gap:10px;position:relative}
+.station{flex:1 1 120px;min-width:0;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.station:hover{border-color:var(--accent)}
+.planet{width:46px;height:46px;border-radius:50%;box-shadow:inset -8px -6px 0 rgba(0,0,0,.18)}
+.p1{background:#5ec2ff}.p2{background:#ff8a65}.p3{background:#9b8cff}.p4{background:#46c79a}.p5{background:#ffcc33}
+.station .name{font-family:var(--font-display);font-weight:600;font-size:.95rem;line-height:1.2}
+.station .prog{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.station.done{border-color:var(--ok)}
+.station.done .prog{color:var(--ok);font-weight:800}
+
+/* Crew panel */
+.crew-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px}
+.player{display:flex;flex-direction:column;gap:8px}
+.player.active{border-color:var(--accent)}
+.player-top{display:flex;align-items:center;gap:10px}
+.avatar{font-size:30px;width:46px;height:46px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.player-name{font-family:var(--font-display);font-weight:600;font-size:1.1rem;min-width:0;overflow-wrap:anywhere}
+.rank{font-size:.85rem;color:var(--muted)}
+.bar{height:10px;border-radius:999px;background:var(--surface2);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--star);border-radius:999px}
+.badges{display:flex;flex-wrap:wrap;gap:4px;min-height:28px}
+.badges span{font-size:20px}
+.player-actions{display:flex;gap:8px;flex-wrap:wrap}
+.add-form{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.add-form .field{display:flex;flex-direction:column;gap:4px;flex:1 1 160px;min-width:0}
+.add-form input{font:inherit;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.avatar-pick{display:flex;gap:6px;flex-wrap:wrap}
+.avatar-pick button{font-size:24px;width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--surface);cursor:pointer}
+.avatar-pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface2)}
+.empty{padding:16px;border:2px dashed var(--line);border-radius:16px;color:var(--muted)}
+
+/* Buttons */
+.btn{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.small{padding:6px 10px;font-size:.85rem}
+.btn.danger{background:var(--bad);color:#fff}
+
+/* Lessons */
+.lesson-head{display:flex;gap:14px;align-items:center}
+.lesson-head .planet{width:56px;height:56px;flex:none}
+.story{background:var(--surface);border-left:0;border-radius:16px;padding:14px 16px;border:2px solid var(--line);font-size:1rem}
+.story b{font-family:var(--font-display)}
+.bigidea{background:var(--surface2);border-radius:16px;padding:16px}
+.bigidea h4{margin-bottom:6px}
+.step h4{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.step h4 .xp{font-family:var(--font-body);font-size:.8rem;font-weight:800;color:var(--star);background:var(--surface2);border-radius:999px;padding:1px 8px}
+.codebox{position:relative;min-width:0}
+pre{margin:0;overflow-x:auto;border-radius:14px;padding:14px 16px;font-family:var(--font-code);font-size:.9rem;line-height:1.55;tab-size:4}
+pre.code{background:var(--term-bg);color:var(--term-fg)}
+pre.out{background:#000;color:var(--term-out);border:2px solid var(--term-bg)}
+pre.out::before{content:"SCREEN SHOWS";display:block;font-family:var(--font-body);font-weight:800;font-size:.7rem;letter-spacing:.1em;color:#7c8aa8;margin-bottom:4px}
+pre.bad{border:3px dashed var(--bad)}
+.tok-str{color:var(--term-str)}.tok-com{color:var(--term-com);font-style:italic}.tok-num{color:var(--term-num)}.tok-kw{color:var(--term-kw);font-weight:600}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:.75rem;font-weight:800;border:0;border-radius:8px;padding:4px 10px;background:#24325c;color:#dbe5ff;cursor:pointer}
+ul.list,ol.list{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+code.inl{font-family:var(--font-code);font-size:.88em;background:var(--surface2);padding:1px 6px;border-radius:6px;white-space:nowrap}
+.task-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+.task{font:inherit;font-weight:800;font-size:.9rem;padding:8px 14px;border-radius:999px;border:2px solid var(--star);background:transparent;color:var(--ink);cursor:pointer}
+.task.is-done{background:var(--ok);border-color:var(--ok);color:#fff}
+.challenges{display:grid;gap:10px}
+.chal{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.chal .lvl{font-family:var(--font-display);font-weight:600;color:var(--star)}
+details{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 14px}
+details summary{cursor:pointer;font-weight:800}
+details[open] summary{margin-bottom:8px}
+.hints details{margin-top:6px}
+.quiz{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.quiz .q{font-weight:800}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choices button{font:inherit;text-align:left;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;min-width:0;overflow-wrap:anywhere}
+.choices button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--bg))}
+.choices button.wrong{border-color:var(--bad);text-decoration:line-through;opacity:.75}
+.feedback{font-weight:700;min-height:1.4em}
+.feedback.ok{color:var(--ok)}.feedback.no{color:var(--bad)}
+.pair{background:var(--surface2);border-radius:16px;padding:14px 16px}
+.callout{border:2px solid var(--star);border-radius:14px;padding:12px 14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+.tablewrap{overflow-x:auto;border:2px solid var(--line);border-radius:14px;background:var(--surface)}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--font-display);font-weight:600}
+tr:last-child td{border-bottom:0}
+td code{font-family:var(--font-code);font-size:.85em;overflow-wrap:anywhere}
+.cert{display:none;text-align:center;border:4px double var(--star);border-radius:20px;padding:24px 16px;background:var(--surface)}
+.cert.show{display:block}
+.cert .big{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--accent);overflow-wrap:anywhere}
+.grownup{background:var(--surface);border-radius:20px;padding:18px;border:2px solid var(--line)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--bg);font-weight:800;padding:12px 18px;border-radius:14px;transition:.25s;z-index:30;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}}
+footer{padding-block:24px 40px;font-size:.9rem}
+</style>
+
+<div class="crewbar">
+  <div class="wrap">
+    <label for="active-player">Who's playing?</label>
+    <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 1</span>
+  <h1>Talking to the Computer</h1>
+  <p class="lead">Welcome aboard, crew! In World 1 you'll teach the ship's robot to talk, count down to blast-off, do space math and draw pictures with letters. Every task you finish earns XP (experience points), and you can unlock badges and become a Star Captain.</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP BOOP! I'm Py-Bot, the ship's robot. I can do amazing things, but only if you tell me EXACTLY what to do. The language I understand is called <b>Python</b>. Let's learn it together!"</p>
+  </div>
+</header>
+
+<!-- MAP -->
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map" id="map-nav">
+      <a class="station" href="#lesson-1" data-lesson="l1"><div class="planet p1"></div><span class="name">1 · Hello, Mission Control!</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="l2"><div class="planet p2"></div><span class="name">2 · Countdown!</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="l3"><div class="planet p3"></div><span class="name">3 · Space Calculator</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="l4"><div class="planet p4"></div><span class="name">4 · Starship Art Studio</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Mission Patch</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<!-- CREW -->
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Add everyone who's learning. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table>
+          <tr><th>Rank</th><th>XP needed</th></tr>
+          <tr><td>🧑‍🚀 Code Cadet</td><td>0</td></tr>
+          <tr><td>🔭 Space Explorer</td><td>100</td></tr>
+          <tr><td>🛸 Rocket Pilot</td><td>250</td></tr>
+          <tr><td>🌟 Star Captain</td><td>450</td></tr>
+        </table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>Badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" aria-labelledby="setup-h">
+  <div class="stack">
+    <span class="eyebrow">Before you start</span>
+    <h2 id="setup-h">Get your ship ready</h2>
+    <p>We'll write Python in a free app called <b>Pydroid 3</b>. Ask a grown-up to help with these steps the first time.</p>
+    <ol class="list">
+      <li>Open the <b>Google Play Store</b>, search for <b>Pydroid 3</b>, and install it. It's free (it shows some ads).</li>
+      <li>Open Pydroid 3. Let it finish setting up, which can take a minute the first time.</li>
+      <li>The big white area is the <b>editor</b>. That's where you type code.</li>
+      <li>Tap the big <b>▶ play button</b> to run your code. The answer appears on a black screen called the <b>terminal</b>.</li>
+      <li>To go back to your code, use the phone's <b>back</b> button or the arrow at the top.</li>
+      <li>To start a new program, clear the editor. To keep one, use the <b>folder menu → Save</b> and give it a name like <code class="inl">lesson1</code>.</li>
+    </ol>
+    <div class="callout stack">
+      <h4>Important phone trick: turn off autocorrect</h4>
+      <p>Phone keyboards try to "help" by changing <code class="inl">print</code> into <code class="inl">Print</code>, or by changing straight quotes <code class="inl">"</code> into curly ones <code class="inl">“ ”</code>. Python doesn't understand those. Open your phone's <b>Settings → Keyboard</b> and turn off <b>auto-correct</b>, <b>auto-capitalization</b> and <b>smart punctuation</b> if you see it.</p>
+      <p>Pydroid also has a row of extra keys above the keyboard with symbols like <code class="inl">( ) " # * :</code>. Use them, they're faster!</p>
+    </div>
+    <div class="step stack">
+      <h4>Test flight</h4>
+      <p>Type this into Pydroid 3 and tap ▶. If you see the message, your ship works!</p>
+      <div class="codebox"><pre class="code">print("Systems online!")</pre></div>
+      <pre class="out">Systems online!</pre>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="l1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="l1-h">Hello, Mission Control!</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot just woke up after a long sleep in deep space. Its speaker is working, but it doesn't know what to say. You need to give it its very first words!</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">print()</code> is Py-Bot's mouth</h4>
+      <p>When you write <code class="inl">print("something")</code>, Python shows <i>something</i> on the screen. The words go inside <b>quotes</b> <code class="inl">" "</code>. Quotes tell Python: "This is text. Say it exactly like this." Programmers call text in quotes a <b>string</b>, because it's like letters threaded on a string, one after another.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a print line">print( "Hello!" )
+  │     └──┬──┘
+  │        └─ the words to say, inside quotes
+  └─ the command: "show this on the screen"</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <p>Type these two lines. You don't have to type the grey notes after the <code class="inl">#</code>; they're just explanations for you.</p>
+      <div class="codebox"><pre class="code">print("Hello, Mission Control!")   # Py-Bot's first words
+print("I am ready to fly!")        # a second line of words</pre></div>
+      <pre class="out">Hello, Mission Control!
+I am ready to fly!</pre>
+      <div class="task-row"><button class="task" data-id="l1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <p>Experiment. Guess what will happen before you tap ▶.</p>
+      <ul class="list">
+        <li>Change <code class="inl">Mission Control</code> to your own name.</li>
+        <li>Use single quotes instead: <code class="inl">print('Hi!')</code>. Does it still work? (Yes! Both kinds work. Just use the same kind at both ends.)</li>
+        <li>Remove the quotes: <code class="inl">print(Hi)</code>. You'll get a red <b>error</b>. That's okay! An error is just a clue from the computer. Without quotes, Python thinks <code class="inl">Hi</code> is a name it should already know.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="l1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make Py-Bot say hello to <b>you</b> by name.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Copy the first line from above and change the words inside the quotes.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make Py-Bot say 3 facts about you on 3 lines (your age, a favorite food, a favorite animal).</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Each line needs its own <code class="inl">print( )</code>.</p></details><details><summary>Hint 2</summary><p><code class="inl">print("My favorite food is pizza")</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="l1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Print a message with an emoji in it (like 🚀). Then put an <b>empty line</b> between two messages using <code class="inl">print()</code> with nothing inside.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Emojis can go inside the quotes, just like letters.</p></details><details><summary>Hint 2</summary><p><code class="inl">print()</code> with nothing in the brackets prints a blank line.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Uh oh! Someone messed up Py-Bot's code. There are <b>2 bugs</b>. Type it in, read the red error, and fix them one at a time.</p>
+      <div class="codebox"><pre class="code bad">Print("Hello, crew!")
+print(I am Py-Bot)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Python is picky about capital letters.</p></details><details><summary>Hint 2</summary><p>Words you want to say need something around them…</p></details></div>
+      <div class="task-row"><button class="task" data-id="l1-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Driver and Navigator <span class="xp">+10 XP</span></h4>
+      <p>Work in twos. The <b>Driver</b> holds the phone and types. The <b>Navigator</b> doesn't touch the phone, but reads the instructions and spots mistakes. Swap jobs every 5 minutes! Together, make Py-Bot introduce <b>both</b> of you.</p>
+      <div class="task-row"><button class="task" data-id="l1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="l1-q1" data-xp="10" data-explain="Right! A small p, and quotes around the words.">
+        <p class="q">1. Which line makes Py-Bot talk?</p>
+        <div class="choices"><button>Print("Hi")</button><button data-ok>print("Hi")</button><button>print(Hi)</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="l1-q2" data-xp="10" data-explain="Yes! Quotes mean: this is text, say it exactly.">
+        <p class="q">2. What do the quotes " " tell Python?</p>
+        <div class="choices"><button>Do some math</button><button data-ok>This is text, say it exactly</button><button>Skip this line</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- UNPLUGGED -->
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Robot Commander</h2>
+    <p>One person is <b>Py-Bot</b>. Everyone else writes commands on scraps of paper, like <code class="inl">print("Hop on one foot")</code> or <code class="inl">print("Say BANANA")</code>.</p>
+    <ol class="list">
+      <li>Line up the paper commands in order. That's your program!</li>
+      <li>Py-Bot does each command, top to bottom, <b>exactly</b> as written. Nothing more, nothing less.</li>
+      <li>If a command has a mistake (a capital P, missing quotes or a missing bracket), Py-Bot says <b>"ERROR! BEEP BOOP!"</b> and freezes until the writer fixes it.</li>
+      <li>Take turns being Py-Bot.</li>
+    </ol>
+    <p class="muted">What you're learning: computers do exactly what you write, in order, and they're very picky about spelling.</p>
+    <div class="task-row"><button class="task" data-id="un-play" data-xp="20">I played Robot Commander +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="l2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 30 minutes</span><h2 id="l2-h">Countdown!</h2></div></div>
+    <p class="story"><b>Story:</b> The rocket is fueled and ready. Mission Control needs Py-Bot to do the countdown, but the numbers have to come in the right order, or the rocket will get very confused!</p>
+    <div class="bigidea">
+      <h4>The big idea: Python reads from top to bottom</h4>
+      <p>Python runs your code one line at a time, starting at the top, like reading a recipe. If you change the order of the lines, you change the order things happen.</p>
+      <p style="margin-top:8px">Also: any line that starts with <code class="inl">#</code> is a <b>comment</b>. Python skips it. It's a secret note for humans.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code"># Launch program by the Star Crew
+print("3...")
+print("2...")
+print("1...")
+print()
+print("BLAST OFF! 🚀")</pre></div>
+      <pre class="out">3...
+2...
+1...
+
+BLAST OFF! 🚀</pre>
+      <p class="muted">See the empty line before BLAST OFF? That's the <code class="inl">print()</code> with nothing inside. And the comment line on top didn't show up at all!</p>
+      <div class="task-row"><button class="task" data-id="l2-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Swap the <code class="inl">"3..."</code> line and the <code class="inl">"1..."</code> line. What happens to the countdown?</li>
+        <li>Make it start from 5 instead of 3.</li>
+        <li>Add your own comment, like <code class="inl"># made by Leo</code>. Does it show up on screen?</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="l2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a countdown from 5 to 1 that ends with "LIFT OFF!"</p>
+          <div class="hints"><details><summary>Hint</summary><p>You need 6 <code class="inl">print</code> lines: 5 numbers and 1 lift off.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>A full countdown from 10 to 1, with a comment at the top saying who wrote it.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Comments start with <code class="inl">#</code>. Copy a line and change the number to save typing.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>A launch checklist! Print 3 checks first (like <code class="inl">Fuel: OK</code>), then a blank line, then the countdown, then a blank line, then blast off.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Plan the order on paper first, top to bottom.</p></details><details><summary>Hint 2</summary><p>A blank line is <code class="inl">print()</code>.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>This countdown has <b>2 bugs</b>: one that makes an error, and one that makes the countdown wrong (no error!).</p>
+      <div class="codebox"><pre class="code bad">print("3...")
+print("1...")
+print("2...)
+print("BLAST OFF!")</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Look closely at the third line. Count the quotes.</p></details><details><summary>Hint 2</summary><p>Read the numbers out loud. Do they count down correctly?</p></details></div>
+      <div class="task-row"><button class="task" data-id="l2-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power <span class="xp">+10 XP</span></h4>
+      <p>The Navigator says a countdown out loud. The Driver types it. Then run it and check: did it come out the same? Swap and do another one!</p>
+      <div class="task-row"><button class="task" data-id="l2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="l2-q1" data-xp="10" data-explain="Yes! Python starts at the top and goes down.">
+        <p class="q">1. Which line does Python run first?</p>
+        <div class="choices"><button>The bottom line</button><button data-ok>The top line</button><button>The longest line</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="l2-q2" data-xp="10" data-explain="Correct! Comments are notes for humans. Python skips them.">
+        <p class="q">2. What happens to a line that starts with # ?</p>
+        <div class="choices"><button>It prints in big letters</button><button>It makes an error</button><button data-ok>Python skips it, it's a note for humans</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="l3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 30 minutes</span><h2 id="l3-h">Space Calculator</h2></div></div>
+    <p class="story"><b>Story:</b> We're in space! Now the crew needs answers fast: How far is the Moon? How many snacks do we need? Good news: Py-Bot is a super-fast calculator.</p>
+    <div class="bigidea">
+      <h4>The big idea: no quotes means "do the math"</h4>
+      <p>If you put numbers in <code class="inl">print()</code> <b>without</b> quotes, Python works out the answer. <b>With</b> quotes, it just repeats the text.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <tr><th>Math</th><th>Python symbol</th><th>Example</th></tr>
+      <tr><td>Plus</td><td><code>+</code></td><td><code>2 + 3</code></td></tr>
+      <tr><td>Minus</td><td><code>-</code></td><td><code>10 - 4</code></td></tr>
+      <tr><td>Times</td><td><code>*</code> (a star, not x!)</td><td><code>3 * 4</code></td></tr>
+      <tr><td>Divide</td><td><code>/</code> (a slash)</td><td><code>10 / 2</code></td></tr>
+    </table></div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">print(2 + 3)       # adds
+print(10 - 4)      # subtracts
+print(3 * 4)       # times uses a star
+print(10 / 2)      # divide uses a slash
+print("2 + 3")     # in quotes it's just text!</pre></div>
+      <pre class="out">5
+6
+12
+5.0
+2 + 3</pre>
+      <p class="muted">Why <b>5.0</b>? When Python divides, it always gives an answer with a dot, in case the answer is something like 3.5 (three and a half).</p>
+      <div class="task-row"><button class="task" data-id="l3-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>The Moon is about 384400 kilometers away. How far is there and back? Try <code class="inl">print(384400 * 2)</code>.</li>
+        <li>Try <code class="inl">print(7 / 2)</code>. What does the dot mean now?</li>
+        <li>Surprise test: what happens if you write a big number with a comma, like <code class="inl">print(384,400)</code>? (Python thinks the comma means "two separate numbers"! So write big numbers without commas.)</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="l3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>There are 4 astronauts. Each one gets 3 space snacks. Make Python work out how many snacks to pack.</p>
+          <div class="hints"><details><summary>Hint</summary><p>"Each one gets" usually means times: <code class="inl">*</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="l3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>How many minutes are in one day? (A day has 24 hours, and each hour has 60 minutes.) Print a label line first, like <code class="inl">"Minutes in a day:"</code>, then the answer.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Two lines: one print with quotes (the label), one without (the math).</p></details></div>
+          <div class="task-row"><button class="task" data-id="l3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>How many <b>seconds</b> are in a day? And in a whole week? You can multiply more than two numbers at once!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Seconds in a minute: 60. Minutes in an hour: 60. Hours in a day: 24.</p></details><details><summary>Hint 2</summary><p><code class="inl">print(24 * 60 * 60)</code>. Now how do you get a week?</p></details></div>
+          <div class="task-row"><button class="task" data-id="l3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot was told to work out snacks for the crew, but it crashed. Find the <b>1 bug</b>.</p>
+      <div class="codebox"><pre class="code bad">print("Snacks needed:")
+print(4 x 3)</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Look at the table above. What symbol does Python use for times?</p></details></div>
+      <div class="task-row"><button class="task" data-id="l3-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power <span class="xp">+10 XP</span></h4>
+      <p>Math race, team style! The Navigator makes up a space math problem ("8 rockets with 5 windows each"). Both of you guess the answer out loud, then the Driver checks it with Python. Swap jobs after 3 problems.</p>
+      <div class="task-row"><button class="task" data-id="l3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="l3-q1" data-xp="10" data-explain="Yes! No quotes, so Python does the math.">
+        <p class="q">1. What shows on the screen for <code class="inl">print(5 + 5)</code>?</p>
+        <div class="choices"><button>5 + 5</button><button data-ok>10</button><button>55</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="l3-q2" data-xp="10" data-explain="Correct! In quotes it's just text, so it's repeated exactly.">
+        <p class="q">2. What shows on the screen for <code class="inl">print("5 + 5")</code>?</p>
+        <div class="choices"><button data-ok>5 + 5</button><button>10</button><button>An error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="l3-q3" data-xp="10" data-explain="Right! The star * means times.">
+        <p class="q">3. Which symbol means "times" in Python?</p>
+        <div class="choices"><button>x</button><button data-ok>*</button><button>#</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="l4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 30 minutes</span><h2 id="l4-h">Starship Art Studio</h2></div></div>
+    <p class="story"><b>Story:</b> The ship's walls are boring and grey. Py-Bot wants to decorate! There's no paint in space, but you can draw pictures using letters and symbols. This is called <b>text art</b>.</p>
+    <div class="bigidea">
+      <h4>The big idea: stack lines to make a picture, and multiply text</h4>
+      <p>Each <code class="inl">print</code> line is one row of your picture. Spaces count too, so use them to push symbols to the right place.</p>
+      <p style="margin-top:8px">New trick: you can multiply text! <code class="inl">print("⭐" * 5)</code> prints five stars in a row: ⭐⭐⭐⭐⭐</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">print("=" * 15)     # a line of 15 equals signs
+print("      ^      ")
+print("     |o|     ")
+print("     |o|     ")
+print("    &lt;|_|&gt;    ")
+print("     ***     ")  # rocket fire!
+print("=" * 15)</pre></div>
+      <pre class="out">===============
+      ^
+     |o|
+     |o|
+    &lt;|_|&gt;
+     ***
+===============</pre>
+      <div class="task-row"><button class="task" data-id="l4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Make the rocket taller by adding more <code class="inl">|o|</code> windows.</li>
+        <li>Change <code class="inl">"=" * 15</code> to <code class="inl">"🌟" * 8</code>.</li>
+        <li>Try <code class="inl">print("ha" * 10)</code>. Py-Bot is laughing!</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="l4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Print a row of 20 stars <code class="inl">*</code> using multiplication.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">"*" * 20</code> goes inside <code class="inl">print( )</code>.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Draw an alien, a planet or a robot using at least 4 lines of text art. Draw it on paper first!</p>
+          <div class="hints"><details><summary>Hint</summary><p>Try symbols like <code class="inl">o O ( ) [ ] - _ | ^ * @</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="l4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Make a <b>name banner</b>: a border on top, your name in the middle, and a border on the bottom. Use multiplication for the borders.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>3 lines: border, name, border.</p></details><details><summary>Hint 2</summary><p>Add spaces inside the quotes before your name to put it in the middle.</p></details></div>
+          <div class="task-row"><button class="task" data-id="l4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot wanted 5 stars, but got a <b>TypeError</b> instead. Find the <b>1 bug</b>.</p>
+      <div class="codebox"><pre class="code bad">print("*" * "5")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Is 5 a number to count with, or a word to say? Numbers for math don't wear quotes.</p></details></div>
+      <div class="task-row"><button class="task" data-id="l4-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power <span class="xp">+10 XP</span></h4>
+      <p>Art gallery! Each of you draws one half of a picture: one does the top (like a head), the other does the bottom (like a body). Put both halves into one program and run it. Does it fit together?</p>
+      <div class="task-row"><button class="task" data-id="l4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="l4-q1" data-xp="10" data-explain="Yes! Multiplying text repeats it.">
+        <p class="q">1. What does <code class="inl">print("ha" * 3)</code> show?</p>
+        <div class="choices"><button>ha3</button><button data-ok>hahaha</button><button>ha ha ha ha</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="l4-q2" data-xp="10" data-explain="Correct! The number for multiplying must not be in quotes.">
+        <p class="q">2. How do you fix <code class="inl">print("*" * "5")</code>?</p>
+        <div class="choices"><button>Change * to x</button><button data-ok>Take the quotes off the 5</button><button>Use a capital P</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">Mission Patch</h2></div></div>
+    <p class="story"><b>Story:</b> Every real space mission has a mission patch, a badge with the crew's names and a picture. Mission Control wants a <b>program</b> that shows yours, followed by the launch! Use everything you learned in World 1.</p>
+    <div class="stack">
+      <h4>Your program must have:</h4>
+      <ul class="list">
+        <li>A border made with multiplication (Lesson 4)</li>
+        <li>Your mission's name and every crew member's name (Lesson 1)</li>
+        <li>A picture made of text art (Lesson 4)</li>
+        <li>A space math fact with an answer Python works out (Lesson 3)</li>
+        <li>A countdown and a blast off, in the right order, with a blank line (Lesson 2)</li>
+        <li>A comment at the top with the authors' names (Lesson 2)</li>
+      </ul>
+      <p class="muted">Teamwork tip: split the jobs! One person makes the border and names, one makes the picture, one makes the math and countdown. Then put all the parts together, in order, in one program.</p>
+    </div>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">👑 Boss · +50 XP</span><p>Build and run your Mission Patch program, then show it to everyone!</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Write the parts on paper first, in order from top to bottom.</p></details><details><summary>Hint 2</summary><p>Run your code after each part, so bugs are easy to find.</p></details></div>
+        <div class="task-row"><button class="task" data-id="boss-done" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 1: Talking to the Computer</b><br>and earned the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">🚀 🌟 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Coming next: World 2 · Magic Boxes</h4>
+      <p>Py-Bot is going to learn to <b>remember</b> things and <b>ask you questions</b>. You'll build a robot that knows your name!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ERRORS -->
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder</h2>
+    <p>Red text isn't a disaster. It's Python giving you a clue! Read the <b>last line</b> of the error first. It also tells you which <b>line number</b> has the problem.</p>
+    <div class="tablewrap"><table>
+      <tr><th>The error says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td><code>NameError: name 'Print' is not defined</code></td><td>Python doesn't know that word. Often it's a capital letter or a typo.</td><td>Use a small <code>print</code>. Check spelling.</td></tr>
+      <tr><td><code>NameError: name 'Hi' is not defined</code></td><td>You forgot the quotes around your words.</td><td><code>print("Hi")</code></td></tr>
+      <tr><td><code>SyntaxError: unterminated string literal</code></td><td>A quote is missing at the end of your words.</td><td>Make sure there's a <code>"</code> at both ends.</td></tr>
+      <tr><td><code>SyntaxError: '(' was never closed</code></td><td>A bracket is missing at the end.</td><td>Every <code>(</code> needs a <code>)</code>.</td></tr>
+      <tr><td><code>SyntaxError: invalid character '“'</code></td><td>The phone used curly "smart" quotes.</td><td>Use the straight <code>"</code> key from Pydroid's extra keys, and turn off smart punctuation.</td></tr>
+      <tr><td><code>SyntaxError: invalid syntax</code></td><td>Something is written in a way Python doesn't understand, like <code>x</code> for times.</td><td>Look near where the error points. Use <code>*</code> for times.</td></tr>
+      <tr><td><code>TypeError: can't multiply sequence by non-int of type 'str'</code></td><td>You tried to multiply text by text.</td><td>The number must not be in quotes: <code>"*" * 5</code></td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- GROWN-UPS -->
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key</h2>
+    <p>You don't need to know how to code to run this. Each lesson takes about 30 minutes. Do one lesson per session, or two short ones. Let learners try first, and only open the answer key when they're truly stuck.</p>
+
+    <details>
+      <summary>How to run a session (30–40 minutes)</summary>
+      <ol class="list">
+        <li><b>Warm-up (3 min):</b> Ask "What did Py-Bot learn last time?"</li>
+        <li><b>Story and big idea (5 min):</b> Read them aloud together.</li>
+        <li><b>Type it and run it, then Change it (10 min):</b> Everyone types. Celebrate errors: "Great, a clue!"</li>
+        <li><b>Challenges (10 min):</b> Each learner picks their own level. Fast finishers can try the next level or help others by asking questions, not by typing for them.</li>
+        <li><b>Bug hunt, pair activity and quiz (7 min).</b></li>
+        <li><b>Show and tell (3 min):</b> Everyone shows one thing they made. Clap for each one!</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary>How to help without giving the answer</summary>
+      <ul class="list">
+        <li>"What did you expect to happen? What happened instead?"</li>
+        <li>"What does the last line of the red error say? Which line number?"</li>
+        <li>"Read your line out loud to me, letter by letter."</li>
+        <li>"Can you find the part in the lesson that does something like this?"</li>
+        <li>Point to the hints on the page before showing the answer.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Sharing phones, different speeds and scorekeeping</summary>
+      <ul class="list">
+        <li><b>Sharing one phone:</b> use Driver/Navigator for everything. Swap every 5 minutes or at each new challenge. Pick the right player in the top bar before tapping a task.</li>
+        <li><b>Separate phones:</b> each learner opens this page on their own phone and adds just themselves. Compare XP at show-and-tell.</li>
+        <li><b>Scores</b> are saved in the phone's browser. Clearing browsing data will erase them, so you could also keep a paper tally as a backup.</li>
+        <li><b>Different speeds:</b> challenge levels let everyone work on the same idea. Nobody is behind; they're just choosing a different level.</li>
+        <li><b>Keep competition kind:</b> XP rewards trying, fixing bugs and teamwork, not just speed. Consider small extra awards at show-and-tell: "Most creative," "Best bug hunter," "Kindest helper."</li>
+        <li><b>Honesty:</b> learners tap their own "Done" buttons. You can glance at the screen to confirm.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">print("Hello, Mia!")</pre>
+        <p><b>⭐⭐ Medium</b> (any 3 facts are fine)</p><pre class="code">print("I am 10 years old")
+print("My favorite food is pizza")
+print("My favorite animal is a cat")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">print("I love space 🚀")
+print()
+print("See you on the Moon!")</pre>
+        <p><b>Bug hunt.</b> Python reports the <i>second</i> line first (<code class="inl">SyntaxError</code>), because it checks the grammar of the whole program before running anything. After fixing it, the first line shows <code class="inl">NameError: name 'Print' is not defined</code>. That's a good lesson: fix one clue at a time.</p>
+        <pre class="code">print("Hello, crew!")
+print("I am Py-Bot")</pre>
+        <p><b>Quiz:</b> 1. <code class="inl">print("Hi")</code> · 2. This is text, say it exactly</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">print("5...")
+print("4...")
+print("3...")
+print("2...")
+print("1...")
+print("LIFT OFF!")</pre>
+        <p><b>⭐⭐ Medium:</b> a comment line like <code class="inl"># Countdown by Leo</code>, then prints from 10 down to 1, then a blast-off line.</p>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">print("Fuel: OK")
+print("Engines: OK")
+print("Seatbelts: OK")
+print()
+print("3...")
+print("2...")
+print("1...")
+print()
+print("BLAST OFF! 🚀")</pre>
+        <p><b>Bug hunt.</b> Line 3 is missing its closing quote (<code class="inl">SyntaxError: unterminated string literal</code>). Lines 2 and 3 are in the wrong order. That one gives no error, which is a great talking point: the computer can't tell when you've asked for the wrong thing.</p>
+        <pre class="code">print("3...")
+print("2...")
+print("1...")
+print("BLAST OFF!")</pre>
+        <p><b>Quiz:</b> 1. The top line · 2. Python skips it</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>Change it:</b> <code class="inl">384400 * 2</code> shows 768800. <code class="inl">7 / 2</code> shows 3.5 (three and a half). <code class="inl">print(384,400)</code> shows <code class="inl">384 400</code>, because the comma splits it into two numbers.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">print(4 * 3)</pre><p>Answer: 12 snacks.</p>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">print("Minutes in a day:")
+print(24 * 60)</pre><p>Answer: 1440.</p>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">print("Seconds in a day:")
+print(24 * 60 * 60)
+print("Seconds in a week:")
+print(24 * 60 * 60 * 7)</pre><p>Answers: 86400 and 604800.</p>
+        <p><b>Bug hunt.</b> <code class="inl">x</code> should be <code class="inl">*</code>: <code class="inl">print(4 * 3)</code>.</p>
+        <p><b>Quiz:</b> 1. 10 · 2. 5 + 5 · 3. *</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">print("*" * 20)</pre>
+        <p><b>⭐⭐ Medium:</b> any picture of 4 or more lines counts. Example alien:</p><pre class="code">print("   o   o   ")
+print("  (  ^  )  ")
+print("   [___]   ")
+print("   /   |   ")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">print("~" * 16)
+print("     MIA      ")
+print("~" * 16)</pre>
+        <p><b>Bug hunt.</b> Remove the quotes around 5: <code class="inl">print("*" * 5)</code>.</p>
+        <p><b>Quiz:</b> 1. hahaha · 2. Take the quotes off the 5</p>
+        <p class="muted">Note: emoji take up different widths on different phones, so pictures with emoji may not line up perfectly. That's fine!</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <p>Any program that has all the required parts counts. Here's one example:</p>
+        <pre class="code"># Mission Patch by Mia and Leo
+print("=" * 22)
+print("  MISSION: STAR CREW")
+print("  Captain: Mia")
+print("  Pilot: Leo")
+print("=" * 22)
+print("      ^      ")
+print("     |o|     ")
+print("    &lt;|_|&gt;    ")
+print("     ***     ")
+print("Days to reach Mars (about):")
+print(7 * 30)
+print("3...")
+print("2...")
+print("1...")
+print()
+print("BLAST OFF! 🚀")</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Unplugged game tips</summary>
+      <p>Robot Commander works best with 3 or more people. Keep commands safe and silly (hop, clap, say a word). Sneak in a "buggy" card like <code class="inl">Print("clap")</code> or <code class="inl">print(clap)</code> to see if Py-Bot catches it.</p>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted">Python Space Quest · World 1 of 7. Next up: Magic Boxes (variables and input).</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  const KEY = "pyquest-w1-v1";
+  const AVATARS = ["🧑‍🚀","👩‍🚀","👨‍🚀","🤖","👽","🐱","🐶","🦊","🐼","🦄","🐉","🦖"];
+  const RANKS = [[0,"Code Cadet","🧑‍🚀"],[100,"Space Explorer","🔭"],[250,"Rocket Pilot","🛸"],[450,"Star Captain","🌟"]];
+  const LESSONS = {
+    l1:["l1-try","l1-change","l1-c1","l1-c2","l1-c3","l1-bug","l1-pair","l1-q1","l1-q2"],
+    l2:["l2-try","l2-change","l2-c1","l2-c2","l2-c3","l2-bug","l2-pair","l2-q1","l2-q2"],
+    l3:["l3-try","l3-change","l3-c1","l3-c2","l3-c3","l3-bug","l3-pair","l3-q1","l3-q2","l3-q3"],
+    l4:["l4-try","l4-change","l4-c1","l4-c2","l4-c3","l4-bug","l4-pair","l4-q1","l4-q2"],
+    boss:["boss-done"]
+  };
+  const BADGES = [
+    {icon:"🗣️",name:"First Words",how:"Run your first program in Lesson 1",req:["l1-try"]},
+    {icon:"🚀",name:"Liftoff",how:"Finish the Lesson 2 countdown challenge (any level)",any:["l2-c1","l2-c2","l2-c3"]},
+    {icon:"🧮",name:"Space Calculator",how:"Get every Lesson 3 quiz question right",req:["l3-q1","l3-q2","l3-q3"]},
+    {icon:"🎨",name:"Star Artist",how:"Finish any Lesson 4 challenge",any:["l4-c1","l4-c2","l4-c3"]},
+    {icon:"🐛",name:"Bug Squasher",how:"Fix all 4 bug hunts",req:["l1-bug","l2-bug","l3-bug","l4-bug"]},
+    {icon:"🤝",name:"Pair Power",how:"Do all 4 pair activities",req:["l1-pair","l2-pair","l3-pair","l4-pair"]},
+    {icon:"🦸",name:"Hero Coder",how:"Finish all 4 Hero (⭐⭐⭐) challenges",req:["l1-c3","l2-c3","l3-c3","l4-c3"]},
+    {icon:"🕹️",name:"Robot Commander",how:"Play the unplugged game",req:["un-play"]},
+    {icon:"👑",name:"World 1 Champion",how:"Beat the Mission Patch boss",req:["boss-done"]}
+  ];
+
+  // XP values from the page
+  const XP = {};
+  document.querySelectorAll("[data-id][data-xp]").forEach(el=>{XP[el.dataset.id]=+el.dataset.xp});
+
+  let state = {players:[],active:null,done:{}};
+  try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&Array.isArray(s.players)) state=Object.assign(state,s);}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+  const $ = s=>document.querySelector(s);
+  const toastEl = $("#toast"); let toastT;
+  function toast(msg){toastEl.textContent=msg;toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),2400)}
+
+  function player(){return state.players.find(p=>p.id===state.active)||null}
+  function doneOf(pid){return state.done[pid]||(state.done[pid]={})}
+  function xpOf(pid){const d=state.done[pid]||{};return Object.keys(d).reduce((a,k)=>a+(XP[k]||0),0)}
+  function rankOf(xp){let r=RANKS[0];RANKS.forEach(x=>{if(xp>=x[0])r=x});return r}
+  function nextRank(xp){return RANKS.find(x=>x[0]>xp)||null}
+  function badgesOf(pid){const d=state.done[pid]||{};return BADGES.filter(b=>b.req?b.req.every(k=>d[k]):b.any.some(k=>d[k]))}
+
+  // Badge table
+  const bt=$("#badge-table");
+  BADGES.forEach(b=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${b.icon} ${b.name}</td><td>${b.how}</td>`;bt.appendChild(tr)});
+
+  // Avatar picker
+  let pickedAvatar = AVATARS[0];
+  const ap=$("#avatar-pick");
+  AVATARS.forEach(a=>{const b=document.createElement("button");b.type="button";b.textContent=a;b.setAttribute("aria-label","Avatar "+a);b.setAttribute("aria-pressed",a===pickedAvatar);
+    b.addEventListener("click",()=>{pickedAvatar=a;ap.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b))});ap.appendChild(b)});
+
+  $("#add-form").addEventListener("submit",e=>{
+    e.preventDefault();
+    const input=$("#new-name"); const name=input.value.trim(); if(!name) return;
+    const p={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,avatar:pickedAvatar};
+    state.players.push(p); state.active=p.id; input.value=""; save(); render();
+    toast(`Welcome aboard, ${name}! ${p.avatar}`);
+  });
+
+  $("#active-player").addEventListener("change",e=>{state.active=e.target.value;save();render();const p=player();if(p)toast(`${p.avatar} ${p.name} is playing now`)});
+
+  function award(id,el){
+    const p=player();
+    if(!p){toast("Add a crew member first!");location.hash="#crew";return false}
+    const d=doneOf(p.id); const before=badgesOf(p.id).map(b=>b.name); const rBefore=rankOf(xpOf(p.id))[1];
+    d[id]=1; save(); render();
+    const newB=badgesOf(p.id).filter(b=>!before.includes(b.name)); const rAfter=rankOf(xpOf(p.id));
+    let msg=`+${XP[id]} XP for ${p.name}!`;
+    if(newB.length) msg=`${newB[0].icon} Badge unlocked: ${newB[0].name}!`;
+    if(rAfter[1]!==rBefore) msg=`${rAfter[2]} ${p.name} is now a ${rAfter[1]}!`;
+    toast(msg); return true;
+  }
+
+  // Tasks
+  document.querySelectorAll(".task").forEach(btn=>{
+    btn.dataset.label=btn.textContent;
+    btn.addEventListener("click",()=>{
+      const p=player(); const id=btn.dataset.id;
+      if(p&&doneOf(p.id)[id]){delete doneOf(p.id)[id];save();render();toast("Unmarked. Tap again to mark it done.");return}
+      award(id,btn);
+    });
+  });
+
+  // Quizzes
+  document.querySelectorAll(".quiz").forEach(q=>{
+    q.querySelectorAll(".choices button").forEach(b=>{
+      b.type="button";
+      b.addEventListener("click",()=>{
+        const p=player(); if(!p){toast("Add a crew member first!");location.hash="#crew";return}
+        if(doneOf(p.id)[q.dataset.id]) return;
+        const fb=q.querySelector(".feedback");
+        if(b.hasAttribute("data-ok")){award(q.dataset.id,b)}
+        else{b.classList.add("wrong");fb.textContent="Not quite. Try another answer!";fb.className="feedback no"}
+      });
+    });
+  });
+
+  // Reset
+  $("#reset-ask").addEventListener("click",()=>{$("#reset-confirm").hidden=false});
+  $("#reset-no").addEventListener("click",()=>{$("#reset-confirm").hidden=true});
+  $("#reset-yes").addEventListener("click",()=>{state={players:[],active:null,done:{}};save();$("#reset-confirm").hidden=true;render();toast("All scores deleted.")});
+
+  function render(){
+    if(!player()&&state.players.length) state.active=state.players[0].id;
+    const p=player();
+    // selector
+    const sel=$("#active-player"); sel.innerHTML="";
+    if(!state.players.length){const o=document.createElement("option");o.textContent="Add your crew below";o.value="";sel.appendChild(o);sel.disabled=true}
+    else{sel.disabled=false;state.players.forEach(pl=>{const o=document.createElement("option");o.value=pl.id;o.textContent=`${pl.avatar} ${pl.name}`;if(pl.id===state.active)o.selected=true;sel.appendChild(o)})}
+    const xp=p?xpOf(p.id):0;
+    $("#xp-pill").innerHTML=`⭐ <b>${xp}</b> XP · ${rankOf(xp)[1]}`;
+
+    // crew cards
+    const list=$("#crew-list"); list.innerHTML="";
+    if(!state.players.length){list.innerHTML=`<div class="empty">No crew yet. Type a name below, pick an avatar and tap <b>Add to crew</b>. Add one card for each learner.</div>`}
+    state.players.forEach(pl=>{
+      const x=xpOf(pl.id), r=rankOf(x), n=nextRank(x);
+      const pct=n?Math.round((x-r[0])/(n[0]-r[0])*100):100;
+      const card=document.createElement("div"); card.className="card player"+(pl.id===state.active?" active":"");
+      card.innerHTML=`<div class="player-top"><div class="avatar">${pl.avatar}</div><div style="min-width:0"><div class="player-name"></div><div class="rank">${r[2]} ${r[1]} · <b>${x}</b> XP</div></div></div>
+        <div class="bar" aria-hidden="true"><span style="width:${pct}%"></span></div>
+        <div class="rank">${n?`${n[0]-x} XP to ${n[1]}`:"Top rank reached!"}</div>
+        <div class="badges" aria-label="Badges">${badgesOf(pl.id).map(b=>`<span title="${b.name}">${b.icon}</span>`).join("")||'<span class="rank">No badges yet</span>'}</div>
+        <div class="player-actions"></div>`;
+      card.querySelector(".player-name").textContent=pl.name;
+      const acts=card.querySelector(".player-actions");
+      if(pl.id!==state.active){const b=document.createElement("button");b.className="btn small";b.type="button";b.textContent="Play as "+pl.name;b.addEventListener("click",()=>{state.active=pl.id;save();render();toast(`${pl.avatar} ${pl.name} is playing now`)});acts.appendChild(b)}
+      const rm=document.createElement("button");rm.className="btn ghost small";rm.type="button";rm.textContent="Remove";
+      rm.addEventListener("click",()=>{
+        if(rm.dataset.sure){state.players=state.players.filter(z=>z.id!==pl.id);delete state.done[pl.id];if(state.active===pl.id)state.active=state.players[0]?state.players[0].id:null;save();render();toast(`${pl.name} left the crew.`)}
+        else{rm.dataset.sure="1";rm.textContent="Tap again to remove";rm.classList.add("danger");rm.classList.remove("ghost")}
+      });
+      acts.appendChild(rm);
+      list.appendChild(card);
+    });
+
+    // tasks
+    const d=p?(state.done[p.id]||{}):{};
+    document.querySelectorAll(".task").forEach(btn=>{
+      const on=!!d[btn.dataset.id]; btn.classList.toggle("is-done",on);
+      btn.textContent=on?"✓ Done!":btn.dataset.label; btn.setAttribute("aria-pressed",on);
+    });
+    // quizzes
+    document.querySelectorAll(".quiz").forEach(q=>{
+      const on=!!d[q.dataset.id]; const fb=q.querySelector(".feedback");
+      q.querySelectorAll(".choices button").forEach(b=>{b.classList.remove("wrong");b.classList.toggle("right",on&&b.hasAttribute("data-ok"))});
+      if(on){fb.textContent="✓ "+q.dataset.explain+` +${XP[q.dataset.id]} XP`;fb.className="feedback ok"}else{fb.textContent="";fb.className="feedback"}
+    });
+    // map
+    document.querySelectorAll(".station").forEach(st=>{
+      const ids=LESSONS[st.dataset.lesson]; const n=ids.filter(k=>d[k]).length;
+      st.classList.toggle("done",!!p&&n===ids.length);
+      st.querySelector(".prog").textContent=p?(n===ids.length?"✓ Complete":`${n} of ${ids.length} done`):`${ids.length} tasks`;
+    });
+    // certificate
+    const cert=$("#cert"); const won=!!(p&&d["boss-done"]);
+    cert.classList.toggle("show",won);
+    if(won){$("#cert-name").textContent=`${p.avatar} ${p.name}`;$("#cert-rank").textContent=rankOf(xp)[1]}
+  }
+
+  // Syntax colouring for code blocks + copy buttons
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print)\b|\b(\d+(?:\.\d+)?)\b/gm;
+  document.querySelectorAll("pre.code").forEach(pre=>{
+    const raw=pre.textContent;
+    if(pre.getAttribute("aria-label")) return; // diagram
+    let out="",last=0;
+    raw.replace(RE,(m,c,s,k,n,i)=>{out+=esc(raw.slice(last,i));
+      out+=c?`<span class="tok-com">${esc(m)}</span>`:s?`<span class="tok-str">${esc(m)}</span>`:k?`<span class="tok-kw">${esc(m)}</span>`:`<span class="tok-num">${esc(m)}</span>`;
+      last=i+m.length;return m});
+    out+=esc(raw.slice(last)); pre.innerHTML=out;
+    if(pre.parentElement.classList.contains("codebox")){
+      const b=document.createElement("button");b.className="copy";b.type="button";b.textContent="Copy";
+      b.addEventListener("click",()=>{
+        const done=()=>{b.textContent="Copied!";setTimeout(()=>b.textContent="Copy",1500)};
+        const fallback=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, now copy";setTimeout(()=>b.textContent="Copy",2000)};
+        try{navigator.clipboard.writeText(raw).then(done,fallback)}catch(e){fallback()}
+      });
+      pre.parentElement.appendChild(b);
+    }
+  });
+
+  // Starfield + little rocket
+  const cv=$("#stars"),ctx=cv.getContext("2d");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W,H,stars=[];
+  function size(){const r=cv.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    stars=Array.from({length:Math.round(W/6)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,s:Math.random()*.6+.2}))}
+  size(); addEventListener("resize",size);
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{ctx.globalAlpha=.5+.5*Math.sin(t*.03*s.s+s.x);ctx.fillStyle="#dbe5ff";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();if(!reduce){s.x-=s.s;if(s.x<0)s.x=W}});
+    ctx.globalAlpha=1;
+    // planet
+    ctx.fillStyle="#5ec2ff";ctx.beginPath();ctx.arc(W-50,H-10,46,0,7);ctx.fill();
+    ctx.fillStyle="rgba(0,0,0,.18)";ctx.beginPath();ctx.arc(W-38,H+2,46,0,7);ctx.fill();
+    // rocket
+    const rx=W*.28,ry=H/2+(reduce?0:Math.sin(t*.05)*6);
+    ctx.save();ctx.translate(rx,ry);
+    ctx.fillStyle="#ffb03a";ctx.beginPath();ctx.moveTo(-34,0);ctx.lineTo(-22,-7);ctx.lineTo(-22,7);ctx.fill();
+    ctx.fillStyle="#ffffff";ctx.beginPath();ctx.moveTo(26,0);ctx.quadraticCurveTo(10,-12,-22,-10);ctx.lineTo(-22,10);ctx.quadraticCurveTo(10,12,26,0);ctx.fill();
+    ctx.fillStyle="#e8541f";ctx.beginPath();ctx.moveTo(-14,-10);ctx.lineTo(-24,-20);ctx.lineTo(-24,-9);ctx.fill();ctx.beginPath();ctx.moveTo(-14,10);ctx.lineTo(-24,20);ctx.lineTo(-24,9);ctx.fill();
+    ctx.fillStyle="#5ec2ff";ctx.beginPath();ctx.arc(6,0,4.5,0,7);ctx.fill();
+    ctx.restore();
+    ctx.fillStyle="#a6f0a6";ctx.font="600 13px JetBrains Mono, monospace";ctx.fillText('print("BLAST OFF!")',W*.28+40,ry+4);
+    t++; if(!reduce) requestAnimationFrame(draw);
+  }
+  draw();
+
+  render();
+})();
+</script>
