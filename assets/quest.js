@@ -9,7 +9,8 @@
   const AVATARS = ["🧑‍🚀","👩‍🚀","👨‍🚀","🤖","👽","🐱","🐶","🦊","🐼","🦄","🐉","🦖"];
   const RANKS = [
     [0,"Code Cadet","🧑‍🚀"],[100,"Space Explorer","🔭"],[250,"Rocket Pilot","🛸"],
-    [450,"Star Captain","🌟"],[750,"Galaxy Guardian","🛡️"],[1100,"Fleet Commander","🎖️"]
+    [450,"Star Captain","🌟"],[750,"Galaxy Guardian","🛡️"],[1100,"Fleet Commander","🎖️"],
+    [1500,"Nebula Navigator","🌌"],[2000,"Cosmic Legend","🏆"]
   ];
   const BADGES = [
     // World 1
@@ -31,7 +32,27 @@
     {w:2,icon:"🫂",name:"Dream Team",how:"Do all 4 World 2 pair activities",req:["m1-pair","m2-pair","m3-pair","m4-pair"]},
     {w:2,icon:"⚡",name:"Super Hero Coder",how:"Finish all 4 World 2 Hero (⭐⭐⭐) challenges",req:["m1-c3","m2-c3","m3-c3","m4-c3"]},
     {w:2,icon:"🥤",name:"Box Swapper",how:"Play the Box Swap game",req:["w2-un"]},
-    {w:2,icon:"🛂",name:"World 2 Champion",how:"Beat the Space Passport boss",req:["w2-boss"]}
+    {w:2,icon:"🛂",name:"World 2 Champion",how:"Beat the Space Passport boss",req:["w2-boss"]},
+    // World 3
+    {w:3,icon:"⚖️",name:"True or False",how:"Run your first comparison program in Lesson 1",req:["d1-try"]},
+    {w:3,icon:"🚦",name:"Decision Maker",how:"Finish a Lesson 2 challenge (any level)",any:["d2-c1","d2-c2","d2-c3"]},
+    {w:3,icon:"🔀",name:"Path Finder",how:"Finish a Lesson 3 challenge (any level)",any:["d3-c1","d3-c2","d3-c3"]},
+    {w:3,icon:"🎲",name:"Quiz Show Host",how:"Get every Lesson 4 quiz question right",req:["d4-q1","d4-q2","d4-q3"]},
+    {w:3,icon:"🔦",name:"Bug Detective",how:"Fix all 4 World 3 bug hunts",req:["d1-bug","d2-bug","d3-bug","d4-bug"]},
+    {w:3,icon:"🧩",name:"Perfect Pair",how:"Do all 4 World 3 pair activities",req:["d1-pair","d2-pair","d3-pair","d4-pair"]},
+    {w:3,icon:"🌠",name:"Mega Hero Coder",how:"Finish all 4 World 3 Hero (⭐⭐⭐) challenges",req:["d1-c3","d2-c3","d3-c3","d4-c3"]},
+    {w:3,icon:"🙋",name:"If-Machine",how:"Play the Human If-Machine game",req:["w3-un"]},
+    {w:3,icon:"🗺️",name:"World 3 Champion",how:"Beat the Space Adventure boss",req:["w3-boss"]},
+    // World 4
+    {w:4,icon:"🔁",name:"Loop Starter",how:"Run your first loop in Lesson 1",req:["r1-try"]},
+    {w:4,icon:"⏱️",name:"Count Master",how:"Finish a Lesson 2 challenge (any level)",any:["r2-c1","r2-c2","r2-c3"]},
+    {w:4,icon:"🖼️",name:"Loop Artist",how:"Finish a Lesson 3 challenge (any level)",any:["r3-c1","r3-c2","r3-c3"]},
+    {w:4,icon:"♾️",name:"While Wizard",how:"Get every Lesson 4 quiz question right",req:["r4-q1","r4-q2","r4-q3"]},
+    {w:4,icon:"🕷️",name:"Bug Hunter Pro",how:"Fix all 4 World 4 bug hunts",req:["r1-bug","r2-bug","r3-bug","r4-bug"]},
+    {w:4,icon:"👯",name:"Loop Buddies",how:"Do all 4 World 4 pair activities",req:["r1-pair","r2-pair","r3-pair","r4-pair"]},
+    {w:4,icon:"💫",name:"Ultra Hero Coder",how:"Finish all 4 World 4 Hero (⭐⭐⭐) challenges",req:["r1-c3","r2-c3","r3-c3","r4-c3"]},
+    {w:4,icon:"💃",name:"Loop Dancer",how:"Play the Loop Dance game",req:["w4-un"]},
+    {w:4,icon:"🪐",name:"World 4 Champion",how:"Beat the Hidden Planet boss",req:["w4-boss"]}
   ];
 
   const XP = {};
@@ -180,7 +201,7 @@
 
   // ---------- code colouring + copy buttons ----------
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print|input|int)\b|\b(\d+(?:\.\d+)?)\b/gm;
+  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print|input|int|if|elif|else|for|in|range|while|import|and|or|not|True|False|break)\b|\b(\d+(?:\.\d+)?)\b/gm;
   document.querySelectorAll("pre.code").forEach(pre=>{
     if(pre.getAttribute("aria-label")) return; // diagrams stay plain
     const raw=pre.textContent; let out="",last=0;

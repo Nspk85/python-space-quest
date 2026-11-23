@@ -91,7 +91,13 @@
   // ---------- Python ----------
   let pyReady = null, py = null;
   let echo = ""; // text printed since the last newline, used as the input() question
+  const MAX_OUT = 20000;
   function write(text, cls){
+    const isMessage = cls && cls !== "typed";
+    if(!isMessage && out.textContent.length > MAX_OUT){
+      if(!out.dataset.capped){ out.dataset.capped="1"; const n=document.createElement("span"); n.className="pad-note"; n.textContent="\n(Lots of output! Py-Bot stopped showing more.)\n"; out.appendChild(n); }
+      return;
+    }
     if(cls){ const s=document.createElement("span"); s.className=cls; s.textContent=text; out.appendChild(s); }
     else out.appendChild(document.createTextNode(text));
     out.scrollTop = out.scrollHeight;
@@ -111,11 +117,13 @@
       p.setStderr({ write: buf=>{ write(dec.decode(buf), "pad-err"); return buf.length; } });
       p.setStdin({ stdin: ()=>{
         const question = echo.trim() || "Py-Bot is asking you something:";
-        let ans = window.prompt(question, "");
-        if(ans === null) ans = "";
-        write(ans + "\n", "typed"); echo = "";
+        const ans = window.prompt(question, "");
+        echo = "";
+        if(ans === null){ write("\n"); return null; }   // Cancel = stop the program
+        write(ans + "\n", "typed");
         return ans;
       }});
+      p.runPython(RUNNER);
       status.textContent = "Python is ready";
       return p;
     }).catch(err=>{
@@ -126,40 +134,82 @@
     return pyReady;
   }
 
-  function friendlyError(msg){
-    // Keep only the part about the learner's code, not Pyodide's internals.
-    const lines = msg.split("\n");
-    let start = lines.findIndex(l=>l.includes('File "<exec>"'));
-    if(start<0) start = Math.max(0, lines.length-2);
-    const kept = lines.slice(start).filter(l=>l.trim()!=="")
-      .map(l=>l.replace('File "<exec>", ',"").replace(/^\s{2}/,""))
-      .filter(l=>!/^\s*line \d+(, in <module>)?\s*$/.test(l));
-    const last = kept[kept.length-1] || msg;
-    const lineNo = (msg.match(/File "<exec>", line (\d+)(?![\s\S]*File "<exec>")/)||[])[1];
-    return {detail: kept.join("\n"), last, lineNo};
-  }
+  // Runs the learner's code with a 5-second safety stop (time spent answering input() doesn't count),
+  // and reports errors about the learner's own lines only.
+  const RUNNER = `
+import sys, time, builtins, traceback
+class _TooLong(Exception):
+    pass
+def _quest_run(src, limit=5.0):
+    g = {"__name__": "__main__"}
+    paused = [0.0]
+    start = time.perf_counter()
+    real_input = builtins.input
+    def _input(prompt=""):
+        t = time.perf_counter()
+        try:
+            return real_input(prompt)
+        finally:
+            paused[0] += time.perf_counter() - t
+    g["input"] = _input
+    def _trace(frame, event, arg):
+        if time.perf_counter() - start - paused[0] > limit:
+            raise _TooLong()
+        return _trace
+    try:
+        code = compile(src, "main.py", "exec")
+    except SyntaxError as e:
+        text = "".join(traceback.format_exception_only(type(e), e))
+        text = "\\n".join(l for l in text.splitlines() if not l.strip().startswith('File "main.py"'))
+        return ["error", e.lineno or 0, text]
+    sys.settrace(_trace)
+    try:
+        exec(code, g)
+    except _TooLong:
+        return ["toolong", 0, ""]
+    except EOFError:
+        return ["cancel", 0, ""]
+    except BaseException as e:
+        frames = [f for f in traceback.extract_tb(e.__traceback__) if f.filename == "main.py"]
+        line = frames[-1].lineno if frames else 0
+        text = "".join(traceback.format_exception_only(type(e), e)).strip()
+        lines = src.splitlines()
+        if 0 < line <= len(lines) and lines[line-1].strip():
+            text = "    " + lines[line-1].strip() + "\\n" + text
+        return ["error", line, text]
+    finally:
+        sys.settrace(None)
+    return ["ok", 0, ""]
+`;
 
   runBtn.addEventListener("click", async ()=>{
     let src = code.value;
     if(!src.trim()){ out.textContent=""; write("Type some code first, then tap ▶ Run.\n","pad-note"); return; }
     if(/[“”‘’]/.test(src)){ src = src.replace(/[“”]/g,'"').replace(/[‘’]/g,"'"); code.value = src; code.dispatchEvent(new Event("input")); }
-    runBtn.disabled = true; out.textContent = ""; echo = "";
+    runBtn.disabled = true; out.textContent = ""; delete out.dataset.capped; echo = "";
     try{
       await warmUp();
       status.textContent = "Running…";
       await new Promise(r=>setTimeout(r,30)); // let the screen update first
-      const globals = py.globals.get("dict")();
-      try{
-        py.runPython(src, {globals});
+      const runner = py.globals.get("_quest_run");
+      const res = runner(src); runner.destroy();
+      const [kind, lineNo, text] = res.toJs(); res.destroy();
+      const nl = ()=>{ if(out.textContent && !out.textContent.endsWith("\n")) write("\n"); };
+      if(kind === "ok"){
         status.textContent = "Done ✓";
         if(!out.textContent) write("(Your program ran, but it didn't print anything.)\n","pad-note");
-      }catch(err){
-        const e = friendlyError(String(err && err.message || err));
-        write((out.textContent && !out.textContent.endsWith("\n")) ? "\n" : "");
-        write("🐛 Bug clue" + (e.lineNo ? " on line " + e.lineNo : "") + ":\n", "pad-err-title");
-        write(e.detail + "\n", "pad-err");
+      } else if(kind === "toolong"){
+        nl(); write("⏰ Py-Bot stopped your program after 5 seconds.\n", "pad-err-title");
+        write("Is there a loop that never ends? Check that something inside your while loop changes, so the loop can finish.\n", "pad-err");
+        status.textContent = "Stopped: it ran too long";
+      } else if(kind === "cancel"){
+        nl(); write("You tapped Cancel, so the program stopped. Tap ▶ Run to start again.\n", "pad-note");
+        status.textContent = "Stopped";
+      } else {
+        nl(); write("🐛 Bug clue" + (lineNo ? " on line " + lineNo : "") + ":\n", "pad-err-title");
+        write(text + "\n", "pad-err");
         status.textContent = "Found a bug clue. Read the red text!";
-      }finally{ globals.destroy(); }
+      }
     }catch(e){ /* status already explains the download problem */ }
     runBtn.disabled = false;
   });

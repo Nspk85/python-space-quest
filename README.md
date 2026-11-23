@@ -8,8 +8,8 @@ A space-themed Python course for complete beginners, written for kids around 10 
 |---|---|---|
 | 1 · Talking to the Computer | `print()`, text, order, math, text art | [world1.html](world1.html) |
 | 2 · Magic Boxes | variables, `input()` and `int()` | [world2.html](world2.html) |
-| 3 · Choose Your Path | `if` / `else` | coming soon |
-| 4 · Loop-de-Loop Forest | loops | coming soon |
+| 3 · Choose Your Path | comparisons, `if` / `elif` / `else`, `random` | [world3.html](world3.html) |
+| 4 · Loop-de-Loop Forest | `for`, `range()`, loop art, `while` | [world4.html](world4.html) |
 | 5 · Spell Books | functions | coming soon |
 | 6 · Treasure Chests | lists | coming soon |
 | 7 · Final Boss | team project | coming soon |
@@ -24,7 +24,7 @@ A space-themed Python course for complete beginners, written for kids around 10 
 ## How it's built
 
 - `assets/quest.css` and `assets/quest.js` are shared by every World: page styles, crew, XP, ranks, badges, code colouring and copy buttons.
-- `assets/codepad.js` adds the Code Pad: an editor with symbol keys, a Run button and "Try it" buttons on every example. It runs Python with [Pyodide](https://pyodide.org), hosted in `assets/pyodide/` (downloaded on the first Run, about 14 MB). `input()` answers are typed into a pop-up box.
+- `assets/codepad.js` adds the Code Pad: an editor with symbol keys, a Run button and "Try it" buttons on every example. It runs Python with [Pyodide](https://pyodide.org), hosted in `assets/pyodide/` (downloaded on the first Run, about 14 MB). `input()` answers are typed into a pop-up box; tapping Cancel stops the program. A program that runs longer than 5 seconds (not counting time spent answering) is stopped, so endless loops can't freeze the page.
 - Each World page sets `window.QUEST` (its World number, boss task and lesson task lists) before loading `quest.js`.
 - Progress is saved in the browser under one key, so the crew and total XP carry across Worlds. Progress saved by the first World 1 release is imported automatically.
 

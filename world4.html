@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Python Space Quest: World 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/quest.css">
+</head>
+<body>
+
+<div class="crewbar">
+  <div class="wrap">
+    <label for="active-player">Who's playing?</label>
+    <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars" data-text="for i in range(3):" data-planet="#46c79a"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 4</span>
+  <h1>Loop-de-Loop Forest</h1>
+  <p class="lead">The ship lands on a planet covered in spinning space trees. Py-Bot has a LOT of jobs to do here: count 100 seeds, water every tree, keep flying until the fuel runs out. Typing the same line 100 times? No way! In World 4 you'll teach Py-Bot to <b>repeat</b> things with loops.</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP BEEP BEEP BEEP BEEP… that took 5 lines! What if you want 1,000 beeps? Teach me loops, and I'll do it in 2 lines. BOOP!"</p>
+  </div>
+  <p class="muted">Coming from <a href="world3.html">World 3</a>? Your crew, XP and badges are already here.</p>
+</header>
+
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map">
+      <a class="station" href="#lesson-1" data-lesson="r1"><div class="planet p1"></div><span class="name">1 · Repeat After Me</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="r2"><div class="planet p2"></div><span class="name">2 · Counting Machine</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="r3"><div class="planet p3"></div><span class="name">3 · Loop Art</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="r4"><div class="planet p4"></div><span class="name">4 · Keep Going Until…</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Hidden Planet</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Same crew as before, with all your XP. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>World 4 badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="setup" aria-labelledby="setup-h">
+  <div class="stack">
+    <span class="eyebrow">Good to know for this World</span>
+    <h2 id="setup-h">Py-Bot's safety stop</h2>
+    <p>Loops are powerful, and sometimes a loop forgets how to stop and goes round and round forever. Don't worry! If a program runs for more than <b>5 seconds</b>, the Code Pad stops it and shows a ⏰ message. Time spent typing answers doesn't count.</p>
+    <p>Indenting works just like in World 3: the lines with <b>4 spaces</b> in front are the ones that repeat.</p>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="r1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="r1-h">Repeat After Me</h2></div></div>
+    <p class="story"><b>Story:</b> The forest trees only wake up if Py-Bot beeps at them. There are lots of trees! Instead of writing <code class="inl">print("Beep!")</code> again and again, let's tell Py-Bot to repeat it.</p>
+    <div class="bigidea">
+      <h4>The big idea: a <code class="inl">for</code> loop repeats lines</h4>
+      <p><code class="inl">for i in range(3):</code> means "do the indented lines <b>3 times</b>." Change the number to repeat more or fewer times. The box <code class="inl">i</code> counts the laps for you (more about that in Lesson 2).</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a for loop">for i in range(3):        ← "repeat 3 times", then a colon
+····print("Beep!")        ← this line repeats
+print("Done!")            ← no indent: runs once, after the loop</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">for i in range(3):
+    print("Beep!")
+print("Done!")</pre></div>
+      <pre class="out">Beep!
+Beep!
+Beep!
+Done!</pre>
+      <div class="task-row"><button class="task" data-id="r1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Change <code class="inl">3</code> to <code class="inl">10</code>. Then try <code class="inl">100</code>. Two lines of code, 100 beeps!</li>
+        <li>Add a second indented line inside the loop: <code class="inl">print("🌳 A tree wakes up!")</code>. Both lines repeat.</li>
+        <li>Put spaces in front of <code class="inl">print("Done!")</code>. Now what happens?</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="r1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Print your name 5 times using a loop.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">for i in range(5):</code> then an indented print.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Print <code class="inl">"Hip hip hooray!"</code> 3 times, and then <code class="inl">"🎉 Happy launch day!"</code> just once at the end.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Which line should be indented, and which one shouldn't?</p></details></div>
+          <div class="task-row"><button class="task" data-id="r1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Ask "How many cheers?" and repeat a cheer that many times. Then ask for a cheer word too, so the player picks both!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p><code class="inl">times = int(input("How many cheers? "))</code></p></details><details><summary>Hint 2</summary><p>You can put a box in the brackets: <code class="inl">range(times)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="r1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot wanted "Jump!" 3 times and "All done!" once. There are <b>2 bugs</b>: one crash and one sneaky bug.</p>
+      <div class="codebox"><pre class="code bad">for i in range("3"):
+    print("Jump!")
+    print("All done!")</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Is <code class="inl">"3"</code> a number or text? <code class="inl">range()</code> needs a number.</p></details><details><summary>Hint 2</summary><p>Once it runs, how many times does "All done!" print? Which lines repeat?</p></details></div>
+      <div class="task-row"><button class="task" data-id="r1-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Guess the count <span class="xp">+10 XP</span></h4>
+      <p>The Navigator secretly writes a loop on paper with a number in <code class="inl">range()</code> and two lines inside. The Driver types it. Before running, both guess how many lines will appear on the screen. Run it and check! Swap and repeat.</p>
+      <div class="task-row"><button class="task" data-id="r1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="r1-q1" data-xp="10" data-explain="Yes! range(4) means 4 times.">
+        <p class="q">1. How many times does <code class="inl">for i in range(4):</code> repeat?</p>
+        <div class="choices"><button>3</button><button data-ok>4</button><button>5</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="r1-q2" data-xp="10" data-explain="Correct! Only the indented lines repeat.">
+        <p class="q">2. Which lines repeat in a loop?</p>
+        <div class="choices"><button>Every line in the program</button><button data-ok>The indented lines under the for</button><button>Only the last line</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Loop Dance</h2>
+    <p>The leader writes dance programs on paper and everyone follows them:</p>
+    <ul class="list">
+      <li><b>Without a loop:</b> "clap, clap, clap, clap, stomp". Then the same thing with a loop: "<b>for</b> 4 times: clap", then "stomp". Which was quicker to write?</li>
+      <li><b>Two moves in a loop:</b> "<b>for</b> 3 times: spin, then jump". Everyone does spin-jump, spin-jump, spin-jump.</li>
+      <li><b>Counting loop:</b> "<b>for</b> n from 1 to 4: clap n times". (1 clap, 2 claps, 3 claps, 4 claps!)</li>
+      <li><b>While loop = freeze dance!</b> "<b>while</b> the music is playing: dance". When the leader stops the music, everyone freezes. The loop ends!</li>
+    </ul>
+    <p class="muted">What you're learning: loops save writing, a loop can repeat several steps, and a while loop keeps going until something changes.</p>
+    <div class="task-row"><button class="task" data-id="w4-un" data-xp="20">I played Loop Dance +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="r2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 35 minutes</span><h2 id="r2-h">Counting Machine</h2></div></div>
+    <p class="story"><b>Story:</b> Remember the countdown in World 1? It took 10 lines to count from 10 to 1. Now Py-Bot can do it in 2 lines! And it can count seeds, times tables, and anything else.</p>
+    <div class="bigidea">
+      <h4>The big idea: the loop box counts for you</h4>
+      <p>Each time the loop goes round, the box after <code class="inl">for</code> holds the next number. <code class="inl">range()</code> decides which numbers:</p>
+    </div>
+    <pre class="code" aria-label="Diagram of range with three numbers">range(1, 6)        → 1 2 3 4 5        (stops BEFORE 6!)
+range(0, 20, 5)    → 0 5 10 15        (jumps by 5)
+range(10, 0, -1)   → 10 9 8 ... 2 1   (counts down)
+      │   │   └─ step: how much to jump each time
+      │   └─ stop: Python stops just before this number
+      └─ start: the first number</pre>
+    <div class="callout"><p><b>Watch out:</b> <code class="inl">range(5)</code> on its own starts at <b>0</b>: 0 1 2 3 4. That's still 5 numbers, just starting from zero. Computers love starting at 0!</p></div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">for n in range(10, 0, -1):     # count down from 10
+    print(n, "...")
+print("BLAST OFF! 🚀")</pre></div>
+      <pre class="out">10 ...
+9 ...
+8 ...
+7 ...
+6 ...
+5 ...
+4 ...
+3 ...
+2 ...
+1 ...
+BLAST OFF! 🚀</pre>
+      <div class="task-row"><button class="task" data-id="r2-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Count up instead: <code class="inl">for n in range(1, 11):</code></li>
+        <li>Count by fives: <code class="inl">range(0, 51, 5)</code></li>
+        <li>A times table in 2 lines:<br><code class="inl">for n in range(1, 11):</code><br><code class="inl">····print(n, "x 7 =", n * 7)</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="r2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Count from 1 to 20.</p>
+          <div class="hints"><details><summary>Hint</summary><p>The stop number is one more than where you want to end.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Ask which times table to practice, then print it from 1 to 10.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">table = int(input("Which times table? "))</code>, then use <code class="inl">n * table</code> in the loop.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>The famous puzzle:</b> what do you get if you add up every number from 1 to 100? A kid called Carl Friedrich Gauss solved it in his head over 200 years ago. Make Python do it with a <code class="inl">total</code> box and a loop!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Start with <code class="inl">total = 0</code> before the loop.</p></details><details><summary>Hint 2</summary><p>Inside the loop: <code class="inl">total = total + n</code>. Print <code class="inl">total</code> after the loop (no indent).</p></details></div>
+          <div class="task-row"><button class="task" data-id="r2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Two programs, <b>one sneaky bug each</b>. Neither one crashes!</p>
+      <p><b>Program A</b> should count 1 to 10, but stops at 9.</p>
+      <div class="codebox"><pre class="code bad">for n in range(1, 10):
+    print(n)</pre></div>
+      <p><b>Program B</b> should count down from 5, but prints nothing except the last line.</p>
+      <div class="codebox"><pre class="code bad">for n in range(5, 0):
+    print(n)
+print("Go!")</pre></div>
+      <div class="hints"><details><summary>Hint (A)</summary><p>Python stops <b>before</b> the stop number.</p></details><details><summary>Hint (B)</summary><p>To count down, you need the third number: the step.</p></details></div>
+      <div class="task-row"><button class="task" data-id="r2-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Mystery range <span class="xp">+10 XP</span></h4>
+      <p>The Navigator writes a secret <code class="inl">range()</code> with 3 numbers, like <code class="inl">range(3, 30, 3)</code>. The Driver must guess which numbers it will print and write them on paper. Then run it with a loop and check! Swap.</p>
+      <div class="task-row"><button class="task" data-id="r2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="r2-q1" data-xp="10" data-explain="Yes! It stops just before 5.">
+        <p class="q">1. Which numbers does <code class="inl">range(1, 5)</code> give?</p>
+        <div class="choices"><button>1 2 3 4 5</button><button data-ok>1 2 3 4</button><button>0 1 2 3 4</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="r2-q2" data-xp="10" data-explain="Correct! On its own, range starts at 0.">
+        <p class="q">2. What is the first number in <code class="inl">range(5)</code>?</p>
+        <div class="choices"><button data-ok>0</button><button>1</button><button>5</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="r3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 30 minutes</span><h2 id="r3-h">Loop Art</h2></div></div>
+    <p class="story"><b>Story:</b> Remember text art from World 1? Py-Bot wants to decorate the space forest with patterns, triangles and trees. With loops, the pictures can grow bigger and bigger!</p>
+    <div class="bigidea">
+      <h4>The big idea: loops + text multiplication = patterns</h4>
+      <p>In World 1, <code class="inl">"⭐" * 3</code> made ⭐⭐⭐. Now use the loop box as the number: on each lap the row gets longer, and a triangle appears!</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">for row in range(1, 6):
+    print("⭐" * row)       # row is 1, then 2, then 3...</pre></div>
+      <pre class="out">⭐
+⭐⭐
+⭐⭐⭐
+⭐⭐⭐⭐
+⭐⭐⭐⭐⭐</pre>
+      <div class="task-row"><button class="task" data-id="r3-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Make it upside down: <code class="inl">range(5, 0, -1)</code></li>
+        <li>Make it bigger: <code class="inl">range(1, 11)</code>, and try a different emoji like 🌲 or 🍕.</li>
+        <li>A space tree! Type this and see what happens. The spaces push each row to the middle:</li>
+      </ul>
+      <div class="codebox"><pre class="code">for row in range(1, 6):
+    print(" " * (5 - row) + "*" * (2 * row - 1))
+print("    |")</pre></div>
+      <pre class="out">    *
+   ***
+  *****
+ *******
+*********
+    |</pre>
+      <div class="task-row"><button class="task" data-id="r3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Draw a square that's 5 rows of 5 <code class="inl">#</code> symbols.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Every row is the same: <code class="inl">"#" * 5</code>. Repeat it 5 times.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Ask "How big?" and draw a triangle of that size. Then add a number at the start of each row, like <code class="inl">3 ⭐⭐⭐</code>.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">range(1, size + 1)</code> and <code class="inl">print(row, "⭐" * row)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="r3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Loop rocket:</b> draw a rocket using at least 2 loops: one for the body (several windows <code class="inl">|o|</code>) and one for the flames that get smaller. Bonus: ask how tall the rocket should be!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Nose: one print. Body: <code class="inl">for i in range(4): print("  |o|")</code>. Flames: a loop that counts down.</p></details><details><summary>Hint 2</summary><p>Flames: <code class="inl">for f in range(3, 0, -1):</code> and print spaces plus <code class="inl">"*" * f</code>.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>This triangle should have 5 rows of stars, but the first line is empty and the biggest row only has 4 stars. <b>1 sneaky bug</b>.</p>
+      <div class="codebox"><pre class="code bad">for row in range(5):
+    print("*" * row)</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>What's the first number in <code class="inl">range(5)</code>? What is <code class="inl">"*" * 0</code>?</p></details></div>
+      <div class="task-row"><button class="task" data-id="r3-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Pattern copycat <span class="xp">+10 XP</span></h4>
+      <p>The Navigator draws a pattern on paper (like a staircase, a square, or a triangle of 🍩). The Driver must write a loop that makes exactly that pattern. Swap and draw a harder one!</p>
+      <div class="task-row"><button class="task" data-id="r3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="r3-q1" data-xp="10" data-explain="Yes! Text times 3 repeats it 3 times.">
+        <p class="q">1. What does <code class="inl">print("ab" * 3)</code> show?</p>
+        <div class="choices"><button data-ok>ababab</button><button>ab3</button><button>aaabbb</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="r3-q2" data-xp="10" data-explain="Correct! row is 1 on the first lap, so 1 star.">
+        <p class="q">2. In <code class="inl">for row in range(1, 4): print("*" * row)</code>, how many stars are on the first line?</p>
+        <div class="choices"><button>0</button><button data-ok>1</button><button>3</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="r4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 35 minutes</span><h2 id="r4-h">Keep Going Until…</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot wants to fly around the forest planet until the fuel runs out. But how many laps is that? Py-Bot doesn't know! It needs a loop that keeps going <b>while</b> there's still fuel.</p>
+    <div class="bigidea">
+      <h4>The big idea: a <code class="inl">while</code> loop repeats as long as something is True</h4>
+      <p><code class="inl">while fuel &gt; 0:</code> means "keep repeating the indented lines, as long as the fuel is more than 0." Before each lap, Python checks the question again. When it becomes False, the loop stops.</p>
+      <p style="margin-top:8px"><b>Use <code class="inl">for</code></b> when you know how many times. <b>Use <code class="inl">while</code></b> when you keep going until something happens.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">fuel = 100
+while fuel &gt; 0:
+    print("Flying... fuel:", fuel)
+    fuel = fuel - 25           # use some fuel each lap
+print("Out of fuel! Landing. 🛬")</pre></div>
+      <pre class="out">Flying... fuel: 100
+Flying... fuel: 75
+Flying... fuel: 50
+Flying... fuel: 25
+Out of fuel! Landing. 🛬</pre>
+      <div class="trace" aria-label="The fuel box each lap">
+        <div class="boxv"><small>lap 1</small>100</div><div class="boxv"><small>lap 2</small>75</div><div class="boxv"><small>lap 3</small>50</div><div class="boxv"><small>lap 4</small>25</div><div class="boxv"><small>check</small>0 &gt; 0? No, stop!</div>
+      </div>
+      <div class="task-row"><button class="task" data-id="r4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Use less fuel each lap: <code class="inl">fuel = fuel - 10</code>. How many laps now?</li>
+        <li>A loop that waits for the right answer. Try it, and type some wrong passwords first:<br><code class="inl">password = ""</code><br><code class="inl">while password != "rocket":</code><br><code class="inl">····password = input("Password? ")</code><br><code class="inl">print("Access granted! 🚀")</code></li>
+        <li>Brave test: delete the line <code class="inl">fuel = fuel - 25</code> from the main example and run it. The fuel never goes down, so the loop never ends… until the safety stop catches it after 5 seconds!</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="r4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Keep asking "What's the magic word?" until the player types <code class="inl">please</code>. Then print "Thank you! ✨"</p>
+          <div class="hints"><details><summary>Hint</summary><p>Copy the password loop from Change it, and change the words.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Are we there yet?</b> Keep asking "Are we there yet?" until the answer is <code class="inl">yes</code>. Count how many times you asked, and print the count at the end.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Start with <code class="inl">answer = ""</code> and <code class="inl">count = 0</code>.</p></details><details><summary>Hint 2</summary><p>Inside the loop, add 1 to count each time you ask.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Piggy bank:</b> you save 7 coins every week. How many weeks until you have at least 100 coins? Use a while loop and print each week, like <code class="inl">Week 3: 21 coins</code>.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Two boxes: <code class="inl">coins = 0</code> and <code class="inl">week = 0</code>.</p></details><details><summary>Hint 2</summary><p><code class="inl">while coins &lt; 100:</code>, and inside it add 1 to week and 7 to coins, then print.</p></details></div>
+          <div class="task-row"><button class="task" data-id="r4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot should run 5 laps, but this loop never stops! The safety stop catches it. Find the <b>1 missing line</b>.</p>
+      <div class="codebox"><pre class="code bad">lap = 1
+while lap &lt;= 5:
+    print("Lap", lap)
+print("Race finished! 🏁")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>What's in the <code class="inl">lap</code> box on every lap? Does anything ever change it?</p></details></div>
+      <div class="task-row"><button class="task" data-id="r4-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Space fortune teller <span class="xp">+10 XP</span></h4>
+      <p>Build a fortune teller together! It keeps asking "Ask me a question (or type bye):" and gives a random answer, until someone types <code class="inl">bye</code>.</p>
+      <div class="codebox"><pre class="code">import random
+question = ""
+while question != "bye":
+    question = input("Ask me a question (or type bye): ")
+    if question != "bye":
+        number = random.randint(1, 3)
+        if number == 1:
+            print("🔮 Yes, definitely!")
+        elif number == 2:
+            print("🔮 No way!")
+        else:
+            print("🔮 Ask again later...")
+print("The fortune teller floats away. 👋")</pre></div>
+      <p class="muted">Then add your own answers by changing <code class="inl">randint(1, 3)</code> to a bigger number and adding more <code class="inl">elif</code>s.</p>
+      <div class="task-row"><button class="task" data-id="r4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="r4-q1" data-xp="10" data-explain="Yes! The loop checks the question before every lap.">
+        <p class="q">1. When does a <code class="inl">while</code> loop stop?</p>
+        <div class="choices"><button>After 10 laps</button><button data-ok>When its question becomes False</button><button>Never</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="r4-q2" data-xp="10" data-explain="Correct! Something inside the loop must change, or it goes forever.">
+        <p class="q">2. What happens if nothing inside a while loop changes the box it's checking?</p>
+        <div class="choices"><button>It stops straight away</button><button data-ok>It loops forever (the safety stop catches it)</button><button>Python fixes it</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="r4-q3" data-xp="10" data-explain="Right! You don't know how many guesses it will take, so use while.">
+        <p class="q">3. A guessing game keeps going until you get it right. Which loop fits best?</p>
+        <div class="choices"><button>for</button><button data-ok>while</button><button>No loop</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">The Hidden Planet</h2></div></div>
+    <p class="story"><b>Story:</b> Somewhere in the forest galaxy, there's a hidden planet numbered from 1 to 50. Py-Bot's scanner can only say "higher" or "lower". Build a <b>planet-hunting game</b> where players guess until they find it!</p>
+    <div class="stack">
+      <h4>Your game must:</h4>
+      <ul class="list">
+        <li>Start with a comment saying who made it, and a title</li>
+        <li>Pick a <b>random</b> secret number from 1 to 50 (World 3)</li>
+        <li>Use a <code class="inl">while</code> loop that keeps asking for a guess until it's correct (Lesson 4)</li>
+        <li>Say <b>"Higher!"</b> or <b>"Lower!"</b> after each wrong guess (World 3)</li>
+        <li>Count the guesses in a box (World 2)</li>
+        <li>At the end, print a victory picture made with a <code class="inl">for</code> loop (Lesson 3), and a message that depends on how many guesses it took</li>
+      </ul>
+    </div>
+    <pre class="out">=== THE HIDDEN PLANET ===
+Guess the planet (1-50): <span class="typed">25</span>
+🔭 Higher!
+Guess the planet (1-50): <span class="typed">38</span>
+🔭 Lower!
+Guess the planet (1-50): <span class="typed">31</span>
+🪐 FOUND IT in 3 guesses!
+*
+**
+***
+Amazing scanning, captain!</pre>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">🪐 Boss · +50 XP</span><p>Build the game and challenge your crew: who can find the planet in the fewest guesses?</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Start with <code class="inl">guess = 0</code> so the while question works the first time.</p></details><details><summary>Hint 2</summary><p>Inside the loop: ask, add 1 to the count, then <code class="inl">if guess &lt; secret:</code> "Higher!", <code class="inl">elif guess &gt; secret:</code> "Lower!".</p></details><details><summary>Hint 3</summary><p>Victory picture: <code class="inl">for row in range(1, guesses + 1):</code> prints one row per guess!</p></details></div>
+        <div class="task-row"><button class="task" data-id="w4-boss" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 4: Loop-de-Loop Forest</b><br>and holds the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">🔁 🪐 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Coming next: World 5 · Spell Books</h4>
+      <p>Py-Bot will learn to make its own commands, called <b>functions</b>: write the spell once, then use it whenever you want!</p>
+    </div>
+  </div>
+</section>
+
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder: World 4</h2>
+    <p>Read the <b>last line</b> of the bug clue first, and check the line number. Indentation errors from <a href="world3.html#errors">World 3</a> happen a lot with loops too.</p>
+    <div class="tablewrap"><table>
+      <tr><th>The bug clue says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td>⏰ Py-Bot stopped your program after 5 seconds</td><td>A loop never ended. Usually a while loop where nothing changes the box it checks.</td><td>Make sure something inside the loop changes, like <code>lap = lap + 1</code>.</td></tr>
+      <tr><td><code>TypeError: 'str' object cannot be interpreted as an integer</code></td><td><code>range()</code> was given text, not a number.</td><td>Use <code>int(input(...))</code>, or remove quotes around the number.</td></tr>
+      <tr><td><code>SyntaxError: expected ':'</code></td><td>The <code>for</code> or <code>while</code> line is missing its colon.</td><td>Add <code>:</code> at the end of the line.</td></tr>
+      <tr><td><code>IndentationError: expected an indented block after 'for' statement</code></td><td>The lines to repeat need spaces in front.</td><td>Add 4 spaces (tap Tab).</td></tr>
+      <tr><td>A line repeats when it shouldn't (or doesn't when it should)</td><td>The indentation is wrong. Indented lines repeat, and others run once.</td><td>Add or remove the 4 spaces in front of that line.</td></tr>
+      <tr><td>The count is one short, or starts at 0</td><td><code>range()</code> stops <b>before</b> the stop number, and starts at 0 if you only give one number.</td><td>Use <code>range(1, 11)</code> to get 1 to 10.</td></tr>
+      <tr><td>A countdown prints nothing</td><td><code>range(5, 0)</code> can't count down without a step.</td><td>Add a step of -1: <code>range(5, 0, -1)</code></td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key: World 4</h2>
+    <p>Loops are where programs start to feel powerful. The trickiest ideas are <b>which lines repeat</b> (indentation), <b>range() stopping one early</b>, and <b>while loops that never end</b>. The Code Pad's 5-second safety stop makes infinite loops safe to explore.</p>
+
+    <details>
+      <summary>Common confusions, and what to say</summary>
+      <ul class="list">
+        <li><b>"Why does range(1, 10) stop at 9?"</b> Say: "The stop number is like a finish line. Python stops just before crossing it."</li>
+        <li><b>"Why does it start at 0?"</b> Computers like counting from 0. <code class="inl">range(5)</code> still gives 5 numbers.</li>
+        <li><b>Infinite loops:</b> trace the box on paper, lap by lap, like the Box Swap game in World 2. If it never changes, the loop never ends.</li>
+        <li><b>for vs while:</b> "Do you know how many times? Use for. Do you keep going until something happens? Use while."</li>
+        <li><b>The total pattern</b> (<code class="inl">total = total + n</code>) is a big idea. Act it out with a cup and slips if needed.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">for i in range(5):
+    print("Mia")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">for i in range(3):
+    print("Hip hip hooray!")
+print("🎉 Happy launch day!")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">times = int(input("How many cheers? "))
+word = input("What's the cheer? ")
+for i in range(times):
+    print(word, "!")</pre>
+        <p><b>Bug hunt.</b> <code class="inl">range("3")</code> gives <code class="inl">TypeError: 'str' object cannot be interpreted as an integer</code>, so remove the quotes. Then "All done!" prints 3 times, because it's indented. Remove its spaces.</p>
+        <pre class="code">for i in range(3):
+    print("Jump!")
+print("All done!")</pre>
+        <p><b>Quiz:</b> 1. 4 · 2. The indented lines under the for</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">for n in range(1, 21):
+    print(n)</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">table = int(input("Which times table? "))
+for n in range(1, 11):
+    print(n, "x", table, "=", n * table)</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">total = 0
+for n in range(1, 101):
+    total = total + n
+print("The total is", total)</pre><p>Answer: 5050. (Gauss's trick: 1 + 100 = 101, 2 + 99 = 101 and so on. That's 50 pairs, and 50 × 101 = 5050.)</p>
+        <p><b>Bug hunt A:</b> <code class="inl">range(1, 11)</code>. <b>Bug hunt B:</b> <code class="inl">range(5, 0, -1)</code>.</p>
+        <p><b>Quiz:</b> 1. 1 2 3 4 · 2. 0</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">for i in range(5):
+    print("#" * 5)</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">size = int(input("How big? "))
+for row in range(1, size + 1):
+    print(row, "⭐" * row)</pre>
+        <p><b>⭐⭐⭐ Hero</b> (any rocket counts)</p><pre class="code">height = int(input("How tall? "))
+print("   ^")
+for i in range(height):
+    print("  |o|")
+print(" &lt;|_|&gt;")
+for f in range(3, 0, -1):
+    print("  " + "*" * f)</pre>
+        <p><b>Bug hunt.</b> <code class="inl">range(5)</code> starts at 0, so the first row is <code class="inl">"*" * 0</code>, which is empty, and the last row has 4 stars. Use <code class="inl">range(1, 6)</code>.</p>
+        <p><b>Quiz:</b> 1. ababab · 2. 1</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>Change it:</b> with <code class="inl">fuel - 10</code>, it does 10 laps.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">word = ""
+while word != "please":
+    word = input("What's the magic word? ")
+print("Thank you! ✨")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">answer = ""
+count = 0
+while answer != "yes":
+    answer = input("Are we there yet? ")
+    count = count + 1
+print("You asked", count, "times!")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">coins = 0
+week = 0
+while coins &lt; 100:
+    week = week + 1
+    coins = coins + 7
+    print("Week", week, ":", coins, "coins")
+print("It took", week, "weeks!")</pre><p>Answer: 15 weeks (105 coins).</p>
+        <p><b>Bug hunt.</b> Add <code class="inl">lap = lap + 1</code> inside the loop, indented, after the print.</p>
+        <p><b>Quiz:</b> 1. When its question becomes False · 2. It loops forever · 3. while</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <pre class="code"># The Hidden Planet by Mia and Leo
+import random
+secret = random.randint(1, 50)
+guess = 0
+guesses = 0
+print("=== THE HIDDEN PLANET ===")
+while guess != secret:
+    guess = int(input("Guess the planet (1-50): "))
+    guesses = guesses + 1
+    if guess &lt; secret:
+        print("🔭 Higher!")
+    elif guess &gt; secret:
+        print("🔭 Lower!")
+print("🪐 FOUND IT in", guesses, "guesses!")
+for row in range(1, guesses + 1):
+    print("*" * row)
+if guesses &lt;= 5:
+    print("Amazing scanning, captain!")
+else:
+    print("Found it! Practice makes perfect.")</pre>
+        <p class="muted">Tip: the best strategy is to guess the middle each time (25, then 12 or 38, and so on). It never takes more than 6 guesses! Ask learners if they can work out why.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP in <b>every</b> World on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted"><a href="index.html">All Worlds</a> · <a href="world3.html">Back to World 3</a> · Next up: World 5 · Spell Books (coming soon)</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+window.QUEST={world:4,bossId:"w4-boss",lessons:{
+  r1:["r1-try","r1-change","r1-c1","r1-c2","r1-c3","r1-bug","r1-pair","r1-q1","r1-q2"],
+  r2:["r2-try","r2-change","r2-c1","r2-c2","r2-c3","r2-bug","r2-pair","r2-q1","r2-q2"],
+  r3:["r3-try","r3-change","r3-c1","r3-c2","r3-c3","r3-bug","r3-pair","r3-q1","r3-q2"],
+  r4:["r4-try","r4-change","r4-c1","r4-c2","r4-c3","r4-bug","r4-pair","r4-q1","r4-q2","r4-q3"],
+  boss:["w4-boss"]}};
+</script>
+<script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
+</body>
+</html>

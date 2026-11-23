@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Python Space Quest: World 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/quest.css">
+</head>
+<body>
+
+<div class="crewbar">
+  <div class="wrap">
+    <label for="active-player">Who's playing?</label>
+    <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars" data-text="if fuel < 20:" data-planet="#9b8cff"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 3</span>
+  <h1>Choose Your Path</h1>
+  <p class="lead">The ship has reached an asteroid field, and Py-Bot has to make choices. Left or right? Is the fuel low? Was that answer correct? In World 3 you'll teach Py-Bot to ask yes-or-no questions and choose what to do next. You'll build quiz games and your very own choose-your-adventure story!</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP! Asteroid ahead! Should I go left? Right? Up? I don't know how to decide! Teach me the magic word: <b>if</b>. BOOP!"</p>
+  </div>
+  <p class="muted">Coming from <a href="world2.html">World 2</a>? Your crew, XP and badges are already here.</p>
+</header>
+
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map">
+      <a class="station" href="#lesson-1" data-lesson="d1"><div class="planet p1"></div><span class="name">1 · True or False?</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="d2"><div class="planet p2"></div><span class="name">2 · If Py-Bot…</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="d3"><div class="planet p3"></div><span class="name">3 · Left or Right?</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="d4"><div class="planet p4"></div><span class="name">4 · Quiz Show</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Space Adventure</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Same crew as before, with all your XP. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>World 3 badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="setup" aria-labelledby="setup-h">
+  <div class="stack">
+    <span class="eyebrow">New skill for this World</span>
+    <h2 id="setup-h">Spaces at the start of a line</h2>
+    <p>From now on, some lines of code start with <b>4 spaces</b>. This is called <b>indenting</b>, and Python uses it to know which lines belong together. It's like the steps under a heading in a recipe.</p>
+    <ul class="list">
+      <li>The Code Pad helps you: when you press <b>Enter</b> after a line ending in <code class="inl">:</code>, it adds the 4 spaces for you.</li>
+      <li>To add 4 spaces yourself, tap the <b>Tab</b> key in the symbol row.</li>
+      <li>To stop indenting, delete the spaces at the start of the new line.</li>
+    </ul>
+    <p class="muted">In the examples, the dots <b>····</b> in the diagrams show where the 4 spaces go. Don't type dots, just spaces!</p>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="d1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="d1-h">True or False?</h2></div></div>
+    <p class="story"><b>Story:</b> Before Py-Bot can make choices, it needs to learn to ask yes-or-no questions. "Is the fuel more than 50?" "Is the password correct?" In Python, the answer is always <b>True</b> or <b>False</b>.</p>
+    <div class="bigidea">
+      <h4>The big idea: comparisons give True or False</h4>
+      <p>A <b>comparison</b> is a question that Python answers with <code class="inl">True</code> (yes) or <code class="inl">False</code> (no).</p>
+    </div>
+    <div class="tablewrap"><table>
+      <tr><th>Symbol</th><th>Question it asks</th><th>Example → answer</th></tr>
+      <tr><td><code>&gt;</code></td><td>Is it bigger than?</td><td><code>10 &gt; 3</code> → True</td></tr>
+      <tr><td><code>&lt;</code></td><td>Is it smaller than?</td><td><code>10 &lt; 3</code> → False</td></tr>
+      <tr><td><code>==</code></td><td>Is it the same as?</td><td><code>5 == 5</code> → True</td></tr>
+      <tr><td><code>!=</code></td><td>Is it different from?</td><td><code>5 != 5</code> → False</td></tr>
+      <tr><td><code>&gt;=</code></td><td>Bigger than, or the same?</td><td><code>7 &gt;= 7</code> → True</td></tr>
+      <tr><td><code>&lt;=</code></td><td>Smaller than, or the same?</td><td><code>8 &lt;= 7</code> → False</td></tr>
+    </table></div>
+    <div class="callout"><p><b>Remember:</b> one <code class="inl">=</code> means "put into the box" (World 2). <b>Two</b> <code class="inl">==</code> means "are these the same?" Think of it as asking twice!</p></div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">fuel = 30
+print(fuel &gt; 50)          # is 30 bigger than 50?
+print(fuel &lt; 50)          # is 30 smaller than 50?
+print(fuel == 30)         # is it exactly 30?
+print("Mars" == "mars")   # capital letters matter!</pre></div>
+      <pre class="out">False
+True
+True
+False</pre>
+      <div class="task-row"><button class="task" data-id="d1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Change <code class="inl">fuel = 30</code> to <code class="inl">fuel = 80</code>. Which answers flip?</li>
+        <li>Try <code class="inl">print(fuel != 30)</code>. What does <code class="inl">!=</code> mean again?</li>
+        <li>Try <code class="inl">print(10 == "10")</code>. It says False! A number and text are never the same, even if they look alike.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="d1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a box <code class="inl">age</code> with your age in it. Print whether your age is bigger than 8.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">print(age &gt; 8)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="d1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Ask for a secret code with <code class="inl">input()</code>. Print <code class="inl">True</code> if it's exactly <code class="inl">rocket</code>, and <code class="inl">False</code> if not.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">print(code == "rocket")</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="d1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Ask for two numbers (use <code class="inl">int</code>!). Print three lines: is the first bigger, is it smaller, and are they the same?</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Two boxes: <code class="inl">a</code> and <code class="inl">b</code>.</p></details><details><summary>Hint 2</summary><p>You can add a label: <code class="inl">print("Same?", a == b)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="d1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot wanted to check if the password is <b>star</b> and print True, but it crashed instead! Find the <b>1 bug</b>.</p>
+      <div class="codebox"><pre class="code bad">password = "star"
+print(password = "star")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Run it and read the clue. How many <code class="inl">=</code> signs do you need to <i>ask</i> a question?</p></details></div>
+      <div class="task-row"><button class="task" data-id="d1-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: True or False challenge <span class="xp">+10 XP</span></h4>
+      <p>The Navigator writes a comparison on paper, like <code class="inl">7 &gt; 12</code> or <code class="inl">"cat" == "Cat"</code>. Both of you shout <b>"True!"</b> or <b>"False!"</b>. Then the Driver checks it with <code class="inl">print()</code>. Do 5, then swap.</p>
+      <div class="task-row"><button class="task" data-id="d1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="d1-q1" data-xp="10" data-explain="Yes! 3 is not bigger than 9.">
+        <p class="q">1. What does <code class="inl">print(3 &gt; 9)</code> show?</p>
+        <div class="choices"><button>True</button><button data-ok>False</button><button>3</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="d1-q2" data-xp="10" data-explain="Correct! Two equals signs ask if things are the same.">
+        <p class="q">2. Which one asks "are these the same?"</p>
+        <div class="choices"><button>=</button><button data-ok>==</button><button>!=</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Human If-Machine</h2>
+    <p>Everyone stands up. The leader reads <b>if</b> commands, and players only do the action if it's <b>True</b> for them:</p>
+    <ul class="list">
+      <li>"<b>if</b> you are wearing blue: jump!"</li>
+      <li>"<b>if</b> your age &gt; 9: touch your nose! <b>else</b>: touch your ears!"</li>
+      <li>"<b>if</b> you have a pet: meow! <b>elif</b> you want a pet: bark! <b>else</b>: moo!"</li>
+    </ul>
+    <p>Take turns being the leader and make up your own. Anyone who does the wrong action becomes a "bug" and has to buzz like a fly. 🐛</p>
+    <p class="muted">What you're learning: <code class="inl">if</code> only runs its action when the question is True. <code class="inl">else</code> catches everyone else.</p>
+    <div class="task-row"><button class="task" data-id="w3-un" data-xp="20">I played the If-Machine +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="d2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 30 minutes</span><h2 id="d2-h">If Py-Bot…</h2></div></div>
+    <p class="story"><b>Story:</b> The fuel warning light is broken! Py-Bot needs to check the fuel and warn the crew, but <b>only</b> when the fuel is low. When the tank is full, it should stay quiet.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">if</code> runs code only when something is True</h4>
+      <p>An <code class="inl">if</code> line asks a True-or-False question and ends with a colon <code class="inl">:</code>. The indented lines underneath only run if the answer is <b>True</b>. If it's False, Python skips them.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of an if statement">if fuel &lt; 20:                     ← the question, then a colon
+····print("Warning! Low fuel!")   ← runs ONLY if True
+····print("Going to refuel.")     ← this too (same indent)
+print("Have a nice flight!")       ← no indent: ALWAYS runs</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <p>Run it <b>twice</b>: once typing <b>10</b> and once typing <b>80</b>.</p>
+      <div class="codebox"><pre class="code">fuel = int(input("How much fuel? "))
+if fuel &lt; 20:
+    print("Warning! Fuel is low! ⛽")
+    print("Flying to the fuel station.")
+print("Have a nice flight!")</pre></div>
+      <pre class="out">How much fuel? <span class="typed">10</span>
+Warning! Fuel is low! ⛽
+Flying to the fuel station.
+Have a nice flight!</pre>
+      <pre class="out">How much fuel? <span class="typed">80</span>
+Have a nice flight!</pre>
+      <div class="task-row"><button class="task" data-id="d2-try" data-xp="10">I ran it both ways! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Remove the spaces before <code class="inl">print("Flying to the fuel station.")</code>. Now try 80 again. What changed?</li>
+        <li>Delete the colon <code class="inl">:</code> at the end of the <code class="inl">if</code> line and run it. Read the bug clue, then put it back.</li>
+        <li>Add a second <code class="inl">if</code>: if the fuel is more than 90, print <code class="inl">"Tank is nearly full!"</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="d2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Ask for a name. If the name is your name, print <code class="inl">"Hey, that's me!"</code></p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">if name == "Mia":</code> then an indented print.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Space thermometer:</b> ask for the temperature. If it's below 0, print <code class="inl">"Brrr! Wear your space coat!"</code> If it's above 30, print <code class="inl">"Too hot! Turn on the fans!"</code></p>
+          <div class="hints"><details><summary>Hint</summary><p>Two separate <code class="inl">if</code> blocks, one after the other.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Ride check:</b> to ride the Moon Coaster, you must be at least 8 years old. Ask for an age. If it's 8 or more, print 2 lines: a welcome and "Buckle up!" Then, no matter what, print <code class="inl">"Thanks for visiting the Moon Park!"</code></p>
+          <div class="hints"><details><summary>Hint 1</summary><p>"At least 8" means <code class="inl">&gt;= 8</code>.</p></details><details><summary>Hint 2</summary><p>The last line has no spaces in front, so it always runs.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>There are <b>2 bugs</b>. Fix them one at a time.</p>
+      <div class="codebox"><pre class="code bad">stars = 12
+if stars &gt; 10
+print("You earned a medal! 🏅")</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>What does every <code class="inl">if</code> line end with?</p></details><details><summary>Hint 2</summary><p>How does Python know which line belongs inside the <code class="inl">if</code>?</p></details></div>
+      <div class="task-row"><button class="task" data-id="d2-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Secret door <span class="xp">+10 XP</span></h4>
+      <p>The Navigator picks a secret password and whispers it to the Driver. The Driver writes a program that asks for the password and prints <code class="inl">"🚪 The door opens!"</code> only if it's correct. Give the phone to someone else to guess. Swap!</p>
+      <div class="task-row"><button class="task" data-id="d2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="d2-q1" data-xp="10" data-explain="Yes! Every if line ends with a colon.">
+        <p class="q">1. What must go at the end of an <code class="inl">if</code> line?</p>
+        <div class="choices"><button>A full stop .</button><button data-ok>A colon :</button><button>Nothing</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="d2-q2" data-xp="10" data-explain="Correct! The indented lines only run when the question is True.">
+        <p class="q">2. When do the indented lines under an <code class="inl">if</code> run?</p>
+        <div class="choices"><button>Always</button><button data-ok>Only when the question is True</button><button>Only when it's False</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="d3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 35 minutes</span><h2 id="d3-h">Left or Right?</h2></div></div>
+    <p class="story"><b>Story:</b> The ship lands on a strange planet with two paths. Py-Bot asks which way to go, and something different happens on each path. This is how choose-your-own-adventure games work!</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">else</code> and <code class="inl">elif</code></h4>
+      <ul class="list">
+        <li><code class="inl">if</code>: "If this is True, do this."</li>
+        <li><code class="inl">elif</code> (short for "else if"): "Otherwise, if <i>this</i> is True, do this instead." You can have as many as you like.</li>
+        <li><code class="inl">else</code>: "If none of those were True, do this." It has no question, just a colon.</li>
+      </ul>
+      <p style="margin-top:8px">Python checks them in order from the top, and only <b>one</b> path runs: the first one that's True.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of if elif else">          ┌─ "left"?  ──yes──▶ 👽 friendly alien
+answer ───┤
+          ├─ "right"? ──yes──▶ 💦 space puddle
+          │
+          └─ anything else ──▶ 🤖 "I don't know that way"</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <p>Run it 3 times: type <b>left</b>, then <b>right</b>, then something silly like <b>banana</b>.</p>
+      <div class="codebox"><pre class="code">answer = input("Which way? left or right? ")
+if answer == "left":
+    print("You meet a friendly alien! 👽")
+elif answer == "right":
+    print("You fall into a space puddle! 💦")
+else:
+    print("Py-Bot doesn't know that way. 🤖")
+print("The adventure continues...")</pre></div>
+      <pre class="out">Which way? left or right? <span class="typed">left</span>
+You meet a friendly alien! 👽
+The adventure continues...</pre>
+      <div class="task-row"><button class="task" data-id="d3-try" data-xp="10">I tried all 3 paths! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Type <b>Left</b> with a capital L. Which path runs? Why?</li>
+        <li>Add a third path: <code class="inl">elif answer == "up":</code> with your own surprise.</li>
+        <li>Magic trick: add <code class="inl">.lower()</code> after <code class="inl">input(...)</code> like this: <code class="inl">answer = input("Which way? ").lower()</code>. Now <b>LEFT</b> and <b>Left</b> work too, because <code class="inl">.lower()</code> turns the answer into small letters.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="d3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Ask "Do you like aliens? yes or no". If yes, print a happy message. Else, print <code class="inl">"Don't worry, they're friendly!"</code></p>
+          <div class="hints"><details><summary>Hint</summary><p>Just <code class="inl">if</code> and <code class="inl">else</code>, no elif needed.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Fuel gauge:</b> ask for the fuel (0–100). If it's under 20, print "Low!". Elif it's under 70, print "Okay". Else, print "Full!"</p>
+          <div class="hints"><details><summary>Hint</summary><p>Order matters! Check the smallest first. If fuel is 10, it's under 20 <i>and</i> under 70, but only the first True path runs.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Planet guide:</b> ask which planet to visit. Give a fun fact for at least 4 planets (like Mars, Jupiter, Saturn, Venus), and a friendly message for anything else. Use <code class="inl">.lower()</code> so capitals don't matter.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>One <code class="inl">if</code>, three <code class="inl">elif</code>, one <code class="inl">else</code>.</p></details><details><summary>Hint 2</summary><p>After <code class="inl">.lower()</code>, compare with small letters: <code class="inl">== "mars"</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="d3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>This program always says <b>"Okay"</b> even when the fuel is 5! There's <b>1 sneaky bug</b> and no error message.</p>
+      <div class="codebox"><pre class="code bad">fuel = 5
+if fuel &lt; 70:
+    print("Okay")
+elif fuel &lt; 20:
+    print("Low!")
+else:
+    print("Full!")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Python stops at the <b>first</b> True path. Is 5 smaller than 70? Then it never even looks at the next one…</p></details></div>
+      <div class="task-row"><button class="task" data-id="d3-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Two-path story <span class="xp">+10 XP</span></h4>
+      <p>Together, invent a tiny story with a choice: "A dragon blocks the way. fight or talk?" The Navigator writes what happens on each path. The Driver codes it. Then play each other's stories!</p>
+      <div class="task-row"><button class="task" data-id="d3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="d3-q1" data-xp="10" data-explain="Yes! else catches everything the other paths didn't.">
+        <p class="q">1. When does the <code class="inl">else</code> part run?</p>
+        <div class="choices"><button>Always</button><button>First, before the if</button><button data-ok>When none of the questions above were True</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="d3-q2" data-xp="10" data-explain="Correct! Only the first True path runs.">
+        <p class="q">2. If two <code class="inl">elif</code> questions are both True, what happens?</p>
+        <div class="choices"><button>Both run</button><button data-ok>Only the first True one runs</button><button>An error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="d4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 35 minutes</span><h2 id="d4-h">Quiz Show</h2></div></div>
+    <p class="story"><b>Story:</b> It's game night on the space station! Py-Bot wants to host a quiz show. It needs to check each answer, give points, and announce the final score. Then it'll learn to roll dice!</p>
+    <div class="bigidea">
+      <h4>The big idea: ifs + boxes = games</h4>
+      <p>Use a <code class="inl">score</code> box from World 2. Each time an answer is correct, add 1 point inside the <code class="inl">if</code>. At the end, print the score.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">score = 0
+answer = input("Which planet do we live on? ")
+if answer == "Earth":
+    print("Correct! ⭐")
+    score = score + 1
+else:
+    print("Oops! It's Earth.")
+answer = int(input("What is 6 * 7? "))
+if answer == 42:
+    print("Correct! ⭐")
+    score = score + 1
+else:
+    print("Oops! It's 42.")
+print("Your score:", score, "out of 2")</pre></div>
+      <pre class="out">Which planet do we live on? <span class="typed">Earth</span>
+Correct! ⭐
+What is 6 * 7? <span class="typed">40</span>
+Oops! It's 42.
+Your score: 1 out of 2</pre>
+      <div class="task-row"><button class="task" data-id="d4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! Meet <code class="inl">random</code> <span class="xp">+10 XP</span></h4>
+      <p>Python has a toolbox called <code class="inl">random</code> for surprises. Put <code class="inl">import random</code> at the top to open the toolbox. Then <code class="inl">random.randint(1, 6)</code> picks a whole number from 1 to 6, like rolling a dice!</p>
+      <div class="codebox"><pre class="code">import random
+roll = random.randint(1, 6)
+print("You rolled a", roll, "🎲")
+if roll == 6:
+    print("SIX! You win a space cookie! 🍪")</pre></div>
+      <ul class="list">
+        <li>Run it a few times. Do you get a different number each time?</li>
+        <li>Change it to a 20-sided dice: <code class="inl">random.randint(1, 20)</code>.</li>
+        <li>Add an <code class="inl">else</code> that says <code class="inl">"Roll again!"</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="d4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Add a third question to the quiz, and change the end to say "out of 3".</p>
+          <div class="hints"><details><summary>Hint</summary><p>Copy one whole question block (5 lines) and change the question and answer.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Coin flip:</b> use <code class="inl">random.randint(1, 2)</code>. If it's 1, print "Heads!", else print "Tails!". Then ask the player to guess first, and tell them if they were right.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Turn the number into a word first: <code class="inl">if flip == 1: side = "heads"</code>, <code class="inl">else: side = "tails"</code>. Then compare it with the guess.</p></details></div>
+          <div class="task-row"><button class="task" data-id="d4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Math quiz with surprise questions:</b> pick two random numbers from 1 to 10, ask the player to multiply them, and say if they're right. Do it 3 times, keep score, and at the end print a message: 3 points = "Math Master! 🏆", 1–2 = "Nice try!", 0 = "Practice makes perfect!"</p>
+          <div class="hints"><details><summary>Hint 1</summary><p><code class="inl">a = random.randint(1, 10)</code>, <code class="inl">b = random.randint(1, 10)</code>, then <code class="inl">print("What is", a, "*", b, "?")</code></p></details><details><summary>Hint 2</summary><p>Compare: <code class="inl">if answer == a * b:</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="d4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot says "Oops!" even when you type <b>4</b>! There's <b>1 sneaky bug</b> and no error.</p>
+      <div class="codebox"><pre class="code bad">answer = input("What is 2 + 2? ")
+if answer == 4:
+    print("Correct!")
+else:
+    print("Oops!")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Remember World 2: what kind of thing does <code class="inl">input()</code> give back? Is the text "4" the same as the number 4?</p></details></div>
+      <div class="task-row"><button class="task" data-id="d4-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Quiz each other <span class="xp">+10 XP</span></h4>
+      <p>Each of you writes a 3-question quiz about something you love (dinosaurs, football, a TV show) on paper. Then the Driver codes the Navigator's quiz and the Navigator plays it. Swap! Who got the highest score?</p>
+      <div class="task-row"><button class="task" data-id="d4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="d4-q1" data-xp="10" data-explain="Yes! It can be 1, 2, 3, 4 or 5.">
+        <p class="q">1. What numbers can <code class="inl">random.randint(1, 5)</code> give?</p>
+        <div class="choices"><button>Only 1 or 5</button><button data-ok>Any whole number from 1 to 5</button><button>Always 3</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="d4-q2" data-xp="10" data-explain="Correct! You open the toolbox first.">
+        <p class="q">2. What do you need at the top before using <code class="inl">random</code>?</p>
+        <div class="choices"><button data-ok>import random</button><button>print(random)</button><button>random = 6</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="d4-q3" data-xp="10" data-explain="Right! Text &quot;4&quot; and number 4 are never the same.">
+        <p class="q">3. What does <code class="inl">print("4" == 4)</code> show?</p>
+        <div class="choices"><button>True</button><button data-ok>False</button><button>4</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">Space Adventure</h2></div></div>
+    <p class="story"><b>Story:</b> Mission Control wants a game for astronauts to play on long trips. Build a <b>choose-your-own-adventure</b> game where the player's choices change what happens!</p>
+    <div class="stack">
+      <h4>Your game must have:</h4>
+      <ul class="list">
+        <li>A comment at the top with the authors' names, and a title with a border</li>
+        <li>At least <b>2 choices</b> the player makes with <code class="inl">input()</code></li>
+        <li>At least one <code class="inl">if</code> / <code class="inl">elif</code> / <code class="inl">else</code></li>
+        <li>A <code class="inl">health</code> or <code class="inl">score</code> box that goes up or down depending on choices</li>
+        <li>One <b>random</b> surprise (like a lucky or unlucky event)</li>
+        <li>An ending that depends on the score, like "You win!" or "Game over!"</li>
+      </ul>
+      <p class="muted">Teamwork tip: draw your story on paper first as a map with arrows, like the left-or-right diagram in Lesson 3. One person writes the story text, one does the ifs, one does the score and the random surprise.</p>
+    </div>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">🗺️ Boss · +50 XP</span><p>Build your adventure game and let everyone in your crew play it!</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Start with just one choice that works. Then add the second.</p></details><details><summary>Hint 2</summary><p>Use <code class="inl">.lower()</code> on answers so capitals don't matter.</p></details><details><summary>Hint 3</summary><p>Random surprise: <code class="inl">if random.randint(1, 2) == 1:</code> something lucky happens, else something unlucky.</p></details></div>
+        <div class="task-row"><button class="task" data-id="w3-boss" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 3: Choose Your Path</b><br>and holds the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">🔀 🗺️ 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Next stop: World 4 · Loop-de-Loop Forest</h4>
+      <p>Py-Bot will learn to <b>repeat</b> things, so 100 lines of code become 2! You'll make countdowns, patterns and a planet-hunting game.</p>
+      <p><a class="btn" href="world4.html" style="display:inline-block;text-decoration:none">Fly to World 4 ▶</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder: World 3</h2>
+    <p>Read the <b>last line</b> of the bug clue first, and check the line number. See also the <a href="world1.html#errors">World 1</a> and <a href="world2.html#errors">World 2</a> decoders.</p>
+    <div class="tablewrap"><table>
+      <tr><th>The bug clue says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td><code>SyntaxError: expected ':'</code></td><td>The <code>if</code>, <code>elif</code> or <code>else</code> line is missing its colon.</td><td>Add <code>:</code> at the end of the line.</td></tr>
+      <tr><td><code>IndentationError: expected an indented block after 'if' statement</code></td><td>The line under the <code>if</code> needs spaces in front.</td><td>Add 4 spaces (tap Tab) at the start of that line.</td></tr>
+      <tr><td><code>IndentationError: unexpected indent</code></td><td>A line has spaces in front, but it isn't under an <code>if</code>.</td><td>Delete the spaces at the start of that line.</td></tr>
+      <tr><td><code>SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?</code></td><td>You used one <code>=</code> to ask a question.</td><td>Use <code>==</code> to compare.</td></tr>
+      <tr><td><code>SyntaxError: invalid syntax</code> on an <code>else</code> or <code>elif</code> line</td><td>The <code>else</code> isn't lined up with its <code>if</code>, or something is in between.</td><td>Start <code>if</code>, <code>elif</code> and <code>else</code> at the same place, with no spaces.</td></tr>
+      <tr><td><code>TypeError: '&lt;' not supported between instances of 'str' and 'int'</code></td><td>You compared text with a number using <code>&lt;</code> or <code>&gt;</code>.</td><td>Use <code>int(input(...))</code> for number answers.</td></tr>
+      <tr><td>No error, but the wrong path runs</td><td>A sneaky bug! Maybe text vs number (<code>"4" == 4</code>), capitals (<code>"Left"</code>), or the paths are in the wrong order.</td><td>Print the box to see what's inside. Check the order of your <code>elif</code>s.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key: World 3</h2>
+    <p>Run sessions the same way as before. World 3 introduces <b>indentation</b>, which is the most common source of bugs for beginners. Expect lots of IndentationErrors at first, and celebrate them as clues!</p>
+
+    <details>
+      <summary>Common confusions, and what to say</summary>
+      <ul class="list">
+        <li><b><code class="inl">=</code> vs <code class="inl">==</code>:</b> "One equals puts something in a box. Two equals asks a question."</li>
+        <li><b>Indentation:</b> "The spaces show which lines belong to the if, like items under a heading in a list."</li>
+        <li><b>Text vs numbers:</b> if a number comparison never works, check for a missing <code class="inl">int()</code>.</li>
+        <li><b>elif order:</b> act out the bug hunt in Lesson 3 like the If-Machine game. Only the first True path wins.</li>
+        <li><b>Capitals:</b> "Left" and "left" are different. <code class="inl">.lower()</code> is a handy fix.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Helping questions for this World</summary>
+      <ul class="list">
+        <li>"Is that question True or False right now? How do you know?"</li>
+        <li>"Which lines belong to the if? How can you tell?"</li>
+        <li>"Can you add a print to see what's in the box before the if?"</li>
+        <li>"Which path did you expect? Which one ran?"</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>Change it:</b> with fuel 80, the answers become True, False, False, False. <code class="inl">!=</code> means "is different from". <code class="inl">10 == "10"</code> is False.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">age = 10
+print(age &gt; 8)</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">code = input("Secret code? ")
+print(code == "rocket")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">a = int(input("First number? "))
+b = int(input("Second number? "))
+print("First is bigger?", a &gt; b)
+print("First is smaller?", a &lt; b)
+print("Same?", a == b)</pre>
+        <p><b>Bug hunt.</b> With one <code class="inl">=</code>, Python thinks you're naming something inside <code class="inl">print</code>, and gives a <code class="inl">TypeError</code> (<i>'password' is an invalid keyword argument for print()</i>). Use <code class="inl">==</code>: <code class="inl">print(password == "star")</code> shows True.</p>
+        <p><b>Quiz:</b> 1. False · 2. ==</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>Change it:</b> without its spaces, "Flying to the fuel station." always prints, even with 80. Without the colon you get <code class="inl">SyntaxError: expected ':'</code>.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">name = input("What's your name? ")
+if name == "Mia":
+    print("Hey, that's me!")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">temp = int(input("Temperature? "))
+if temp &lt; 0:
+    print("Brrr! Wear your space coat!")
+if temp &gt; 30:
+    print("Too hot! Turn on the fans!")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">age = int(input("How old are you? "))
+if age &gt;= 8:
+    print("Welcome to the Moon Coaster!")
+    print("Buckle up!")
+print("Thanks for visiting the Moon Park!")</pre>
+        <p><b>Bug hunt.</b> Line 2 is missing the colon (<code class="inl">SyntaxError: expected ':'</code>). Then line 3 needs 4 spaces (<code class="inl">IndentationError</code>).</p>
+        <pre class="code">stars = 12
+if stars &gt; 10:
+    print("You earned a medal! 🏅")</pre>
+        <p><b>Quiz:</b> 1. A colon · 2. Only when the question is True</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>Change it:</b> "Left" goes to the else path, because capitals matter. <code class="inl">.lower()</code> fixes it.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">answer = input("Do you like aliens? yes or no ")
+if answer == "yes":
+    print("Me too! 👽")
+else:
+    print("Don't worry, they're friendly!")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">fuel = int(input("Fuel (0-100)? "))
+if fuel &lt; 20:
+    print("Low!")
+elif fuel &lt; 70:
+    print("Okay")
+else:
+    print("Full!")</pre>
+        <p><b>⭐⭐⭐ Hero</b> (any facts are fine)</p><pre class="code">planet = input("Which planet? ").lower()
+if planet == "mars":
+    print("Mars has the tallest volcano in the solar system!")
+elif planet == "jupiter":
+    print("Jupiter is so big, all the other planets could fit inside!")
+elif planet == "saturn":
+    print("Saturn's rings are made of ice and rock!")
+elif planet == "venus":
+    print("Venus is the hottest planet!")
+else:
+    print("I don't know that one yet. Let's explore it together!")</pre>
+        <p><b>Bug hunt.</b> 5 is smaller than 70, so the first path wins. Check the smaller number first (swap the two questions), like the Medium answer above.</p>
+        <p><b>Quiz:</b> 1. When none of the questions above were True · 2. Only the first True one runs</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>⭐ Easy:</b> copy one question block, change the question and answer, and change "out of 2" to "out of 3".</p>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">import random
+guess = input("Heads or tails? ").lower()
+flip = random.randint(1, 2)
+if flip == 1:
+    side = "heads"
+else:
+    side = "tails"
+print("It's", side, "!")
+if guess == side:
+    print("You guessed right! 🎉")
+else:
+    print("Not this time!")</pre>
+        <p><b>⭐⭐⭐ Hero</b> (without loops yet, the question block is written 3 times)</p><pre class="code">import random
+score = 0
+a = random.randint(1, 10)
+b = random.randint(1, 10)
+print("What is", a, "x", b, "?")
+answer = int(input("Your answer: "))
+if answer == a * b:
+    print("Correct!")
+    score = score + 1
+else:
+    print("Oops! It's", a * b)
+# ...copy the 9 lines above two more times...
+if score == 3:
+    print("Math Master! 🏆")
+elif score &gt;= 1:
+    print("Nice try!")
+else:
+    print("Practice makes perfect!")</pre>
+        <p class="muted">In World 4, a loop will make this much shorter.</p>
+        <p><b>Bug hunt.</b> <code class="inl">input()</code> gives the text "4", which is never equal to the number 4. Fix: <code class="inl">answer = int(input("What is 2 + 2? "))</code>.</p>
+        <p><b>Quiz:</b> 1. Any whole number from 1 to 5 · 2. import random · 3. False</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <pre class="code"># Space Adventure by Mia and Leo
+import random
+health = 3
+print("=" * 26)
+print("   THE LOST SPACE KITTEN")
+print("=" * 26)
+choice = input("You hear a meow. Search the cave or the crater? ").lower()
+if choice == "cave":
+    print("It's dark! You bump your head. Ouch!")
+    health = health - 1
+elif choice == "crater":
+    print("You find a shiny star. +1 health!")
+    health = health + 1
+else:
+    print("You wait around... nothing happens.")
+if random.randint(1, 2) == 1:
+    print("SURPRISE! A meteor shower! You lose 1 health.")
+    health = health - 1
+else:
+    print("Lucky! A friendly alien gives you a snack. +1 health!")
+    health = health + 1
+choice = input("You see the kitten! Call it or give it a snack? ").lower()
+if choice == "snack":
+    print("The kitten purrs and jumps into your arms!")
+    health = health + 1
+else:
+    print("The kitten runs away... then comes back slowly.")
+print("Health:", health)
+if health &gt;= 4:
+    print("🏆 You win! The kitten is safe on the ship!")
+elif health &gt;= 2:
+    print("🙂 You made it home, a bit tired!")
+else:
+    print("💤 Game over! Have a rest and try again.")</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP in <b>every</b> World on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted"><a href="index.html">All Worlds</a> · <a href="world2.html">Back to World 2</a> · Next up: <a href="world4.html">World 4 · Loop-de-Loop Forest</a></footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+window.QUEST={world:3,bossId:"w3-boss",lessons:{
+  d1:["d1-try","d1-change","d1-c1","d1-c2","d1-c3","d1-bug","d1-pair","d1-q1","d1-q2"],
+  d2:["d2-try","d2-change","d2-c1","d2-c2","d2-c3","d2-bug","d2-pair","d2-q1","d2-q2"],
+  d3:["d3-try","d3-change","d3-c1","d3-c2","d3-c3","d3-bug","d3-pair","d3-q1","d3-q2"],
+  d4:["d4-try","d4-change","d4-c1","d4-c2","d4-c3","d4-bug","d4-pair","d4-q1","d4-q2","d4-q3"],
+  boss:["w3-boss"]}};
+</script>
+<script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
+</body>
+</html>
