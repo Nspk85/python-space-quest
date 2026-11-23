@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo-180.png">
+<title>Python Space Quest: World 6</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/quest.css">
+</head>
+<body>
+
+<div class="crewbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html" aria-label="Home: all Worlds" title="Home"><img src="assets/logo.svg" alt="" width="44" height="44"></a>
+    <div class="who">
+      <label for="active-player">Who's playing?</label>
+      <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    </div>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars" data-text='crew = ["Mia", "Leo"]' data-planet="#ffcc33"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 6</span>
+  <h1>Treasure Chests</h1>
+  <p class="lead">The ship has found a pirate asteroid full of treasure! But one box can only hold one thing. Py-Bot needs a <b>treasure chest</b> that holds lots of things in order: a crew list, a backpack, a pile of gold. In Python, that's called a <b>list</b>.</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP! I made boxes called crew1, crew2, crew3, crew4… this is getting silly. Can I just have ONE chest called crew with everyone inside? BOOP!"</p>
+  </div>
+  <p class="muted">Coming from <a href="world5.html">World 5</a>? Your crew, XP and badges are already here.</p>
+</header>
+
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map">
+      <a class="station" href="#lesson-1" data-lesson="t1"><div class="planet p1"></div><span class="name">1 · Packing the Chest</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="t2"><div class="planet p2"></div><span class="name">2 · Add and Remove</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="t3"><div class="planet p3"></div><span class="name">3 · Loop the Loot</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="t4"><div class="planet p4"></div><span class="name">4 · Lucky Dip</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Packing List</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Same crew as before, with all your XP. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>World 6 badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="t1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="t1-h">Packing the Chest</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot wants to keep the whole crew's names together, in order. Time to pack the first treasure chest!</p>
+    <div class="bigidea">
+      <h4>The big idea: a list holds many things in order</h4>
+      <p>A list goes inside square brackets <code class="inl">[ ]</code>, with commas between the items. Each item has a <b>position number</b> called an <b>index</b>, and the first one is number <b>0</b>, just like <code class="inl">range()</code> in World 4!</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a list">crew = [ "Mia" , "Leo" , "Zoe" ]
+index:     0       1       2
+
+crew[0] → "Mia"      crew[2] → "Zoe"      len(crew) → 3</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">crew = ["Mia", "Leo", "Zoe"]
+print(crew)              # the whole chest
+print(crew[0])           # the first item (index 0)
+print(crew[2])           # the third item (index 2)
+print(len(crew))         # how many items?</pre></div>
+      <pre class="out">['Mia', 'Leo', 'Zoe']
+Mia
+Zoe
+3</pre>
+      <div class="task-row"><button class="task" data-id="t1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Put your real crew's names in the list.</li>
+        <li>Try <code class="inl">print(crew[-1])</code>. Negative numbers count from the end, so -1 is always the last item!</li>
+        <li>Change an item: <code class="inl">crew[1] = "Py-Bot"</code>, then print the list again.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="t1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a list called <code class="inl">snacks</code> with 4 space snacks. Print the first and the last one.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">snacks[0]</code> and <code class="inl">snacks[3]</code> (or <code class="inl">snacks[-1]</code>)</p></details></div>
+          <div class="task-row"><button class="task" data-id="t1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make a list of 5 planets. Print "There are 5 planets" using <code class="inl">len()</code>, then print the middle planet.</p>
+          <div class="hints"><details><summary>Hint</summary><p>With 5 items, the indexes are 0 to 4. Which one is in the middle?</p></details></div>
+          <div class="task-row"><button class="task" data-id="t1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Day planner:</b> make a list of the 7 days of the week. Ask "Which day number (1-7)?" and print the right day. Careful: day 1 is index 0!</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Use <code class="inl">int(input(...))</code> for the number.</p></details><details><summary>Hint 2</summary><p><code class="inl">days[number - 1]</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot wanted the <b>last</b> crew member, but crashed! <b>1 bug</b>.</p>
+      <div class="codebox"><pre class="code bad">crew = ["Mia", "Leo", "Zoe"]
+print(crew[3])</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>There are 3 items. If the first index is 0, what's the last index?</p></details></div>
+      <div class="task-row"><button class="task" data-id="t1-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Index quiz <span class="xp">+10 XP</span></h4>
+      <p>The Navigator makes a list of 6 favorite things and types it in. The Driver closes their eyes and picks a number from 0 to 5. Guess what <code class="inl">things[number]</code> will print, then check it! Swap after 3 turns.</p>
+      <div class="task-row"><button class="task" data-id="t1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="t1-q1" data-xp="10" data-explain="Yes! Lists start counting at 0.">
+        <p class="q">1. In <code class="inl">pets = ["cat", "dog", "fish"]</code>, what is <code class="inl">pets[1]</code>?</p>
+        <div class="choices"><button>cat</button><button data-ok>dog</button><button>fish</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="t1-q2" data-xp="10" data-explain="Correct! len() counts the items.">
+        <p class="q">2. What does <code class="inl">len(["a", "b", "c", "d"])</code> give?</p>
+        <div class="choices"><button>3</button><button data-ok>4</button><button>d</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Treasure Train</h2>
+    <p>Line up some cups (or chairs) in a row and stick a number on each, starting from <b>0</b>. That's your list! Put a "treasure" (a paper slip with a word) in each cup.</p>
+    <ul class="list">
+      <li>"<b>print(chest[2])</b>!" Someone runs to cup 2 and reads out the treasure.</li>
+      <li>"<b>chest.append("crown")</b>!" Add a new cup to the <b>end</b> of the train with "crown" inside.</li>
+      <li>"<b>chest.remove("coin")</b>!" Take the cup with "coin" out, and everyone after it shuffles along. Their numbers change!</li>
+      <li>"<b>len(chest)</b>?" Everyone counts the cups out loud.</li>
+      <li>Tricky one: "<b>print(chest[10])</b>!" If there's no cup 10, everyone shouts <b>"IndexError!"</b></li>
+    </ul>
+    <p class="muted">What you're learning: lists keep things in order, positions start at 0, and adding or removing changes the positions.</p>
+    <div class="task-row"><button class="task" data-id="w6-un" data-xp="20">I played Treasure Train +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="t2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 30 minutes</span><h2 id="t2-h">Add and Remove</h2></div></div>
+    <p class="story"><b>Story:</b> The crew is exploring the asteroid with a backpack. They find things to pick up, and sometimes they use things up. The backpack list needs to change as they go!</p>
+    <div class="bigidea">
+      <h4>The big idea: lists can grow and shrink</h4>
+      <ul class="list">
+        <li><code class="inl">backpack.append("snack")</code> adds "snack" to the <b>end</b>.</li>
+        <li><code class="inl">backpack.remove("map")</code> takes "map" out.</li>
+        <li><code class="inl">"torch" in backpack</code> asks: is "torch" in the list? It gives True or False, so it's perfect for <code class="inl">if</code>.</li>
+      </ul>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">backpack = ["map", "torch"]
+print("Packed:", backpack)
+backpack.append("snack")        # found a snack!
+backpack.append("gold coin")    # found treasure!
+backpack.remove("map")          # the map blew away
+print("Now:", backpack)
+if "torch" in backpack:
+    print("🔦 We can explore the dark cave!")</pre></div>
+      <pre class="out">Packed: ['map', 'torch']
+Now: ['torch', 'snack', 'gold coin']
+🔦 We can explore the dark cave!</pre>
+      <div class="task-row"><button class="task" data-id="t2-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Remove the torch too, and run it. Does the cave message still appear?</li>
+        <li>Start with an <b>empty</b> backpack: <code class="inl">backpack = []</code>, then append 3 things.</li>
+        <li>Add an <code class="inl">else</code> to the <code class="inl">if</code>: <code class="inl">"😱 Too dark! We need a torch."</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="t2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Start with an empty list called <code class="inl">friends</code>. Append 3 names, then print the list and how many friends there are.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">friends = []</code>, then <code class="inl">friends.append("Mia")</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Guest list:</b> make a list of 3 invited guests. Ask "What's your name?". If the name is <code class="inl">in</code> the list, print "Welcome to the party! 🎉", else print "Sorry, you're not on the list."</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">if name in guests:</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Collector:</b> start with an empty list. Use a <code class="inl">while</code> loop to keep asking "Add a treasure (or type done):" and append each answer. When they type <code class="inl">done</code>, print the whole list and how many treasures there are.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Copy the "keep asking" pattern from World 4: start with <code class="inl">item = ""</code>.</p></details><details><summary>Hint 2</summary><p>Only append if the item isn't "done": <code class="inl">if item != "done":</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Two programs, <b>one bug each</b>. Read the bug clues!</p>
+      <p><b>Program A</b></p>
+      <div class="codebox"><pre class="code bad">tools = ["hammer", "wrench"]
+tools.remove("spanner")
+print(tools)</pre></div>
+      <p><b>Program B</b></p>
+      <div class="codebox"><pre class="code bad">gems = ["ruby"]
+gems.append("emerald", "diamond")
+print(gems)</pre></div>
+      <div class="hints"><details><summary>Hint (A)</summary><p>Can you remove something that isn't in the list?</p></details><details><summary>Hint (B)</summary><p><code class="inl">append</code> adds one thing at a time.</p></details></div>
+      <div class="task-row"><button class="task" data-id="t2-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Backpack adventure <span class="xp">+10 XP</span></h4>
+      <p>Write a mini adventure together. Start with an empty backpack. In each "room", the player chooses to pick something up (append) or use something (remove). The last room needs a special item: <code class="inl">if "key" in backpack:</code>. Did the player pick it up?</p>
+      <div class="task-row"><button class="task" data-id="t2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="t2-q1" data-xp="10" data-explain="Yes! append adds to the end.">
+        <p class="q">1. Where does <code class="inl">append</code> put the new item?</p>
+        <div class="choices"><button>At the start</button><button>In the middle</button><button data-ok>At the end</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="t2-q2" data-xp="10" data-explain="Correct! &quot;cat&quot; is in the list, so it's True.">
+        <p class="q">2. What does <code class="inl">print("cat" in ["dog", "cat"])</code> show?</p>
+        <div class="choices"><button data-ok>True</button><button>False</button><button>1</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="t3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 35 minutes</span><h2 id="t3-h">Loop the Loot</h2></div></div>
+    <p class="story"><b>Story:</b> The treasure chest is full! Py-Bot wants to look at every single treasure, one by one: count it, show it, add up its value. A loop and a list are the perfect team.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">for item in list:</code></h4>
+      <p>Instead of <code class="inl">range()</code>, you can loop straight over a list. Each lap, the loop box holds the <b>next item</b>. The loop runs once for every item, no matter how long the list is!</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">planets = ["Mercury", "Venus", "Earth", "Mars"]
+for planet in planets:
+    print("🪐 Hello,", planet, "!")
+print("That's", len(planets), "planets!")</pre></div>
+      <pre class="out">🪐 Hello, Mercury !
+🪐 Hello, Venus !
+🪐 Hello, Earth !
+🪐 Hello, Mars !
+That's 4 planets!</pre>
+      <div class="task-row"><button class="task" data-id="t3-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! Adding up <span class="xp">+10 XP</span></h4>
+      <p>Lists can hold numbers too. Use a <code class="inl">total</code> box (World 4) to add them all up:</p>
+      <div class="codebox"><pre class="code">coins = [5, 10, 3, 20]
+total = 0
+for coin in coins:
+    total = total + coin
+print("Treasure total:", total)
+print("Biggest coin:", max(coins))</pre></div>
+      <ul class="list">
+        <li>Run it, then add more coins to the list. The loop handles them all automatically.</li>
+        <li>Try <code class="inl">min(coins)</code> and <code class="inl">sum(coins)</code>. Python has shortcuts!</li>
+        <li>Add the last 4 planets to the planet list (Jupiter, Saturn, Uranus, Neptune) and rerun it.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="t3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a list of 4 foods, and use a loop to print "Yum, <i>food</i>!" for each one.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">for food in foods:</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Numbered list:</b> print the crew with numbers in front, like <code class="inl">1. Mia</code>, <code class="inl">2. Leo</code>… Use a counter box that goes up by 1 each lap.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">number = 1</code> before the loop, <code class="inl">number = number + 1</code> inside it.</p></details></div>
+          <div class="task-row"><button class="task" data-id="t3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Biggest treasure, the hard way:</b> find the biggest number in <code class="inl">[12, 45, 7, 88, 23]</code> using a loop and an <code class="inl">if</code>, <b>without</b> <code class="inl">max()</code>. Then count how many numbers are more than 20.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Start with <code class="inl">biggest = 0</code>. Each lap: <code class="inl">if n &gt; biggest: biggest = n</code></p></details><details><summary>Hint 2</summary><p>A second counter: <code class="inl">if n &gt; 20: count = count + 1</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>The total should be <b>38</b>, but Py-Bot says <b>20</b>! <b>1 sneaky bug</b>.</p>
+      <div class="codebox"><pre class="code bad">coins = [5, 10, 3, 20]
+for coin in coins:
+    total = 0
+    total = total + coin
+print("Total:", total)</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>Which line runs on every lap? What happens to the total each time it runs?</p></details></div>
+      <div class="task-row"><button class="task" data-id="t3-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Score keeper <span class="xp">+10 XP</span></h4>
+      <p>Play 5 rounds of rock-paper-scissors in real life. After each round, the Driver appends the winner's name to a <code class="inl">winners</code> list. At the end, loop through the list to count how many rounds each of you won!</p>
+      <div class="task-row"><button class="task" data-id="t3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="t3-q1" data-xp="10" data-explain="Yes! One lap for each of the 3 items.">
+        <p class="q">1. How many times does <code class="inl">for x in ["a", "b", "c"]:</code> loop?</p>
+        <div class="choices"><button>1</button><button data-ok>3</button><button>Forever</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="t3-q2" data-xp="10" data-explain="Correct! On the second lap, x is the second item.">
+        <p class="q">2. On the second lap of <code class="inl">for x in ["red", "blue", "green"]:</code>, what's in <code class="inl">x</code>?</p>
+        <div class="choices"><button>red</button><button data-ok>blue</button><button>1</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="t4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 35 minutes</span><h2 id="t4-h">Lucky Dip</h2></div></div>
+    <p class="story"><b>Story:</b> The pirates left a lucky dip machine: reach in, and you get a random prize! With lists and <code class="inl">random</code>, Py-Bot can make jokes, fortunes, team pickers and quiz games.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">random.choice(list)</code> picks a random item</h4>
+      <p>In World 3, <code class="inl">random.randint</code> picked a random number. <code class="inl">random.choice</code> picks a random item from a list, like pulling a name out of a hat.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">import random
+prizes = ["🍪 space cookie", "🧸 alien teddy", "💎 moon gem", "🧦 smelly sock"]
+prize = random.choice(prizes)
+print("You reach into the lucky dip...")
+print("You got:", prize)
+if prize == "🧦 smelly sock":
+    print("Ewww! Try again!")</pre></div>
+      <pre class="out">You reach into the lucky dip...
+You got: 💎 moon gem</pre>
+      <p class="muted">Run it a few times. It's random, so you'll get different prizes!</p>
+      <div class="task-row"><button class="task" data-id="t4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Add your own prizes to the list.</li>
+        <li>Shuffle a list: <code class="inl">random.shuffle(prizes)</code>, then <code class="inl">print(prizes)</code>. The order is mixed up every time!</li>
+        <li>Make a team picker: a list of crew names and <code class="inl">print("Today's captain:", random.choice(crew))</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="t4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p><b>Joke machine:</b> make a list of 3 jokes and print a random one.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Each joke is one string in the list.</p></details></div>
+          <div class="task-row"><button class="task" data-id="t4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p><b>Silly sentence maker:</b> make 3 lists (heroes, actions, places) and print a sentence with one random choice from each. Use a loop to print 5 silly sentences.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">print(random.choice(heroes), random.choice(actions), random.choice(places))</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="t4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Quiz from lists:</b> make a list of 3 questions and a matching list of 3 answers (same order). Loop through with <code class="inl">for i in range(len(questions)):</code>, ask <code class="inl">questions[i]</code>, check against <code class="inl">answers[i]</code>, and keep score.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p><code class="inl">reply = input(questions[i] + " ")</code></p></details><details><summary>Hint 2</summary><p><code class="inl">if reply.lower() == answers[i]:</code> (keep the answers in small letters)</p></details></div>
+          <div class="task-row"><button class="task" data-id="t4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>This fortune teller crashes straight away. There are <b>2 bugs</b>.</p>
+      <div class="codebox"><pre class="code bad">fortunes = ["Yes!", "No way!", "Maybe..."]
+answer = random.choice(fortune)
+print("🔮", answer)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>What do you need at the top before using <code class="inl">random</code>?</p></details><details><summary>Hint 2</summary><p>Compare the list's name on line 1 and line 2, letter by letter.</p></details></div>
+      <div class="task-row"><button class="task" data-id="t4-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Team picker <span class="xp">+10 XP</span></h4>
+      <p>Make a list of everyone in your group (or favorite cartoon characters!). Shuffle it, then split it into two teams: the first half and the second half. Hint: <code class="inl">names[0:2]</code> gives items 0 and 1. Print both teams. Run it again for new teams!</p>
+      <div class="task-row"><button class="task" data-id="t4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="t4-q1" data-xp="10" data-explain="Yes! It picks one random item.">
+        <p class="q">1. What does <code class="inl">random.choice(["a", "b", "c"])</code> give?</p>
+        <div class="choices"><button>All three</button><button data-ok>One random item from the list</button><button>Always "a"</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="t4-q2" data-xp="10" data-explain="Correct! shuffle mixes the order.">
+        <p class="q">2. What does <code class="inl">random.shuffle(cards)</code> do?</p>
+        <div class="choices"><button>Deletes the cards</button><button data-ok>Mixes up the order of the list</button><button>Picks one card</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="t4-q3" data-xp="10" data-explain="Right! The same index finds the matching item in both lists.">
+        <p class="q">3. With a <code class="inl">questions</code> list and an <code class="inl">answers</code> list, how do you find the answer to <code class="inl">questions[2]</code>?</p>
+        <div class="choices"><button>answers[0]</button><button data-ok>answers[2]</button><button>answers[3]</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">Mission Packing List</h2></div></div>
+    <p class="story"><b>Story:</b> The crew is getting ready for the next big mission, and Mission Control needs a <b>packing list app</b>. The rocket is small, so you can only pack <b>5 things</b>!</p>
+    <div class="stack">
+      <h4>Your app must have:</h4>
+      <ul class="list">
+        <li>A comment with the authors' names</li>
+        <li>A list that starts empty</li>
+        <li>A menu in a <code class="inl">while</code> loop: <b>add</b>, <b>remove</b>, <b>show</b>, and <b>launch</b> (to finish)</li>
+        <li><b>Add:</b> ask for an item and append it, but only if there are fewer than 5 things, and it isn't already packed</li>
+        <li><b>Remove:</b> only remove an item if it's <code class="inl">in</code> the list, otherwise print a friendly message</li>
+        <li><b>Show:</b> print every item with a number, using a loop</li>
+        <li>At least one <b>function</b> (World 5), like <code class="inl">show_list(items)</code></li>
+        <li><b>Launch:</b> print the final list and a random good-luck message using <code class="inl">random.choice</code></li>
+      </ul>
+    </div>
+    <pre class="out">🚀 MISSION PACKING LIST (max 5 items)
+add, remove, show or launch? <span class="typed">add</span>
+What do you want to pack? <span class="typed">space helmet</span>
+✅ Packed space helmet (1/5)
+add, remove, show or launch? <span class="typed">show</span>
+1. space helmet
+add, remove, show or launch? <span class="typed">launch</span>
+Final list: 1 item(s). Good luck, crew! 🌟</pre>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">👑 Boss · +50 XP</span><p>Build the packing app, then test it by trying to break it: pack 6 things, remove something that isn't there, pack the same thing twice.</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Start with the menu loop and just "show" and "launch". Then add "add". Then "remove".</p></details><details><summary>Hint 2</summary><p>For add: <code class="inl">if len(items) &gt;= 5:</code> "Rocket is full!", <code class="inl">elif item in items:</code> "Already packed!", <code class="inl">else:</code> append.</p></details></div>
+        <div class="task-row"><button class="task" data-id="w6-boss" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 6: Treasure Chests</b><br>and holds the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">💎 🧺 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Next stop: World 7 · Final Boss</h4>
+      <p>The last World! Your crew will plan and build a <b>whole game together</b>, using everything you've learned, then launch it for everyone to play.</p>
+      <p><a class="btn" href="world7.html" style="display:inline-block;text-decoration:none">Fly to World 7 ▶</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder: World 6</h2>
+    <div class="tablewrap"><table>
+      <tr><th>The bug clue says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td><code>IndexError: list index out of range</code></td><td>There's no item at that position. Remember the last index is one less than the length.</td><td>Use a smaller index, or <code>[-1]</code> for the last item.</td></tr>
+      <tr><td><code>ValueError: list.remove(x): x not in list</code></td><td>You tried to remove something that isn't in the list.</td><td>Check first: <code>if item in my_list:</code></td></tr>
+      <tr><td><code>TypeError: list.append() takes exactly one argument (2 given)</code></td><td><code>append</code> adds one thing at a time.</td><td>Use two <code>append</code> lines.</td></tr>
+      <tr><td><code>NameError: name 'random' is not defined</code></td><td>The random toolbox isn't open.</td><td>Add <code>import random</code> at the top.</td></tr>
+      <tr><td><code>NameError: name 'fortune' is not defined</code></td><td>The list's name is spelled differently somewhere.</td><td>Use exactly the same name everywhere.</td></tr>
+      <tr><td><code>SyntaxError: '[' was never closed</code></td><td>A list is missing its <code>]</code>.</td><td>Add <code>]</code> at the end of the list.</td></tr>
+      <tr><td>The total or count is wrong (no error)</td><td>The starting box (<code>total = 0</code>) might be inside the loop, so it resets every lap.</td><td>Move it above the loop.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key: World 6</h2>
+    <p>Lists bring together almost everything so far: loops, ifs, functions and random. The biggest stumbling block is <b>counting from 0</b>. The Treasure Train game is worth playing more than once.</p>
+
+    <details>
+      <summary>Common confusions, and what to say</summary>
+      <ul class="list">
+        <li><b>Index 0:</b> "The index is how many steps from the start. The first item is 0 steps away."</li>
+        <li><b>IndexError:</b> "3 items means indexes 0, 1, 2. There's no cup 3!"</li>
+        <li><b>for item in list vs for i in range:</b> use the first when you just need each item, and the second when you need the position too (like matching two lists).</li>
+        <li><b>Resetting totals:</b> if a total is wrong, check where <code class="inl">total = 0</code> is. It belongs before the loop.</li>
+        <li><b>Methods:</b> <code class="inl">.append()</code> and <code class="inl">.remove()</code> are spells that belong to the list, so they go after a dot.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">snacks = ["moon cheese", "star crisps", "comet candy", "rocket pops"]
+print(snacks[0])
+print(snacks[-1])</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">planets = ["Mercury", "Venus", "Earth", "Mars", "Jupiter"]
+print("There are", len(planets), "planets")
+print(planets[2])</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+number = int(input("Which day number (1-7)? "))
+print(days[number - 1])</pre>
+        <p><b>Bug hunt.</b> 3 items means indexes 0, 1 and 2. <code class="inl">crew[3]</code> gives <code class="inl">IndexError</code>. Use <code class="inl">crew[2]</code> or <code class="inl">crew[-1]</code>.</p>
+        <p><b>Quiz:</b> 1. dog · 2. 4</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">friends = []
+friends.append("Mia")
+friends.append("Leo")
+friends.append("Zoe")
+print(friends)
+print(len(friends), "friends")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">guests = ["Mia", "Leo", "Zoe"]
+name = input("What's your name? ")
+if name in guests:
+    print("Welcome to the party! 🎉")
+else:
+    print("Sorry, you're not on the list.")</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">treasures = []
+item = ""
+while item != "done":
+    item = input("Add a treasure (or type done): ")
+    if item != "done":
+        treasures.append(item)
+print(treasures)
+print(len(treasures), "treasures!")</pre>
+        <p><b>Bug hunt A.</b> "spanner" isn't in the list (<code class="inl">ValueError</code>). Remove "wrench" instead, or check with <code class="inl">if "spanner" in tools:</code> first.</p>
+        <p><b>Bug hunt B.</b> <code class="inl">append</code> takes one item (<code class="inl">TypeError</code>). Use two lines: <code class="inl">gems.append("emerald")</code> and <code class="inl">gems.append("diamond")</code>.</p>
+        <p><b>Quiz:</b> 1. At the end · 2. True</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>Change it:</b> the total is 38 and the biggest coin is 20. <code class="inl">min</code> is 3 and <code class="inl">sum</code> is 38.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">foods = ["pizza", "tacos", "sushi", "pancakes"]
+for food in foods:
+    print("Yum,", food, "!")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">crew = ["Mia", "Leo", "Zoe"]
+number = 1
+for person in crew:
+    print(str(number) + ".", person)
+    number = number + 1</pre>
+        <p class="muted"><code class="inl">print(number, ".", person)</code> is also fine. It just adds a space before the dot.</p>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">numbers = [12, 45, 7, 88, 23]
+biggest = 0
+count = 0
+for n in numbers:
+    if n &gt; biggest:
+        biggest = n
+    if n &gt; 20:
+        count = count + 1
+print("Biggest:", biggest)
+print("More than 20:", count)</pre><p>Answers: 88 and 3.</p>
+        <p><b>Bug hunt.</b> <code class="inl">total = 0</code> is inside the loop, so it resets every lap and only the last coin (20) counts. Move it above the <code class="inl">for</code> line.</p>
+        <p><b>Quiz:</b> 1. 3 · 2. blue</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">import random
+jokes = ["Why did the robot go on holiday? To recharge! 🔋",
+         "What do planets like to read? Comet books! ☄️",
+         "How do you throw a space party? You planet! 🪐"]
+print(random.choice(jokes))</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">import random
+heroes = ["Py-Bot", "Captain Mia", "A tiny alien"]
+actions = ["danced on", "sneezed on", "found a pizza on"]
+places = ["the Moon", "Mars", "a comet"]
+for i in range(5):
+    print(random.choice(heroes), random.choice(actions), random.choice(places))</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">questions = ["Which planet is red?", "How many legs does a spider have?", "What is 9 x 3?"]
+answers = ["mars", "8", "27"]
+score = 0
+for i in range(len(questions)):
+    reply = input(questions[i] + " ")
+    if reply.lower() == answers[i]:
+        print("Correct! ⭐")
+        score = score + 1
+    else:
+        print("Oops! It was", answers[i])
+print("Score:", score, "out of", len(questions))</pre>
+        <p><b>Bug hunt.</b> Missing <code class="inl">import random</code> at the top (<code class="inl">NameError: name 'random'</code>). Then the list is called <code class="inl">fortunes</code> but line 2 says <code class="inl">fortune</code> (<code class="inl">NameError</code>).</p>
+        <p><b>Pair activity (team picker):</b></p><pre class="code">import random
+names = ["Mia", "Leo", "Zoe", "Sam"]
+random.shuffle(names)
+print("Team Rocket:", names[0:2])
+print("Team Comet:", names[2:4])</pre>
+        <p><b>Quiz:</b> 1. One random item from the list · 2. Mixes up the order of the list · 3. answers[2]</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <pre class="code"># Mission Packing List by Mia and Leo
+import random
+
+def show_list(items):
+    if len(items) == 0:
+        print("Nothing packed yet!")
+    number = 1
+    for item in items:
+        print(str(number) + ".", item)
+        number = number + 1
+
+items = []
+wishes = ["Good luck, crew! 🌟", "Fly safe! 🚀", "See you on Mars! 🪐"]
+print("🚀 MISSION PACKING LIST (max 5 items)")
+choice = ""
+while choice != "launch":
+    choice = input("add, remove, show or launch? ").lower()
+    if choice == "add":
+        item = input("What do you want to pack? ")
+        if len(items) &gt;= 5:
+            print("❌ The rocket is full!")
+        elif item in items:
+            print("You already packed that!")
+        else:
+            items.append(item)
+            print("✅ Packed", item, "(" + str(len(items)) + "/5)")
+    elif choice == "remove":
+        item = input("What do you want to unpack? ")
+        if item in items:
+            items.remove(item)
+            print("Removed", item)
+        else:
+            print("That isn't packed!")
+    elif choice == "show":
+        show_list(items)
+    elif choice != "launch":
+        print("Please type add, remove, show or launch.")
+print("Final list:", len(items), "item(s).", random.choice(wishes))
+show_list(items)</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP in <b>every</b> World on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted"><a href="index.html">All Worlds</a> · <a href="world5.html">Back to World 5</a> · Next up: <a href="world7.html">World 7 · Final Boss</a></footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+window.QUEST={world:6,bossId:"w6-boss",lessons:{
+  t1:["t1-try","t1-change","t1-c1","t1-c2","t1-c3","t1-bug","t1-pair","t1-q1","t1-q2"],
+  t2:["t2-try","t2-change","t2-c1","t2-c2","t2-c3","t2-bug","t2-pair","t2-q1","t2-q2"],
+  t3:["t3-try","t3-change","t3-c1","t3-c2","t3-c3","t3-bug","t3-pair","t3-q1","t3-q2"],
+  t4:["t4-try","t4-change","t4-c1","t4-c2","t4-c3","t4-bug","t4-pair","t4-q1","t4-q2","t4-q3"],
+  boss:["w6-boss"]}};
+</script>
+<script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo-180.png">
+<title>Python Space Quest: World 5</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/quest.css">
+</head>
+<body>
+
+<div class="crewbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html" aria-label="Home: all Worlds" title="Home"><img src="assets/logo.svg" alt="" width="44" height="44"></a>
+    <div class="who">
+      <label for="active-player">Who's playing?</label>
+      <select id="active-player" aria-label="Choose the crew member who is playing"></select>
+    </div>
+    <span class="xp-pill" id="xp-pill">⭐ <b>0</b> XP</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"><canvas id="stars" data-text="def cheer():" data-planet="#ff8a65"></canvas></div>
+  <span class="eyebrow">Python Space Quest · World 5</span>
+  <h1>Spell Books</h1>
+  <p class="lead">On the Wizard Moon, Py-Bot finds an old book full of spells. Each spell is a name for a bunch of instructions: say the name, and all the instructions happen! In World 5 you'll write your own spells. Programmers call them <b>functions</b>.</p>
+  <div class="buddy">
+    <div class="face" aria-hidden="true">🤖</div>
+    <p><b>Py-Bot says:</b> "BEEP! I keep typing the same 5 lines to draw my rocket. What if I could say <b>draw_rocket()</b> and it just happens? Let's make a spell book! BOOP!"</p>
+  </div>
+  <p class="muted">Coming from <a href="world4.html">World 4</a>? Your crew, XP and badges are already here.</p>
+</header>
+
+<section id="map" aria-labelledby="map-h">
+  <div class="stack">
+    <h2 id="map-h">Flight path</h2>
+    <p class="muted">Tap a planet to fly there. Green means the player you picked has finished every task on it.</p>
+    <nav class="map">
+      <a class="station" href="#lesson-1" data-lesson="f1"><div class="planet p1"></div><span class="name">1 · Your First Spell</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-2" data-lesson="f2"><div class="planet p2"></div><span class="name">2 · Spell Ingredients</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-3" data-lesson="f3"><div class="planet p3"></div><span class="name">3 · Spells That Give Back</span><span class="prog"></span></a>
+      <a class="station" href="#lesson-4" data-lesson="f4"><div class="planet p4"></div><span class="name">4 · Spell Library</span><span class="prog"></span></a>
+      <a class="station" href="#boss" data-lesson="boss"><div class="planet p5"></div><span class="name">Boss · Wizard's Spell Book</span><span class="prog"></span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="crew" aria-labelledby="crew-h">
+  <div class="stack">
+    <h2 id="crew-h">Your crew</h2>
+    <p class="muted">Same crew as before, with all your XP. If you share one phone, pick who's playing in the bar at the top before tapping any task. Scores are saved on this phone only.</p>
+    <div class="crew-list" id="crew-list"></div>
+    <form class="card add-form" id="add-form" autocomplete="off">
+      <div class="field">
+        <label for="new-name"><b>New crew member's name</b></label>
+        <input id="new-name" maxlength="20" placeholder="e.g. Mia" required>
+      </div>
+      <div class="field">
+        <span><b>Pick an avatar</b></span>
+        <div class="avatar-pick" id="avatar-pick" role="group" aria-label="Avatar"></div>
+      </div>
+      <button class="btn" type="submit">Add to crew</button>
+    </form>
+    <details>
+      <summary>How ranks and badges work</summary>
+      <div class="stack">
+        <div class="tablewrap"><table id="rank-table"><tr><th>Rank</th><th>Total XP needed (all Worlds)</th></tr></table></div>
+        <div class="tablewrap"><table id="badge-table"><tr><th>World 5 badge</th><th>How to get it</th></tr></table></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- LESSON 1 -->
+<section id="lesson-1" aria-labelledby="f1-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p1" aria-hidden="true"></div><div><span class="eyebrow">Lesson 1 · About 30 minutes</span><h2 id="f1-h">Your First Spell</h2></div></div>
+    <p class="story"><b>Story:</b> Every time the crew does something great, Py-Bot cheers. But writing two cheer lines every time is boring! Let's turn the cheer into a spell that Py-Bot can cast with one word.</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">def</code> makes a function, and <code class="inl">name()</code> uses it</h4>
+      <p><code class="inl">def</code> (short for "define") writes a new spell into the book. The indented lines are what the spell does. Writing the spell <b>doesn't</b> do anything yet! To cast it, you <b>call</b> it: write its name with brackets, like <code class="inl">cheer()</code>.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a function">def cheer():                          ← "here's a new spell called cheer"
+····print("🎉 Hip hip hooray!")       ← what the spell does
+····print("🚀 Go crew go!")
+                                      ← (nothing happens yet!)
+cheer()                               ← cast the spell: both lines run</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">def cheer():
+    print("🎉 Hip hip hooray!")
+    print("🚀 Go crew go!")
+
+print("Mia fixed the engine!")
+cheer()
+print("Leo found the map!")
+cheer()</pre></div>
+      <pre class="out">Mia fixed the engine!
+🎉 Hip hip hooray!
+🚀 Go crew go!
+Leo found the map!
+🎉 Hip hip hooray!
+🚀 Go crew go!</pre>
+      <div class="task-row"><button class="task" data-id="f1-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Add a third line to the spell, like <code class="inl">print("⭐⭐⭐")</code>. Now <b>every</b> cheer has it. You only changed one place!</li>
+        <li>Delete the two <code class="inl">cheer()</code> lines and run it. The spell is written, but nobody cast it, so the cheer never appears.</li>
+        <li>Cast it inside a loop: <code class="inl">for i in range(3):</code> then an indented <code class="inl">cheer()</code>.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="f1-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="callout stack">
+      <h4>Spell-writing rules</h4>
+      <ul class="list">
+        <li>Function names follow the same rules as box labels: small letters, underscores instead of spaces, like <code class="inl">draw_rocket</code>.</li>
+        <li>The <code class="inl">def</code> line ends with <code class="inl">()</code> and a colon <code class="inl">:</code>.</li>
+        <li>Write the spell <b>above</b> the place where you cast it. Python reads from the top, so it has to learn the spell first.</li>
+      </ul>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a spell called <code class="inl">say_hello</code> that prints a greeting from Py-Bot. Cast it twice.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">def say_hello():</code>, an indented print, then <code class="inl">say_hello()</code> twice with no spaces in front.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f1-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make a spell <code class="inl">draw_rocket</code> that prints a text-art rocket (World 1!). Cast it 3 times to make a rocket fleet.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Every line of the rocket goes inside the spell, indented.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f1-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Make two spells, <code class="inl">day()</code> and <code class="inl">night()</code>, that each print a little picture. Then ask "How many days is the trip?" and use a loop to cast <code class="inl">day()</code> then <code class="inl">night()</code> that many times.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Both <code class="inl">def</code>s go at the top.</p></details><details><summary>Hint 2</summary><p>Inside the loop: <code class="inl">day()</code> then <code class="inl">night()</code>, both indented.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f1-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>There are <b>2 bugs</b>: one crash, and one sneaky bug where the spell never happens.</p>
+      <div class="codebox"><pre class="code bad">beep()
+
+def beep():
+    print("BEEP BOOP!")
+
+beep</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Python reads from the top. On line 1, does it know the spell yet?</p></details><details><summary>Hint 2</summary><p>Look at the last line. What does a spell need to be cast?</p></details></div>
+      <div class="task-row"><button class="task" data-id="f1-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Spell swap <span class="xp">+10 XP</span></h4>
+      <p>Each of you invents a spell name (like <code class="inl">dance()</code> or <code class="inl">sneeze()</code>) and writes what it prints on paper. Swap papers! The Driver types both spells and a few lines that cast them in a funny order. Run it and act it out!</p>
+      <div class="task-row"><button class="task" data-id="f1-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="f1-q1" data-xp="10" data-explain="Yes! def writes the spell, but you have to call it to run it.">
+        <p class="q">1. What happens when Python reads a <code class="inl">def</code> block?</p>
+        <div class="choices"><button>It runs the lines straight away</button><button data-ok>It learns the spell, but doesn't run it yet</button><button>It makes an error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="f1-q2" data-xp="10" data-explain="Correct! Name plus brackets casts the spell.">
+        <p class="q">2. How do you cast (call) a spell called <code class="inl">wave</code>?</p>
+        <div class="choices"><button>def wave</button><button>wave</button><button data-ok>wave()</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="unplugged" aria-labelledby="un-h">
+  <div class="stack">
+    <span class="eyebrow">No phone needed · 10 minutes</span>
+    <h2 id="un-h">Game: Recipe Cards</h2>
+    <p>Each player writes a "spell card" on paper with a name in brackets and 3 steps:</p>
+    <pre class="code" aria-label="Example recipe card">def silly_robot():
+····spin around
+····say "BEEP BOOP"
+····freeze like a statue</pre>
+    <ol class="list">
+      <li>Stick the cards on the wall. That's your spell book.</li>
+      <li>The leader calls spells: "<b>silly_robot()</b>!" and everyone does all 3 steps.</li>
+      <li>Then add ingredients, like Lesson 2: "<b>animal_walk(cat)</b>", "<b>animal_walk(penguin)</b>". The same card works with different animals!</li>
+    </ol>
+    <p class="muted">What you're learning: write the steps once, give them a name, then use them again and again.</p>
+    <div class="task-row"><button class="task" data-id="w5-un" data-xp="20">I played Recipe Cards +20 XP</button></div>
+  </div>
+</section>
+
+<!-- LESSON 2 -->
+<section id="lesson-2" aria-labelledby="f2-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p2" aria-hidden="true"></div><div><span class="eyebrow">Lesson 2 · About 30 minutes</span><h2 id="f2-h">Spell Ingredients</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot wants a welcome spell for new crew members. But each person has a different name! Spells can take <b>ingredients</b>, so the same spell works for everyone.</p>
+    <div class="bigidea">
+      <h4>The big idea: put a box name in the brackets</h4>
+      <p>In <code class="inl">def greet(name):</code>, the word <code class="inl">name</code> is a box that's filled when you cast the spell. <code class="inl">greet("Mia")</code> puts "Mia" in the box, and <code class="inl">greet("Leo")</code> puts "Leo" in it. Programmers call these ingredients <b>parameters</b>.</p>
+    </div>
+    <pre class="code" aria-label="Diagram of a parameter">def greet(name):          greet("Mia")
+          ▲                      │
+          └──── "Mia" goes into ─┘
+                the name box</pre>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">def greet(name):
+    print("Welcome aboard,", name, "! 👋")
+
+greet("Mia")
+greet("Leo")
+greet("Py-Bot")</pre></div>
+      <pre class="out">Welcome aboard, Mia ! 👋
+Welcome aboard, Leo ! 👋
+Welcome aboard, Py-Bot ! 👋</pre>
+      <div class="task-row"><button class="task" data-id="f2-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! Two ingredients <span class="xp">+10 XP</span></h4>
+      <p>Spells can take more than one ingredient. Separate them with commas:</p>
+      <div class="codebox"><pre class="code">def draw_line(symbol, length):
+    print(symbol * length)
+
+draw_line("⭐", 5)
+draw_line("~", 20)
+draw_line("🍕", 3)</pre></div>
+      <ul class="list">
+        <li>Run it, then add your own <code class="inl">draw_line(...)</code> with a different symbol.</li>
+        <li>Swap the order: <code class="inl">draw_line(5, "⭐")</code>. What happens? (The order of ingredients matters!)</li>
+        <li>Make <code class="inl">greet</code> ask for the name: <code class="inl">greet(input("Your name? "))</code></li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="f2-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make a spell <code class="inl">favorite(food)</code> that prints "I love" and the food. Cast it with 3 different foods.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">print("I love", food)</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="f2-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make a spell <code class="inl">times_table(number)</code> that prints that times table from 1 to 10. Cast it for 3 and for 7.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Put a <code class="inl">for</code> loop inside the spell (World 4). Inside the loop is indented twice: 8 spaces.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f2-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Make <code class="inl">box(width, height, symbol)</code> that draws a rectangle. Then draw a tiny house: a box for the roof made of <code class="inl">^</code> and a bigger box for the walls made of <code class="inl">#</code>.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Loop <code class="inl">height</code> times, and print <code class="inl">symbol * width</code> each time.</p></details><details><summary>Hint 2</summary><p><code class="inl">box(6, 2, "^")</code> then <code class="inl">box(6, 3, "#")</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="f2-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>This spell crashes. Read the bug clue: it tells you exactly what's missing! <b>1 bug</b>.</p>
+      <div class="codebox"><pre class="code bad">def shout(word, times):
+    print(word * times)
+
+shout("GO! ")</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>How many ingredients does the spell need? How many did you give it?</p></details></div>
+      <div class="task-row"><button class="task" data-id="f2-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Name the pet <span class="xp">+10 XP</span></h4>
+      <p>Together, write <code class="inl">pet(animal, name)</code> that prints "My space <i>animal</i> is called <i>name</i>!". Take turns: one person says an animal, the other says a silly name, and the Driver adds a line to cast the spell. Make 5 space pets!</p>
+      <div class="task-row"><button class="task" data-id="f2-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="f2-q1" data-xp="10" data-explain="Yes! &quot;Zoe&quot; goes into the name box.">
+        <p class="q">1. With <code class="inl">def greet(name):</code>, what's in the <code class="inl">name</code> box when you call <code class="inl">greet("Zoe")</code>?</p>
+        <div class="choices"><button>name</button><button data-ok>Zoe</button><button>Nothing</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="f2-q2" data-xp="10" data-explain="Correct! Ingredients are separated by commas.">
+        <p class="q">2. How do you give a spell two ingredients?</p>
+        <div class="choices"><button>draw_line("*" 5)</button><button data-ok>draw_line("*", 5)</button><button>draw_line("*") (5)</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 3 -->
+<section id="lesson-3" aria-labelledby="f3-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p3" aria-hidden="true"></div><div><span class="eyebrow">Lesson 3 · About 35 minutes</span><h2 id="f3-h">Spells That Give Back</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot made a spell that works out space math, but it just prints the answer on the screen. Py-Bot wants to <b>keep</b> the answer in a box to use later. Some spells need to hand something back!</p>
+    <div class="bigidea">
+      <h4>The big idea: <code class="inl">return</code> hands an answer back</h4>
+      <p><code class="inl">return</code> sends a value back to the place where the spell was cast, like a vending machine giving you a snack. You can put it in a box, print it, or use it in more math.</p>
+      <p style="margin-top:8px"><b>print</b> shows something on the screen. <b>return</b> gives something back to your code. They're different!</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">def double(number):
+    return number * 2
+
+answer = double(21)            # the 42 comes back into the box
+print(answer)
+print(double(5) + double(10))  # 10 + 20</pre></div>
+      <pre class="out">42
+30</pre>
+      <div class="task-row"><button class="task" data-id="f3-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Make <code class="inl">triple(number)</code> that returns the number times 3.</li>
+        <li>Change <code class="inl">return number * 2</code> to <code class="inl">print(number * 2)</code> and run it. Now <code class="inl">print(answer)</code> shows <b>None</b>, and the last line crashes, because the spell doesn't give anything back any more, so there's nothing to add up!</li>
+        <li>Spells can return text too: <code class="inl">def shout(word):</code> then <code class="inl">return word.upper() + "!!!"</code>. Try <code class="inl">print(shout("hello"))</code>.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="f3-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Make <code class="inl">days_alive(age)</code> that returns the age times 365. Print the answer for your age.</p>
+          <div class="hints"><details><summary>Hint</summary><p><code class="inl">return age * 365</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="f3-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make <code class="inl">is_even(number)</code> that returns True if a number is even and False if not. Hint: <code class="inl">number % 2</code> gives the leftover after dividing by 2.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Even numbers have nothing left over: <code class="inl">number % 2 == 0</code></p></details><details><summary>Hint 2</summary><p>You can return a comparison straight away: <code class="inl">return number % 2 == 0</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="f3-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p>Make <code class="inl">grade(score)</code> that returns a word: 9 or more = "Superstar", 5 or more = "Good job", anything else = "Keep practicing". Then ask for a score and print the word.</p>
+          <div class="hints"><details><summary>Hint</summary><p>Use if / elif / else inside the spell, with a <code class="inl">return</code> in each path.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f3-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>Py-Bot expected <b>Total: 12</b>, but it says <b>Total: None</b>! <b>1 sneaky bug</b>.</p>
+      <div class="codebox"><pre class="code bad">def add(a, b):
+    total = a + b
+
+result = add(5, 7)
+print("Total:", result)</pre></div>
+      <div class="hints"><details><summary>Hint</summary><p>The spell works out the total… but does it hand it back? <code class="inl">None</code> is Python's way of saying "nothing came back".</p></details></div>
+      <div class="task-row"><button class="task" data-id="f3-bug" data-xp="20">Squashed the bug +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Function machine <span class="xp">+10 XP</span></h4>
+      <p>The Navigator secretly writes a function that changes a number, like <code class="inl">return n * 3 + 1</code>, and types it in while the Driver looks away. The Driver can only call it with numbers and look at what comes back: <code class="inl">print(mystery(1))</code>, <code class="inl">print(mystery(2))</code>… Can the Driver work out the secret rule? Swap!</p>
+      <div class="task-row"><button class="task" data-id="f3-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="f3-q1" data-xp="10" data-explain="Yes! return hands the answer back to your code.">
+        <p class="q">1. What does <code class="inl">return</code> do?</p>
+        <div class="choices"><button>Prints on the screen</button><button data-ok>Hands an answer back to where the spell was cast</button><button>Starts the program again</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="f3-q2" data-xp="10" data-explain="Correct! A function without return gives back None.">
+        <p class="q">2. A function with no <code class="inl">return</code> line gives back…</p>
+        <div class="choices"><button>0</button><button data-ok>None</button><button>An error</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LESSON 4 -->
+<section id="lesson-4" aria-labelledby="f4-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p4" aria-hidden="true"></div><div><span class="eyebrow">Lesson 4 · About 35 minutes</span><h2 id="f4-h">Spell Library</h2></div></div>
+    <p class="story"><b>Story:</b> Py-Bot's spell book is getting full! Now it's time to use spells together, and even cast spells inside other spells. This is how big programs are built: from lots of small, tidy pieces.</p>
+    <div class="bigidea">
+      <h4>The big idea: small spells build big programs</h4>
+      <p>Break a big job into small spells, each with one job and a good name. Then the main part of your program reads almost like a story: <code class="inl">show_title()</code>, <code class="inl">play_round()</code>, <code class="inl">show_score()</code>.</p>
+    </div>
+
+    <div class="step stack">
+      <h4>Type it and run it <span class="xp">+10 XP</span></h4>
+      <div class="codebox"><pre class="code">import random
+
+def banner(text):
+    print("*" * 20)
+    print(" ", text)
+    print("*" * 20)
+
+def roll_dice():
+    return random.randint(1, 6)
+
+def play_round(player):
+    roll = roll_dice()              # a spell inside a spell!
+    print(player, "rolled a", roll)
+    return roll
+
+banner("DICE BATTLE")
+mia = play_round("Mia")
+leo = play_round("Leo")
+if mia &gt; leo:
+    banner("Mia wins! 🏆")
+elif leo &gt; mia:
+    banner("Leo wins! 🏆")
+else:
+    banner("It's a tie! 🤝")</pre></div>
+      <pre class="out">********************
+  DICE BATTLE
+********************
+Mia rolled a 5
+Leo rolled a 2
+********************
+  Mia wins! 🏆
+********************</pre>
+      <p class="muted">The dice are random, so your numbers will be different. Run it a few times!</p>
+      <div class="task-row"><button class="task" data-id="f4-try" data-xp="10">I ran it! +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Change it! <span class="xp">+10 XP</span></h4>
+      <ul class="list">
+        <li>Change the names to your crew's names.</li>
+        <li>Make <code class="inl">roll_dice</code> a 20-sided dice. You only change <b>one</b> line, and the whole game uses it.</li>
+        <li>Add a third player.</li>
+      </ul>
+      <div class="task-row"><button class="task" data-id="f4-change" data-xp="10">I tried all 3 +10 XP</button></div>
+    </div>
+
+    <div class="step stack">
+      <h4>Challenges: pick your level</h4>
+      <div class="challenges">
+        <div class="chal"><span class="lvl">⭐ Easy · +10 XP</span><p>Use <code class="inl">banner()</code> to make a 3-part show: a title, a joke, and "The End".</p>
+          <div class="hints"><details><summary>Hint</summary><p>Copy the banner spell, then cast it three times with different text.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f4-c1" data-xp="10">Done +10 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐ Medium · +20 XP</span><p>Make the dice battle best of 3: play 3 rounds with a loop and count wins for each player. Banner the champion!</p>
+          <div class="hints"><details><summary>Hint</summary><p>Two score boxes before the loop. In the loop, call <code class="inl">play_round</code> for each player and add 1 to the winner's score.</p></details></div>
+          <div class="task-row"><button class="task" data-id="f4-c2" data-xp="20">Done +20 XP</button></div></div>
+        <div class="chal"><span class="lvl">⭐⭐⭐ Hero · +30 XP</span><p><b>Math quiz machine:</b> make <code class="inl">ask_question()</code> that picks two random numbers, asks the player to add them, and <b>returns</b> 1 if they're right or 0 if wrong. Call it 5 times in a loop, add up the score, then use <code class="inl">banner()</code> to show it.</p>
+          <div class="hints"><details><summary>Hint 1</summary><p>Inside the spell: <code class="inl">if answer == a + b: return 1</code> and <code class="inl">else: return 0</code>.</p></details><details><summary>Hint 2</summary><p>In the loop: <code class="inl">score = score + ask_question()</code></p></details></div>
+          <div class="task-row"><button class="task" data-id="f4-c3" data-xp="30">Done +30 XP</button></div></div>
+      </div>
+    </div>
+
+    <div class="step stack">
+      <h4>Bug hunt <span class="xp">+20 XP</span></h4>
+      <p>There are <b>2 bugs</b>. One crashes, and one makes the banner look wrong.</p>
+      <div class="codebox"><pre class="code bad">def banner(text):
+    print("*" * 20)
+    print(" ", text)
+print("*" * 20)
+
+banner(Game Over)</pre></div>
+      <div class="hints"><details><summary>Hint 1</summary><p>Words you want to pass in need quotes, just like with <code class="inl">print</code>.</p></details><details><summary>Hint 2</summary><p>Which lines belong to the spell? Look at the spaces in front of each one.</p></details></div>
+      <div class="task-row"><button class="task" data-id="f4-bug" data-xp="20">Squashed both bugs +20 XP</button></div>
+    </div>
+
+    <div class="pair stack">
+      <h4>Pair power: Two-person spell book <span class="xp">+10 XP</span></h4>
+      <p>Each of you writes one spell on your own (for example, one draws a picture and one tells a random joke). Then put both spells into one program, and write a main part that uses both. Does it work first time? If not, debug it together!</p>
+      <div class="task-row"><button class="task" data-id="f4-pair" data-xp="10">We did it as a pair +10 XP</button></div>
+    </div>
+
+    <div class="stack">
+      <h4>Quick quiz</h4>
+      <div class="quiz" data-id="f4-q1" data-xp="10" data-explain="Yes! Spells can cast other spells.">
+        <p class="q">1. Can a function call another function?</p>
+        <div class="choices"><button data-ok>Yes</button><button>No</button><button>Only if it's called main</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="f4-q2" data-xp="10" data-explain="Correct! Change it once inside the function and every use gets the change.">
+        <p class="q">2. Why are functions useful?</p>
+        <div class="choices"><button>They make programs run faster</button><button data-ok>You write something once and reuse it, and changes happen in one place</button><button>Python needs at least one</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+      <div class="quiz" data-id="f4-q3" data-xp="10" data-explain="Right! Python must read the def before it can cast the spell.">
+        <p class="q">3. Where should the <code class="inl">def</code> go?</p>
+        <div class="choices"><button>At the very bottom</button><button data-ok>Above the line that calls it</button><button>Anywhere, it doesn't matter</button></div>
+        <p class="feedback" aria-live="polite"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="stack">
+    <div class="lesson-head"><div class="planet p5" aria-hidden="true"></div><div><span class="eyebrow">Boss battle · About 45 minutes</span><h2 id="boss-h">Wizard's Spell Book</h2></div></div>
+    <p class="story"><b>Story:</b> The Wizard Moon's library wants a <b>magic menu</b>: a program that shows a list of spells, lets you pick one by number, casts it, and keeps going until you choose to leave.</p>
+    <div class="stack">
+      <h4>Your program must have:</h4>
+      <ul class="list">
+        <li>A comment with the authors' names</li>
+        <li>At least <b>4 spells</b> (functions). At least one must take an ingredient, and at least one must <code class="inl">return</code> something</li>
+        <li>A <code class="inl">show_menu()</code> spell that prints the choices</li>
+        <li>A <code class="inl">while</code> loop that keeps showing the menu until the player picks "quit"</li>
+        <li>if / elif / else to cast the right spell for each choice</li>
+      </ul>
+      <p class="muted">Spell ideas: draw a rocket, roll dice, a times table, a compliment, a random fortune, a countdown, a joke.</p>
+    </div>
+    <pre class="out">=== WIZARD'S SPELL BOOK ===
+1. Draw a rocket
+2. Roll a dice
+3. Times table
+4. Quit
+Pick a spell: <span class="typed">2</span>
+🎲 You rolled a 4
+...
+Pick a spell: <span class="typed">4</span>
+The spell book closes. Goodbye! 📕</pre>
+    <div class="challenges">
+      <div class="chal"><span class="lvl">📖 Boss · +50 XP</span><p>Build your spell book and let your crew try every spell!</p>
+        <div class="hints"><details><summary>Hint 1</summary><p>Write and test one spell at a time before building the menu.</p></details><details><summary>Hint 2</summary><p>Start with <code class="inl">choice = ""</code> and <code class="inl">while choice != "4":</code></p></details><details><summary>Hint 3</summary><p>Keep the choice as text (don't use <code class="inl">int</code>), and compare with <code class="inl">"1"</code>, <code class="inl">"2"</code>… That way a typo can't crash the menu.</p></details></div>
+        <div class="task-row"><button class="task" data-id="w5-boss" data-xp="50">We beat the boss! +50 XP</button></div></div>
+    </div>
+    <div class="cert" id="cert" aria-live="polite">
+      <p class="eyebrow">Certificate of achievement</p>
+      <p style="margin-top:8px">This certifies that</p>
+      <p class="big" id="cert-name">Crew member</p>
+      <p>has completed <b>World 5: Spell Books</b><br>and holds the rank of <b id="cert-rank">Code Cadet</b>.</p>
+      <p style="margin-top:12px;font-size:2rem" aria-hidden="true">🪄 📖 🤖</p>
+      <p class="muted" style="margin-top:8px">Take a screenshot to keep it!</p>
+    </div>
+    <div class="callout stack">
+      <h4>Next stop: World 6 · Treasure Chests</h4>
+      <p>Py-Bot will learn to keep <b>lots of things in one box</b>, called a list: a crew list, a backpack, a treasure chest full of loot!</p>
+      <p><a class="btn" href="world6.html" style="display:inline-block;text-decoration:none">Fly to World 6 ▶</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="errors" aria-labelledby="err-h">
+  <div class="stack">
+    <span class="eyebrow">Keep this handy</span>
+    <h2 id="err-h">Error message decoder: World 5</h2>
+    <div class="tablewrap"><table>
+      <tr><th>The bug clue says…</th><th>What it means</th><th>How to fix it</th></tr>
+      <tr><td><code>NameError: name 'beep' is not defined</code></td><td>You cast a spell before Python read its <code>def</code>, or the name is spelled differently.</td><td>Move the <code>def</code> above the call. Check the spelling.</td></tr>
+      <tr><td><code>TypeError: shout() missing 1 required positional argument: 'times'</code></td><td>The spell needs more ingredients than you gave it.</td><td>Add the missing ingredient in the brackets.</td></tr>
+      <tr><td><code>TypeError: greet() takes 1 positional argument but 2 were given</code></td><td>You gave the spell too many ingredients.</td><td>Remove the extra one, or add another box to the <code>def</code> line.</td></tr>
+      <tr><td><code>SyntaxError: expected ':'</code></td><td>The <code>def</code> line is missing its colon.</td><td>End it with <code>):</code></td></tr>
+      <tr><td><code>IndentationError: expected an indented block after function definition</code></td><td>The spell's lines need spaces in front.</td><td>Add 4 spaces (tap Tab).</td></tr>
+      <tr><td><code>TypeError: unsupported operand type(s) for +: 'NoneType' and 'NoneType'</code></td><td>You did math with something a spell gave back, but the spell has no <code>return</code>.</td><td>Use <code>return</code> instead of <code>print</code> inside the spell.</td></tr>
+      <tr><td>The spell never happens (no error)</td><td>You wrote the spell's name without brackets, so it was never cast.</td><td>Add <code>()</code>, like <code>cheer()</code>.</td></tr>
+      <tr><td>It prints <code>None</code></td><td>The spell has no <code>return</code>, so nothing came back.</td><td>Add <code>return</code> with the answer.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section id="grownups" aria-labelledby="gu-h">
+  <div class="grownup stack">
+    <span class="eyebrow">For grown-ups and group leaders</span>
+    <h2 id="gu-h">Leader's guide and answer key: World 5</h2>
+    <p>Functions are a big step: they're about <b>organizing</b> code, not just running it. The two big ideas to keep coming back to are "writing a spell isn't casting it" and "print shows, return gives back".</p>
+
+    <details>
+      <summary>Common confusions, and what to say</summary>
+      <ul class="list">
+        <li><b>"I wrote the function but nothing happened!"</b> Say: "You wrote the recipe, but you haven't cooked it. How do you cast it?"</li>
+        <li><b>print vs return:</b> a vending machine <i>returns</i> a snack into your hand; a TV screen <i>prints</i> a picture you can't hold. Ask: "Do you need to keep the answer?"</li>
+        <li><b>Parameters:</b> act it out with the Box Swap cups from World 2. Calling <code class="inl">greet("Mia")</code> drops "Mia" into the <i>name</i> cup.</li>
+        <li><b>Double indentation:</b> a loop inside a function needs 8 spaces. The Code Pad's auto-indent helps.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 1</summary>
+      <div class="stack">
+        <p><b>⭐ Easy</b></p><pre class="code">def say_hello():
+    print("Hello from Py-Bot! 🤖")
+
+say_hello()
+say_hello()</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">def draw_rocket():
+    print("   ^")
+    print("  |o|")
+    print("  |o|")
+    print(" &lt;|_|&gt;")
+    print("  ***")
+
+draw_rocket()
+draw_rocket()
+draw_rocket()</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">def day():
+    print("☀️  Daytime: exploring!")
+
+def night():
+    print("🌙  Night: sleeping in the ship")
+
+days = int(input("How many days is the trip? "))
+for i in range(days):
+    day()
+    night()</pre>
+        <p><b>Bug hunt.</b> Line 1 casts <code class="inl">beep()</code> before the <code class="inl">def</code> (<code class="inl">NameError</code>), so move it below. The last line says <code class="inl">beep</code> without brackets, so the spell is never cast. It should be <code class="inl">beep()</code>.</p>
+        <p><b>Quiz:</b> 1. It learns the spell, but doesn't run it yet · 2. wave()</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 2</summary>
+      <div class="stack">
+        <p><b>Change it:</b> <code class="inl">draw_line(5, "⭐")</code> still works, because <code class="inl">5 * "⭐"</code> is the same as <code class="inl">"⭐" * 5</code>. It's a nice surprise to discuss! With other spells, swapping the order often breaks things.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">def favorite(food):
+    print("I love", food)
+
+favorite("pizza")
+favorite("noodles")
+favorite("mango")</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">def times_table(number):
+    for n in range(1, 11):
+        print(n, "x", number, "=", n * number)
+
+times_table(3)
+times_table(7)</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">def box(width, height, symbol):
+    for row in range(height):
+        print(symbol * width)
+
+box(6, 2, "^")
+box(6, 3, "#")</pre>
+        <p><b>Bug hunt.</b> <code class="inl">shout</code> needs 2 ingredients (<code class="inl">TypeError: ... missing 1 required positional argument: 'times'</code>). Fix: <code class="inl">shout("GO! ", 3)</code>.</p>
+        <p><b>Quiz:</b> 1. Zoe · 2. draw_line("*", 5)</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 3</summary>
+      <div class="stack">
+        <p><b>Change it:</b> with <code class="inl">print</code> instead of <code class="inl">return</code>, the spell prints 42, then <code class="inl">print(answer)</code> shows None, and adding two Nones gives a <code class="inl">TypeError</code>.</p>
+        <p><b>⭐ Easy</b></p><pre class="code">def days_alive(age):
+    return age * 365
+
+print(days_alive(10))</pre>
+        <p><b>⭐⭐ Medium</b></p><pre class="code">def is_even(number):
+    return number % 2 == 0
+
+print(is_even(4))
+print(is_even(7))</pre>
+        <p><b>⭐⭐⭐ Hero</b></p><pre class="code">def grade(score):
+    if score &gt;= 9:
+        return "Superstar"
+    elif score &gt;= 5:
+        return "Good job"
+    else:
+        return "Keep practicing"
+
+score = int(input("What was your score? "))
+print(grade(score))</pre>
+        <p><b>Bug hunt.</b> The spell works out <code class="inl">total</code> but never returns it. Add <code class="inl">return total</code> as the last line of the spell.</p>
+        <p><b>Quiz:</b> 1. Hands an answer back to where the spell was cast · 2. None</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Lesson 4</summary>
+      <div class="stack">
+        <p><b>⭐⭐ Medium</b> (add these lines after the three spells)</p><pre class="code">mia_wins = 0
+leo_wins = 0
+for i in range(3):
+    mia = play_round("Mia")
+    leo = play_round("Leo")
+    if mia &gt; leo:
+        mia_wins = mia_wins + 1
+    elif leo &gt; mia:
+        leo_wins = leo_wins + 1
+if mia_wins &gt; leo_wins:
+    banner("Mia is champion!")
+elif leo_wins &gt; mia_wins:
+    banner("Leo is champion!")
+else:
+    banner("It's a tie!")</pre>
+        <p><b>⭐⭐⭐ Hero</b> (uses <code class="inl">banner</code> from the lesson)</p><pre class="code">import random
+
+def banner(text):
+    print("*" * 20)
+    print(" ", text)
+    print("*" * 20)
+
+def ask_question():
+    a = random.randint(1, 10)
+    b = random.randint(1, 10)
+    print("What is", a, "+", b, "?")
+    answer = int(input("Answer: "))
+    if answer == a + b:
+        print("Correct! ✅")
+        return 1
+    else:
+        print("Oops, it's", a + b)
+        return 0
+
+score = 0
+for i in range(5):
+    score = score + ask_question()
+banner("Score: " + str(score) + " out of 5")</pre>
+        <p class="muted"><code class="inl">str()</code> turns a number into text so it can be glued onto other text with <code class="inl">+</code>. It's fine for learners to print the score on a separate line instead.</p>
+        <p><b>Bug hunt.</b> <code class="inl">banner(Game Over)</code> needs quotes: <code class="inl">banner("Game Over")</code> (it's a <code class="inl">SyntaxError</code>). The last <code class="inl">print("*" * 20)</code> isn't indented, so it isn't part of the spell. It runs once when the program starts, and the banner has no bottom line. Indent it.</p>
+        <p><b>Quiz:</b> 1. Yes · 2. You write something once and reuse it · 3. Above the line that calls it</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Answer key: Boss battle (example solution)</summary>
+      <div class="stack">
+        <pre class="code"># Wizard's Spell Book by Mia and Leo
+import random
+
+def show_menu():
+    print("=== WIZARD'S SPELL BOOK ===")
+    print("1. Draw a rocket")
+    print("2. Roll a dice")
+    print("3. Times table")
+    print("4. Quit")
+
+def draw_rocket():
+    print("   ^")
+    print("  |o|")
+    print(" &lt;|_|&gt;")
+    print("  ***")
+
+def roll_dice(sides):
+    return random.randint(1, sides)
+
+def times_table(number):
+    for n in range(1, 11):
+        print(n, "x", number, "=", n * number)
+
+choice = ""
+while choice != "4":
+    show_menu()
+    choice = input("Pick a spell: ")
+    if choice == "1":
+        draw_rocket()
+    elif choice == "2":
+        print("🎲 You rolled a", roll_dice(6))
+    elif choice == "3":
+        number = int(input("Which times table? "))
+        times_table(number)
+    elif choice == "4":
+        print("The spell book closes. Goodbye! 📕")
+    else:
+        print("That's not a spell! Try 1, 2, 3 or 4.")</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Reset all scores on this phone</summary>
+      <div class="stack">
+        <p>This deletes every crew member and all their XP in <b>every</b> World on this phone. It can't be undone.</p>
+        <div class="task-row"><button class="btn ghost small" id="reset-ask" type="button">Reset everything</button>
+          <span id="reset-confirm" hidden><button class="btn danger small" id="reset-yes" type="button">Yes, delete all scores</button> <button class="btn ghost small" id="reset-no" type="button">Cancel</button></span></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="muted"><a href="index.html">All Worlds</a> · <a href="world4.html">Back to World 4</a> · Next up: <a href="world6.html">World 6 · Treasure Chests</a></footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+window.QUEST={world:5,bossId:"w5-boss",lessons:{
+  f1:["f1-try","f1-change","f1-c1","f1-c2","f1-c3","f1-bug","f1-pair","f1-q1","f1-q2"],
+  f2:["f2-try","f2-change","f2-c1","f2-c2","f2-c3","f2-bug","f2-pair","f2-q1","f2-q2"],
+  f3:["f3-try","f3-change","f3-c1","f3-c2","f3-c3","f3-bug","f3-pair","f3-q1","f3-q2"],
+  f4:["f4-try","f4-change","f4-c1","f4-c2","f4-c3","f4-bug","f4-pair","f4-q1","f4-q2","f4-q3"],
+  boss:["w5-boss"]}};
+</script>
+<script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
+</body>
+</html>

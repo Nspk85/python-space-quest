@@ -10,7 +10,8 @@
   const RANKS = [
     [0,"Code Cadet","🧑‍🚀"],[100,"Space Explorer","🔭"],[250,"Rocket Pilot","🛸"],
     [450,"Star Captain","🌟"],[750,"Galaxy Guardian","🛡️"],[1100,"Fleet Commander","🎖️"],
-    [1500,"Nebula Navigator","🌌"],[2000,"Cosmic Legend","🏆"]
+    [1500,"Nebula Navigator","🌌"],[2000,"Cosmic Legend","🏆"],
+    [2600,"Galaxy Hero","🦸"],[3200,"Supernova","💥"],[3800,"Python Master","🐍"]
   ];
   const BADGES = [
     // World 1
@@ -52,7 +53,37 @@
     {w:4,icon:"👯",name:"Loop Buddies",how:"Do all 4 World 4 pair activities",req:["r1-pair","r2-pair","r3-pair","r4-pair"]},
     {w:4,icon:"💫",name:"Ultra Hero Coder",how:"Finish all 4 World 4 Hero (⭐⭐⭐) challenges",req:["r1-c3","r2-c3","r3-c3","r4-c3"]},
     {w:4,icon:"💃",name:"Loop Dancer",how:"Play the Loop Dance game",req:["w4-un"]},
-    {w:4,icon:"🪐",name:"World 4 Champion",how:"Beat the Hidden Planet boss",req:["w4-boss"]}
+    {w:4,icon:"🪐",name:"World 4 Champion",how:"Beat the Hidden Planet boss",req:["w4-boss"]},
+    // World 5
+    {w:5,icon:"🪄",name:"First Spell",how:"Run your first function in Lesson 1",req:["f1-try"]},
+    {w:5,icon:"🧪",name:"Potion Mixer",how:"Finish a Lesson 2 challenge (any level)",any:["f2-c1","f2-c2","f2-c3"]},
+    {w:5,icon:"🎁",name:"Gift Giver",how:"Finish a Lesson 3 challenge (any level)",any:["f3-c1","f3-c2","f3-c3"]},
+    {w:5,icon:"📚",name:"Librarian",how:"Get every Lesson 4 quiz question right",req:["f4-q1","f4-q2","f4-q3"]},
+    {w:5,icon:"🧹",name:"Bug Sweeper",how:"Fix all 4 World 5 bug hunts",req:["f1-bug","f2-bug","f3-bug","f4-bug"]},
+    {w:5,icon:"🧙",name:"Wizard Pair",how:"Do all 4 World 5 pair activities",req:["f1-pair","f2-pair","f3-pair","f4-pair"]},
+    {w:5,icon:"🔥",name:"Blazing Hero Coder",how:"Finish all 4 World 5 Hero (⭐⭐⭐) challenges",req:["f1-c3","f2-c3","f3-c3","f4-c3"]},
+    {w:5,icon:"🥪",name:"Recipe Reader",how:"Play the Recipe Cards game",req:["w5-un"]},
+    {w:5,icon:"📖",name:"World 5 Champion",how:"Beat the Spell Book boss",req:["w5-boss"]},
+    // World 6
+    {w:6,icon:"🧺",name:"Chest Packer",how:"Run your first list program in Lesson 1",req:["t1-try"]},
+    {w:6,icon:"🎒",name:"Backpacker",how:"Finish a Lesson 2 challenge (any level)",any:["t2-c1","t2-c2","t2-c3"]},
+    {w:6,icon:"🔍",name:"Treasure Hunter",how:"Finish a Lesson 3 challenge (any level)",any:["t3-c1","t3-c2","t3-c3"]},
+    {w:6,icon:"🎰",name:"Lucky Dip",how:"Get every Lesson 4 quiz question right",req:["t4-q1","t4-q2","t4-q3"]},
+    {w:6,icon:"🦟",name:"Bug Buster",how:"Fix all 4 World 6 bug hunts",req:["t1-bug","t2-bug","t3-bug","t4-bug"]},
+    {w:6,icon:"🏴‍☠️",name:"Pirate Pals",how:"Do all 4 World 6 pair activities",req:["t1-pair","t2-pair","t3-pair","t4-pair"]},
+    {w:6,icon:"💎",name:"Diamond Hero Coder",how:"Finish all 4 World 6 Hero (⭐⭐⭐) challenges",req:["t1-c3","t2-c3","t3-c3","t4-c3"]},
+    {w:6,icon:"🚂",name:"Treasure Train",how:"Play the Treasure Train game",req:["w6-un"]},
+    {w:6,icon:"👑",name:"World 6 Champion",how:"Beat the Packing List boss",req:["w6-boss"]},
+    // World 7
+    {w:7,icon:"📝",name:"Mission Planner",how:"Run your game skeleton in Lesson 1",req:["g1-try"]},
+    {w:7,icon:"🧱",name:"Builder",how:"Finish a Lesson 2 challenge (any level)",any:["g2-c1","g2-c2","g2-c3"]},
+    {w:7,icon:"🧪",name:"Tester",how:"Finish a Lesson 3 challenge (any level)",any:["g3-c1","g3-c2","g3-c3"]},
+    {w:7,icon:"🧠",name:"Grand Review",how:"Get every Lesson 4 quiz question right",req:["g4-q1","g4-q2","g4-q3","g4-q4"]},
+    {w:7,icon:"🛠️",name:"Master Debugger",how:"Fix all 4 World 7 bug hunts",req:["g1-bug","g2-bug","g3-bug","g4-bug"]},
+    {w:7,icon:"🤜",name:"Dream Crew",how:"Do all 4 World 7 pair activities",req:["g1-pair","g2-pair","g3-pair","g4-pair"]},
+    {w:7,icon:"🌟",name:"Legendary Hero Coder",how:"Finish all 4 World 7 Hero (⭐⭐⭐) challenges",req:["g1-c3","g2-c3","g3-c3","g4-c3"]},
+    {w:7,icon:"🎮",name:"Playtester",how:"Play the Playtest Party game",req:["w7-un"]},
+    {w:7,icon:"🎓",name:"Python Space Quest Graduate",how:"Launch your team's game in the Grand Launch",req:["w7-boss"]}
   ];
 
   const XP = {};
@@ -219,7 +250,7 @@
 
   // ---------- code colouring + copy buttons ----------
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print|input|int|if|elif|else|for|in|range|while|import|and|or|not|True|False|break)\b|\b(\d+(?:\.\d+)?)\b/gm;
+  const RE=/(#.*$)|("[^"\n]*"?|'[^'\n]*'?)|\b(print|input|int|if|elif|else|for|in|range|while|import|and|or|not|True|False|break|def|return|pass|None|len|str)\b|\b(\d+(?:\.\d+)?)\b/gm;
   document.querySelectorAll("pre.code").forEach(pre=>{
     if(pre.getAttribute("aria-label")) return; // diagrams stay plain
     const raw=pre.textContent; let out="",last=0;

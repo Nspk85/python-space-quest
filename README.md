@@ -10,9 +10,9 @@ A space-themed Python course for complete beginners, written for kids around 10 
 | 2 · Magic Boxes | variables, `input()` and `int()` | [world2.html](world2.html) |
 | 3 · Choose Your Path | comparisons, `if` / `elif` / `else`, `random` | [world3.html](world3.html) |
 | 4 · Loop-de-Loop Forest | `for`, `range()`, loop art, `while` | [world4.html](world4.html) |
-| 5 · Spell Books | functions | coming soon |
-| 6 · Treasure Chests | lists | coming soon |
-| 7 · Final Boss | team project | coming soon |
+| 5 · Spell Books | functions, parameters, `return` | [world5.html](world5.html) |
+| 6 · Treasure Chests | lists, `append` / `remove`, looping over lists, `random.choice` | [world6.html](world6.html) |
+| 7 · Final Boss | plan, build, test and launch a team game; graduation | [world7.html](world7.html) |
 
 ## What each world includes
 
