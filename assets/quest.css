@@ -196,3 +196,8 @@ body.pad-open .toast{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}
 footer{padding-bottom:96px}
 body.pad-open{padding-bottom:64vh}
 @media (min-height:900px){.pad-out{max-height:30vh}}
+
+/* Add-crew button in the top bar, and a highlight when jumping to the form */
+.crew-add-btn{font-size:.95rem}
+.add-form.flash{outline:3px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion: no-preference){.add-form{transition:outline-color .3s}}

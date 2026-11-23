@@ -106,11 +106,24 @@
     toast(`Welcome aboard, ${name}! ${p.avatar}`);
   });
 
-  $("#active-player").addEventListener("change",e=>{state.active=e.target.value;save();render();const p=player();if(p)toast(`${p.avatar} ${p.name} is playing now`)});
+  function goAddCrew(){
+    const form=$("#add-form"), input=$("#new-name");
+    form.scrollIntoView({block:"center",behavior:"smooth"});
+    try{input.focus({preventScroll:true})}catch(e){input.focus()}
+    form.classList.add("flash"); setTimeout(()=>form.classList.remove("flash"),1600);
+  }
+  const addBtn=document.createElement("button");
+  addBtn.type="button"; addBtn.className="btn small crew-add-btn"; addBtn.textContent="＋ Add crew member";
+  addBtn.addEventListener("click",goAddCrew);
+  $("#active-player").insertAdjacentElement("afterend",addBtn);
+
+  $("#active-player").addEventListener("change",e=>{
+    if(e.target.value==="__add"){e.target.value=state.active||"";goAddCrew();return}
+    state.active=e.target.value;save();render();const p=player();if(p)toast(`${p.avatar} ${p.name} is playing now`)});
 
   function award(id){
     const p=player();
-    if(!p){toast("Add a crew member first!");location.hash="#crew";return}
+    if(!p){toast("Add a crew member first!");goAddCrew();return}
     const before=badgesOf(p.id).map(b=>b.name); const rBefore=rankOf(xpOf(p.id))[1];
     doneOf(p.id)[id]=XP[id]||0; save(); render();
     const newB=badgesOf(p.id).filter(b=>!before.includes(b.name)); const rAfter=rankOf(xpOf(p.id));
@@ -133,7 +146,7 @@
     q.querySelectorAll(".choices button").forEach(b=>{
       b.type="button";
       b.addEventListener("click",()=>{
-        const p=player(); if(!p){toast("Add a crew member first!");location.hash="#crew";return}
+        const p=player(); if(!p){toast("Add a crew member first!");goAddCrew();return}
         if(doneOf(p.id)[q.dataset.id]!==undefined) return;
         const fb=q.querySelector(".feedback");
         if(b.hasAttribute("data-ok")) award(q.dataset.id);
@@ -150,8 +163,13 @@
     if(!player()&&state.players.length) state.active=state.players[0].id;
     const p=player();
     const sel=$("#active-player"); sel.innerHTML="";
-    if(!state.players.length){const o=document.createElement("option");o.textContent="Add your crew below";o.value="";sel.appendChild(o);sel.disabled=true}
-    else{sel.disabled=false;state.players.forEach(pl=>{const o=document.createElement("option");o.value=pl.id;o.textContent=`${pl.avatar} ${pl.name}`;if(pl.id===state.active)o.selected=true;sel.appendChild(o)})}
+    const empty=!state.players.length;
+    sel.hidden=empty; addBtn.hidden=!empty;
+    const lbl=document.querySelector('label[for="active-player"]'); if(lbl) lbl.textContent=empty?"No crew yet:":"Who's playing?";
+    if(!empty){
+      state.players.forEach(pl=>{const o=document.createElement("option");o.value=pl.id;o.textContent=`${pl.avatar} ${pl.name}`;if(pl.id===state.active)o.selected=true;sel.appendChild(o)});
+      const o=document.createElement("option");o.value="__add";o.textContent="＋ Add someone new";sel.appendChild(o);
+    }
     const xp=p?xpOf(p.id):0;
     $("#xp-pill").innerHTML=`⭐ <b>${xp}</b> XP · ${rankOf(xp)[1]}`;
 
