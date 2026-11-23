@@ -1,6 +1,6 @@
 # Python Space Quest
 
-A space-themed Python course for complete beginners, written for kids around 10 years old. Learners code on Android phones or tablets using the free Pydroid 3 app. No AI is needed to use it.
+A space-themed Python course for complete beginners, written for kids around 10 years old. Learners code on Android phones or tablets in the built-in Code Pad, which runs real Python in the browser, so nothing needs to be installed. No AI is needed to use it.
 
 ## Worlds
 
@@ -24,6 +24,7 @@ A space-themed Python course for complete beginners, written for kids around 10 
 ## How it's built
 
 - `assets/quest.css` and `assets/quest.js` are shared by every World: page styles, crew, XP, ranks, badges, code colouring and copy buttons.
+- `assets/codepad.js` adds the Code Pad: an editor with symbol keys, a Run button and "Try it" buttons on every example. It runs Python with [Pyodide](https://pyodide.org), hosted in `assets/pyodide/` (downloaded on the first Run, about 14 MB). `input()` answers are typed into a pop-up box.
 - Each World page sets `window.QUEST` (its World number, boss task and lesson task lists) before loading `quest.js`.
 - Progress is saved in the browser under one key, so the crew and total XP carry across Worlds. Progress saved by the first World 1 release is imported automatically.
 

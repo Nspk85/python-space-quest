@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Python Space Quest: World 1</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,23 +79,23 @@
   <div class="stack">
     <span class="eyebrow">Before you start</span>
     <h2 id="setup-h">Get your ship ready</h2>
-    <p>We'll write Python in a free app called <b>Pydroid 3</b>. Ask a grown-up to help with these steps the first time.</p>
+    <p>You don't need to install anything! This website has a built-in <b>Code Pad</b> where you type Python and run it. It works in Chrome on any Android phone or tablet.</p>
     <ol class="list">
-      <li>Open the <b>Google Play Store</b>, search for <b>Pydroid 3</b>, and install it. It's free (it shows some ads).</li>
-      <li>Open Pydroid 3. Let it finish setting up, which can take a minute the first time.</li>
-      <li>The big white area is the <b>editor</b>. That's where you type code.</li>
-      <li>Tap the big <b>▶ play button</b> to run your code. The answer appears on a black screen called the <b>terminal</b>.</li>
-      <li>To go back to your code, use the phone's <b>back</b> button or the arrow at the top.</li>
-      <li>To start a new program, clear the editor. To keep one, use the <b>folder menu → Save</b> and give it a name like <code class="inl">lesson1</code>.</li>
+      <li>Tap the orange <b>▶ Code Pad</b> button in the bottom corner. A coding area slides up.</li>
+      <li>The dark box is the <b>editor</b>. That's where you type code.</li>
+      <li>Tap <b>▶ Run</b>. What your code does appears in the black <b>"screen shows"</b> box underneath.</li>
+      <li>Every example in the lessons has a <b>▶ Try it</b> button that puts the example into the Code Pad. Typing it yourself is even better practice, and gets your fingers used to the symbols!</li>
+      <li>Tap <b>✕</b> to close the Code Pad. It remembers your code, even if you close the page. To keep a program you're proud of, copy it into a notes app or write it down.</li>
     </ol>
     <div class="callout stack">
-      <h4>Important phone trick: turn off autocorrect</h4>
-      <p>Phone keyboards try to "help" by changing <code class="inl">print</code> into <code class="inl">Print</code>, or by changing straight quotes <code class="inl">"</code> into curly ones <code class="inl">“ ”</code>. Python doesn't understand those. Open your phone's <b>Settings → Keyboard</b> and turn off <b>auto-correct</b>, <b>auto-capitalization</b> and <b>smart punctuation</b> if you see it.</p>
-      <p>Pydroid also has a row of extra keys above the keyboard with symbols like <code class="inl">( ) " # * :</code>. Use them, they're faster!</p>
+      <h4>Good to know</h4>
+      <p><b>Internet:</b> the first time you tap Run, the page downloads Python (about 14 MB), which can take a minute. After that, the browser usually remembers it, so it starts much faster. Use Wi-Fi the first time if you can.</p>
+      <p><b>Symbol keys:</b> under the editor there's a row of keys like <code class="inl">( ) " : = * #</code>. Tap them instead of hunting through the phone keyboard. Brackets and quotes come in pairs automatically.</p>
+      <p><b>Autocorrect:</b> the Code Pad asks the keyboard not to autocorrect. If your phone still changes <code class="inl">print</code> into <code class="inl">Print</code>, open <b>Settings → Keyboard</b> and turn off auto-correct and auto-capitalization.</p>
     </div>
     <div class="step stack">
       <h4>Test flight</h4>
-      <p>Type this into Pydroid 3 and tap ▶. If you see the message, your ship works!</p>
+      <p>Open the Code Pad, type this in and tap <b>▶ Run</b>. If you see the message, your ship works!</p>
       <div class="codebox"><pre class="code">print("Systems online!")</pre></div>
       <pre class="out">Systems online!</pre>
     </div>
@@ -118,7 +118,7 @@
 
     <div class="step stack">
       <h4>Type it and run it <span class="xp">+10 XP</span></h4>
-      <p>Type these two lines. You don't have to type the grey notes after the <code class="inl">#</code>; they're just explanations for you.</p>
+      <p>Type these two lines into the Code Pad. You don't have to type the grey notes after the <code class="inl">#</code>; they're just explanations for you.</p>
       <div class="codebox"><pre class="code">print("Hello, Mission Control!")   # Py-Bot's first words
 print("I am ready to fly!")        # a second line of words</pre></div>
       <pre class="out">Hello, Mission Control!
@@ -506,7 +506,7 @@ print("=" * 15)</pre></div>
       <tr><td><code>NameError: name 'Hi' is not defined</code></td><td>You forgot the quotes around your words.</td><td><code>print("Hi")</code></td></tr>
       <tr><td><code>SyntaxError: unterminated string literal</code></td><td>A quote is missing at the end of your words.</td><td>Make sure there's a <code>"</code> at both ends.</td></tr>
       <tr><td><code>SyntaxError: '(' was never closed</code></td><td>A bracket is missing at the end.</td><td>Every <code>(</code> needs a <code>)</code>.</td></tr>
-      <tr><td><code>SyntaxError: invalid character '“'</code></td><td>The phone used curly "smart" quotes.</td><td>Use the straight <code>"</code> key from Pydroid's extra keys, and turn off smart punctuation.</td></tr>
+      <tr><td><code>SyntaxError: invalid character '“'</code></td><td>The phone used curly "smart" quotes.</td><td>Use the straight <code>"</code> key from the Code Pad's symbol keys. (The Code Pad also fixes curly quotes for you when you tap Run.)</td></tr>
       <tr><td><code>SyntaxError: invalid syntax</code></td><td>Something is written in a way Python doesn't understand, like <code>x</code> for times.</td><td>Look near where the error points. Use <code>*</code> for times.</td></tr>
       <tr><td><code>TypeError: can't multiply sequence by non-int of type 'str'</code></td><td>You tried to multiply text by text.</td><td>The number must not be in quotes: <code>"*" * 5</code></td></tr>
     </table></div>
@@ -687,5 +687,6 @@ window.QUEST={world:1,bossId:"boss-done",lessons:{
   boss:["boss-done"]}};
 </script>
 <script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
 </body>
 </html>

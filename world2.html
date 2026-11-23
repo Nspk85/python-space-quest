@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Python Space Quest: World 2</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,13 +79,13 @@
 <section id="setup" aria-labelledby="setup-h">
   <div class="stack">
     <span class="eyebrow">New skill for this World</span>
-    <h2 id="setup-h">Answering Py-Bot in Pydroid 3</h2>
-    <p>In this World, your programs will <b>ask questions</b> and wait for you to answer. Here's how that works in Pydroid 3:</p>
+    <h2 id="setup-h">Answering Py-Bot's questions</h2>
+    <p>In this World, your programs will <b>ask questions</b> and wait for you to answer. Here's how that works in the Code Pad:</p>
     <ol class="list">
-      <li>Tap ▶ to run. The black terminal screen opens and shows Py-Bot's question.</li>
-      <li>Tap the terminal so the keyboard pops up.</li>
-      <li>Type your answer and press <b>Enter</b> (the ↵ key).</li>
-      <li>If the keyboard covers the screen, scroll up or hide the keyboard to see everything.</li>
+      <li>Tap <b>▶ Run</b>. When Py-Bot asks a question, a <b>pop-up box</b> appears with the question in it.</li>
+      <li>Type your answer in the box and tap <b>OK</b>.</li>
+      <li>Your answer appears in the "screen shows" box, underlined, and the program carries on.</li>
+      <li>If you tap <b>Cancel</b>, Py-Bot gets an empty answer. Just tap Run again to start over.</li>
     </ol>
     <p class="muted">In the examples, the <span class="typed" style="color:var(--accent)">underlined</span> words in the black "screen shows" boxes are what <b>you</b> type.</p>
   </div>
@@ -739,5 +739,6 @@ window.QUEST={world:2,bossId:"w2-boss",lessons:{
   boss:["w2-boss"]}};
 </script>
 <script src="assets/quest.js"></script>
+<script src="assets/codepad.js"></script>
 </body>
 </html>
