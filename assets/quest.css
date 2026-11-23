@@ -40,9 +40,10 @@ a{color:var(--accent)}
 .crewbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
   margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:10px max(16px,env(safe-area-inset-left,0px))}
 .crewbar .wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"home who xp";align-items:center;gap:10px 14px}
-.home-link{grid-area:home;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-display);font-weight:600;font-size:.95rem;
-  color:var(--ink);text-decoration:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 14px;white-space:nowrap}
-.home-link:hover{border-color:var(--accent)}
+.home-link{grid-area:home;display:inline-flex;border-radius:14px;line-height:0;flex:none}
+.home-link img{width:44px;height:44px;display:block;border-radius:14px;transition:transform .15s}
+.home-link:hover img,.home-link:focus-visible img{transform:scale(1.06)}
+@media (prefers-reduced-motion: reduce){.home-link img{transition:none}}
 .crewbar .who{grid-area:who;display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
 .crewbar .xp-pill{grid-area:xp;margin-left:0}
 @media (max-width:560px){.crewbar .wrap{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"home xp" "who who"}.crewbar .xp-pill{justify-self:end}}

@@ -1,0 +1,13 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Python Space Quest</title>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#e8541f"/>
+  <path d="M17 14 Q10 14 10 21 L10 27 Q10 32 6 32 Q10 32 10 37 L10 43 Q10 50 17 50" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M47 14 Q54 14 54 21 L54 27 Q54 32 58 32 Q54 32 54 37 L54 43 Q54 50 47 50" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="rotate(45 32 32)">
+    <path d="M32 13 C38 18 39 30 37 41 L27 41 C25 30 26 18 32 13Z" fill="#fff"/>
+    <path d="M27 33 L22 42 L27 40Z" fill="#0d1630"/>
+    <path d="M37 33 L42 42 L37 40Z" fill="#0d1630"/>
+    <circle cx="32" cy="25" r="3.6" fill="#5ec2ff" stroke="#0d1630" stroke-width="1.8"/>
+    <path d="M32 42 Q28 47 32 51 Q36 47 32 42Z" fill="#ffd257"/>
+  </g>
+</svg>
